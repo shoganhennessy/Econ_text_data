@@ -11,7 +11,7 @@ Papers.data <- fread('../Master_data/Working_papers_data.csv')
 
 
 Papers.data %>%
-  pull(nber_index, abstract) %>%
+  pull(abstract) %>%
   unnest_tokens()
 
 
