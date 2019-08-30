@@ -1,5 +1,5 @@
 # 21/08/2019
-# Sentiment analysis of NBER abstracts 
+# Sentiment analysis of abstracts 
 library(tidyverse)
 library(data.table)
 library(dplyr)
