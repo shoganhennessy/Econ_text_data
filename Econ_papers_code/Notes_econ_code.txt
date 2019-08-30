@@ -1,0 +1,13 @@
+
+New data file: econ papers and their code:
+https://www.r-bloggers.com/finding-economic-articles-with-data-2/
+
+
+Code data set on articles published.
+
+Gives a data set where one can parse or create some measure of 
+from the code that creates journal articles.
+
+WHat about authors who use new software?  As in they switch Stata to Python.
+
+

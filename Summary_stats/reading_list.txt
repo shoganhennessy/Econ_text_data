@@ -1,0 +1,41 @@
+﻿Articles to read on the top of published economics research:
+
+Social Ties in Academia: A Friend Is a Treasure
+Tommaso Colussi
+Review of Economics and Statistics
+Volume 100 | Issue 1 | March 2018 
+
+https://www.nber.org/papers/w25967.pdf
+
+Charity and Favoritism in the Field: Are Female Economists Nicer (To Each Other)?
+Jason Abrevaya and Daniel S. Hamermesh
+Review of Economics and Statistics
+Volume 94 | Issue 1 | February 2012 
+
+Bransch, F., and M. Kvasnicka, 2017, “Male Gatekeepers Gender Bias in the Publishing Process?”.
+IZA DP No. 11089.
+
+What Do Editors Maximize? Evidence from Four Economics Journals
+David Card and Stefano DellaVigna
+Review of Economics and Statistics
+
+The Effects of Publication Lags on Life‐Cycle Research Productivity in Economics
+Economic Inquiry, Vol. 51, Issue 2, pp. 1251-1276, 2013
+and
+https://pubs.aeaweb.org/doi/pdfplus/10.1257/jep.28.3.205
+
+
+Idea about NSF economics programme funding:
+
+https://www.nsf.gov/funding/pgm_summ.jsp?pims_id=5437
+Look in to NSF funding.  The econ dept of the NSF 
+reduced funding in 1981, and hasn't really recovered.
+Importantly, exogenous drop in funding here.
+^The time period also coincides with authors who 
+would go on to working papers 1970-2019.
+
+AUthors who enter PhD in 1981, 1982 are exoegnously less
+likely to funded by NSF grants than 1979, 1980 -- tease out with data.
+
+This paper describes the NSF economics programme
+https://www.jstor.org/stable/43855708
