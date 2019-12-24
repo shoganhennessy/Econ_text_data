@@ -1,0 +1,60 @@
+Gender Differences in Recognition for Group Work
+Heather Sarsons
+
+^
+Creates a data set of all CVs of (relevant) economists
+
+
+https://www.nber.org/papersbyprog/LS.html
+lists appointment date
+
+Every economics author listed:
+https://ideas.repec.org/i/eall.html
+
+
+Tool to OCR pdf files, say if I got every research paper in NBER/ever
+https://en.wikipedia.org/wiki/Pdftotext
+
+
+Overleaf notes:
+
+(Paragraph on my own research work)
+In a similar vein, I wonder what contributes to inequality in 
+\textit{in our own field}.  
+The NBER acts as an institutional gatekeeper in the economic
+profession by allowing appointed fellows (and coauthors) to 
+circulate papers in its influential working paper series,
+limiting benefit of comments and discussion.
+A dataset of published economics papers and authors (made available on 
+RePEc.org) combined with the dataset of working
+papers, authors and appointment dates (made available 
+on NBER.org) provides an opportunity to compare 
+success of authors' research papers immediately before and 
+after a promotion in NBER appointment, 
+as well as measure textual change from working paper to 
+publication.
+Using these data I will measure the beneficial effect of 
+NBER promotion on follow on research, including the benefits
+of inclusion in the working paper series.
+To this end, I have already constructed and cleaned the dataset of all NBER 
+papers and authors, and am working to do the same for RePEc listings.
+The project is inspired by \cite{10.1257/aer.p20171126},
+who collected data on economists from CV information to show the 
+rate of return of coauthored papers in terms of tenure 
+appointment are lower for women economists;
+I similarly wonder what the the profile of faculty 
+chosen for fellow positions looks like,
+whether NBER appointment decisions -- and allocation of all the benefits
+involved -- suffer from biases similar to tenure appointment.
+
+Daniel Gross: If you wanted to build this out more (I know space is a constraint) you could start to connect to the recent research on gender inequality in economics w.r.t. coauthorship credit and publication outcomes. See the Heather Sarsons paper (I think R&R at JPE) and the recent Card, DellaVigna, et al. paper (forthcoming QJE). The point here being that NBER affiliation is another driver of inequality (not about gender per se, but just status and exposure).
+Nov 23, 2019 12:05 PM
+You: Thanks for pointing to the Heather Sarsons paper, the dataset she constructed from economists CVs sounds like something very similar to what I was thinking of startig to make. I haven't seen this paper yet -- partially I think because it wasn't in the NBER database!
+Nov 24, 2019 4:38 PM • Edit • Delete
+You: The AER paper isn't included in the AER replication database, possibly because it is personally identifying information, which is unfortunate for me.
+Nov 24, 2019 5:01 PM • Edit • Delete
+You: Oh, I realised the work is in a proceedings and has been updated recently so it's more of an in-progress paper. Perhaps I should look more in to what the AER proceedings mean too then....
+Nov 24, 2019 5:05 PM • Edit • Delete
+You: I found the RePEc listing is very comprehensive, so my next stage is to collect data from there, and look in to how accurate the NBER appointment data is.
+Nov 24, 2019 7:08 PM • Edit • Delete
+Hit Enter to reply

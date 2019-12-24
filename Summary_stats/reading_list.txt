@@ -25,6 +25,23 @@ and
 https://pubs.aeaweb.org/doi/pdfplus/10.1257/jep.28.3.205
 
 
+Travel costs affecting research
+https://www.nber.org/papers/w24780
+
+
+
+
+
+https://www.nber.org/papers/w19819
+Distance collaboration
+
+Declining importance of physical access to research colleagues
+https://ideas.repec.org/a/eee/jfinec/v93y2009i3p353-381.html 
+
+
+
+
+
 Idea about NSF economics programme funding:
 
 https://www.nsf.gov/funding/pgm_summ.jsp?pims_id=5437
@@ -39,3 +56,13 @@ likely to funded by NSF grants than 1979, 1980 -- tease out with data.
 
 This paper describes the NSF economics programme
 https://www.jstor.org/stable/43855708
+
+
+Ideas about email domains:
+https://www.theguardian.com/technology/2016/mar/07/email-ray-tomlinson-history
+
+
+TOOLS OR TOYS? THE IMPACT OF HIGH TECHNOLOGY ON SCHOLARLY PRODUCTIVITY
+Daniel S. Hamermesh  Sharon M. Oster
+First published: 26 March 2007 h
+Communication technology on scholarly productivity by considering patterns of coauthored economics articles.
