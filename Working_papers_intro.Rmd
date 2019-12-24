@@ -1,15 +1,17 @@
 ---
-title: "Working Papers in Economics Publishing: NBER Series"
+title: 'Working Papers in Economics Publishing: NBER Series'
 author: "Senan Hogan-Hennesssy"
 date: "24/12/2019"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ## UNFINISED, TO BE COMPLETED OVER THE NEXT WEEK
 
 
 ```{r setup, include=F}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = TRUE, dev = 'svg')
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = F)
 library(tidyverse)
 library(data.table)
 library(stringi)
