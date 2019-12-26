@@ -9,3 +9,6 @@ Completed working paper dataset, working on an introduction to the working paper
 Blog posts:
 1. [The NBER working papers, read here.](http://htmlpreview.github.io/?https://github.com/shoganhennessy/Econ_text_data/blob/master/Blog_post_exploration/Working_papers_intro.html)
 2. The ideas.repec listings (in progress, up soon)
+
+Note: I do not list the code to build the data used in this work, for which the majority of work went in to creating.  
+If you are interested in work using these data, then contact me.

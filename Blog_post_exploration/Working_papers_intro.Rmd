@@ -51,9 +51,9 @@ of some very famous research papers and some heavily cited working papers themse
 I have retreieved the listing of all NBER working papers, a collection of 
 `r nrow(Papers.data)` papers  (as of `r as.Date(max(Papers.data$date)) %>% format("%d %b %Y")`),
 starting with a small number of technical reports in 1973
-to hundreds of modern research papers in the 2000s.
+to hundreds of modern research papers every year in the 2000s.
 
-```{r, echo=F, fig.height = 4, fig.width = 7, fig.align = 'center'}
+```{r, echo=F, fig.height = 3.5, fig.width = 6, fig.align = 'center'}
 # SHow count per year
 Papers.data %>%
   mutate(date = as.Date(date),
