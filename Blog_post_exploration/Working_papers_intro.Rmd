@@ -21,6 +21,7 @@ library(stringi)
 library(ggplot2)
 library(RColorBrewer)
 library(ggrepel)
+library(tidytext)
 theme_set(theme_bw())
 
 # Load the raw working papers data
@@ -159,44 +160,76 @@ Papers_subjects.data %>%
   scale_x_continuous(limits = c(1975,2025))
 ```
 
-The series is particularly popular for empirical economics, perhaps following the trend of rising empricism in the subject 
-over the <i>credibility revolution</i> the last two decades.
+Most of the papers go on to be published, but the rate of publishing is certainly not constant.
+In the early days, around 60\% of the working papers are published in peer reviewed journals, going on to peak at 94\% in 1987 before falling to common day.  What drives this ride and fall?
+It is clear that papers since 2015 are still in the pipeline, afterall the NBER series was started
+partially to disseminate knowledge current knowledge in light of publishing lags.
 
-To-do:
-Set the stage for a difference between
-published and un-published papers.
-
-
-### Publication
-
-The majority of papers in every year go on to be published.
-The most recent years (2015 and on) have a very low publishing rate -- papers likely to yet be published?
-
-```{r, echo=F}
+```{r, echo=F, fig.height = 3, fig.width = 7, fig.align = 'center'}
 # Show rate of publishing by year
 Papers.data %>%
   transmute(publish_rate = (published != ''),
             date         = as.Date(date)) %>%
   mutate(year = as.integer(format(date, '%Y'))) %>%
-  filter(year < 2015) %>%
   group_by(year) %>%
   summarise(publish_rate = mean(publish_rate)) %>%
   ggplot(aes(x = year, y = publish_rate)) +
-  geom_point() +
-  geom_smooth(span = 5) +
-  theme_bw() +
-  scale_x_continuous(name = 'Year', breaks = seq(1975, 2015, by = 5)) +
+  geom_point() +  geom_smooth(span = 15, se = F) + theme_bw() +
+  scale_x_continuous(name = 'Year', breaks = seq(1975, 2020, by = 5)) +
   scale_y_continuous(name = 'Publish Rate (%)', 
-                     breaks = seq(0, 1, by = 0.2), limits = c(0,1))
-# Note sharp drops off 2015, work still yet to be published?
+                     breaks = seq(0, 1, by = 0.1), limits = c(0,1))
+# Note sharp drop off 2015, work still yet to be published?
 ```
 
-### To-do: Textual difference
+Yet the publication rate has not been constant.  What explains the changes in publication rate among these working papers?
 
-Textual analysis along the publication outcome:
 
-Let's compare textual measures (sentiment, relative word usage, measure of mathematical/empirical words) across dimensions:
-published vs unpublished.
+### Textual difference
+
+It's unclear whether there is an observable difference between the published and non-published papers
+-- other than the outcome itself!
+We have access to the abstract of every paper, however, so I was inspired by the David Robinson's famous blog
+[post](http://varianceexplained.org/r/trump-tweets/#fnref:fullcode) to investigate the text
+with some tools in R -- take a look [here](https://github.com/shoganhennessy/Econ_text_data/blob/master/Blog_post_exploration/Working_papers_intro.Rmd) if you want to follow the code.
+First take a look at the most common words used for each classification.
+
+```{r, echo=F}
+# Demark published papers and only take those with abstracts
+Papers_abtracts.data <- Papers.data %>% 
+  mutate(published = (published != '')) %>%
+  filter(abstract != '')
+
+# Take out the most common
+reg <- "([^A-Za-z\\d#@']|'(?![A-Za-z\\d#@]))"
+abstracts_words <- Papers_abtracts.data %>%
+  select(published, abstract) %>%
+  unnest_tokens(word, abstract, token = 'regex', pattern = reg) %>%
+  filter(!word %in% c(stop_words$word, 'working', 'paper'), str_detect(word, '[a-z]')) %>%
+  group_by(published, word) %>%
+  summarise(count = n()) %>%
+  arrange(-count)
+
+published_words <- abstracts_words %>% filter(published == T) %>% head(10) %>%
+  pull(word) %>% paste(sep = ', ', collapse = ', ') 
+unpublished_words <- abstracts_words %>% filter(published == F) %>% head(10) %>%
+  pull(word) %>% paste(sep = ', ', collapse = ', ') 
+
+```
+
+Most common for published articles: `r published_words`.
+
+Most common for the unpublished: `r unpublished_words`.
+
+The ten most common words are almost identical across publication outcome, yet this measure is crude.
+
+Next do a relative word usage textual analysis along the publication outcome.
+
+
+
+section on measure of mathematical/empirical words across publication outcome.
+Follow the papers which include the use of the word ``data'' in the abstract (and/or similar words).
+Are they new?  are they just in a few areas?
+Are they rising in publication rate?
 
 Examine the outcome within groups -> are there any NBER programmes we would expect to have changed specifically?  
 Perhaps the rise in empiricism is more pronounced in labour than, say, macroeconomics
