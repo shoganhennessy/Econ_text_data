@@ -1,11 +1,18 @@
 ---
-title: 'Working Papers in Economics: the NBER Series'
+title: "Working Papers in Economics: the NBER Series"
 author: "Senan Hogan-Hennesssy"
-date: "24/12/2019"
-output: html_document
-fig_width: 6 
-fig_height: 4 
+date: "`r format(Sys.time(), '%d %b %Y')`"
+output:
+  html_document: default
+  pdf_document: default
+fig_width: 3
+fig_height: 2
+fig.align: "center"
 ---
+<style>
+body {
+text-align: justify}
+</style>
 
 ## UNFINISED, TO BE COMPLETED OVER THE NEXT WEEK
 
@@ -19,7 +26,7 @@ library(ggplot2)
 theme_set(theme_bw())
 
 # Load the raw working papers data
-Papers.data <- fread('Data/NBER_data/Papers_data/Working_papers_data_new.csv')
+Papers.data <- fread('../Data/NBER_data/Papers_data/Working_papers_data_new.csv')
 Papers.data <- Papers.data %>% filter(title != 'Paper Not Found', !is.na(date), date != '') # FIlter empty entries 
 ```
 
@@ -69,6 +76,7 @@ Papers.data %>%
 ```
 
 And by area of expertise (note: papers can be cross registered, and are likely to be so in more recent years).
+
 ```{r, echo=F}
 # SHow count per year, for each area
 Papers_subjects.data <- Papers.data %>% transmute(
