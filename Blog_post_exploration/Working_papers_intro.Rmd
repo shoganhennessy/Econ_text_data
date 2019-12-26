@@ -21,6 +21,8 @@ library(tidyverse)
 library(data.table)
 library(stringi)
 library(ggplot2)
+library(RColorBrewer)
+library(ggrepel)
 theme_set(theme_bw())
 
 # Load the raw working papers data
@@ -28,7 +30,7 @@ Papers.data <- fread('../Data/NBER_data/Papers_data/Working_papers_data_new.csv'
 Papers.data <- Papers.data %>% filter(title != 'Paper Not Found', !is.na(date), date != '') # FIlter empty entries 
 ```
 
-Publishing in a main goal of academic economists, but rarely is it as simple
+Publishing is a main goal of academic economists, but rarely is it as simple
 as write the paper then publish.
 Projects can take years and often transform over the work, data analysis and 
 dissemination of results.
@@ -80,7 +82,7 @@ to measure rise in internet listing of working papers in general.
 The papers are sorted in to subjects areas, the [NBER research area programmes](https://www.nber.org/programs/) (the graph below only shows top 10 areas).
 Note: papers can be cross registered to multiple areas, and are more likely to be so for recent years.
 
-```{r, echo=F, fig.height = 4, fig.width = 7, fig.align = 'center'}
+```{r, echo=F, fig.height = 4.5, fig.width = 7, fig.align = 'center'}
 # SHow count per year, for each area
 Papers_subjects.data <- Papers.data %>% transmute(
   aging = stri_detect_fixed(nber_area, 'Program on the Economics of Aging'),
@@ -145,12 +147,22 @@ popular_areas <- Papers_subjects.data %>%
 Papers_subjects.data %>%
   filter(nber_area %in% popular_areas) %>% arrange(year) %>%
   group_by(nber_area) %>% mutate(cumul_count = cumsum(count)) %>%
-  ggplot(aes(x = year, y = cumul_count, colour = nber_area)) +
-  geom_line(position = position_dodge(w = 1)) +
-  scale_x_continuous(name = 'Year', breaks = seq(1970, 2020, by = 5)) +
+  mutate(label = if_else(year == max(year), nber_area, NA_character_)) %>%
+  ggplot(aes(x = year, y = cumul_count, 
+             group = nber_area, colour = nber_area)) +
+  geom_line(position = position_dodge(w = 2)) +
+  scale_x_continuous(name = 'Year', breaks = seq(1975, 2020, by = 5)) +
   scale_y_continuous(name = 'Cumulative Count of Working Papers') + 
-  theme_classic() + theme(legend.position = c(0.175, 0.60))
+  theme_classic() + theme(legend.position = c(0.175, 0.60)) +
+  scale_color_brewer(palette = 'Paired') + 
+  geom_label_repel(aes(label = label), 
+    nudge_x = 1, direction = 'y', hjust = -2, segment.alpha = 0, na.rm = T) + 
+  scale_color_discrete(guide = F) + 
+  scale_x_continuous(limits = c(1975,2025))
 ```
+
+The series is particularly popular for empirical economics, perhaps following the trend of rising empricism in the subject 
+over the <i>credibility revolution</i> the last two decades.
 
 To-do:
 Set the stage for a difference between

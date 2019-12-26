@@ -11,4 +11,4 @@ Blog posts:
 2. The ideas.repec listings (in progress, up soon)
 
 Note: I do not list the code to build the data used in this work, for which the majority of work went in to creating.  
-If you are interested in work using these data, then contact me.
+If you are interested in using these data, then contact me.
