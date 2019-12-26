@@ -2,7 +2,7 @@
 title: "Working Papers in Economics: the NBER Series"
 author: "Senan Hogan-Hennesssy"
 date: "`r format(Sys.time(), '%d %b %Y')`"
-output: github_document
+output: html_document
 ---
 <style>
 body {
