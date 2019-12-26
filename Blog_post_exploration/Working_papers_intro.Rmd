@@ -33,7 +33,7 @@ as write the paper then publish.
 Projects can take years and often transform over the work, data analysis and 
 dissemination of results.
 An important part of gauging the impact of research in progress is releasing a working paper.
-The National Bureau of Economics Research (NBER) hosts a heavily circulated 
+The National Bureau of Economic Research (NBER) hosts a heavily circulated 
 [series](https://www.nber.org/papers)
 for its affiliates to register working papers, and the series includes pre-published versions
 of some very famous research papers and some heavily cited working papers themselves.
