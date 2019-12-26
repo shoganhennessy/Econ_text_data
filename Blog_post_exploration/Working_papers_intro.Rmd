@@ -63,7 +63,7 @@ Papers.data %>%
   ggplot(aes(x = year, y = count)) +
   geom_line() + geom_smooth(span = 5, se = F) +
   #geom_point() + geom_smooth(span = 5, se = F) +
-  scale_x_continuous(name = 'Year', breaks = seq(1975, 2020, by = 5)) +
+  scale_x_continuous(name = 'Year', breaks = seq(1970, 2020, by = 5)) +
   scale_y_continuous(name = 'Count of Working Papers')
 ```
 
@@ -141,19 +141,19 @@ popular_areas <- Papers_subjects.data %>%
   group_by(nber_area) %>% summarise_all(sum) %>% 
   arrange(-count) %>% head(10) %>% pull(nber_area)
 
-# Graph the count of the the most popular areas
+# Graph the cumulative count of the the most popular areas
 Papers_subjects.data %>%
-  filter(nber_area %in% popular_areas) %>%
-  ggplot(aes(x = year, y = count, group = nber_area, colour = nber_area)) +
-  geom_line() +
-  scale_x_continuous(name = 'Year', breaks = seq(1975, 2015, by = 5)) +
-  scale_y_continuous(name = 'Count of Working Papers')
+  filter(nber_area %in% popular_areas) %>% arrange(year) %>%
+  group_by(nber_area) %>% mutate(cumul_count = cumsum(count)) %>%
+  ggplot(aes(x = year, y = cumul_count, colour = nber_area)) +
+  geom_line(position = position_dodge(w = 1)) +
+  scale_x_continuous(name = 'Year', breaks = seq(1970, 2020, by = 5)) +
+  scale_y_continuous(name = 'Cumulative Count of Working Papers') + 
+  theme_classic() + theme(legend.position = c(0.175, 0.60))
 ```
 
-Consider some big revisions to this graph, perhaps a cdf plot would be better, easier to differentiate areas.
-
 To-do:
-Embed with quotes of famous working papers, and set the stage for a difference between
+Set the stage for a difference between
 published and un-published papers.
 
 
