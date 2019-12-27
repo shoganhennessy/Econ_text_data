@@ -216,7 +216,6 @@ published_words <- abstracts_words %>% filter(published == T) %>% head(10) %>%
   pull(word) %>% paste(sep = ', ', collapse = ', ') 
 unpublished_words <- abstracts_words %>% filter(published == F) %>% head(10) %>%
   pull(word) %>% paste(sep = ', ', collapse = ', ') 
-
 ```
 
 Most common for published articles: `r published_words`.
@@ -249,27 +248,40 @@ relative_abstract_words %>%
   ylab('Published - Unpublished relative log ratio') + xlab('') +
   scale_fill_manual(name = '', values = c('red', 'darkblue'))
 ```
-* Coal is least likely to be in a published paper, with many papers tackling the economic issues of coal production and
-pollution (see WP 23417, 26551, etc.) yet apparently going on to make the lowest rate of successful publication.
-Comment on ``cocaine'' 
-
-* Comment on unpublished words
-* ``afdc'' (WP 7240)
+* Bubble is th word most likely to be among published papers, temperature among those not published. 
+Bubble can most commonly be associated with asset bubbles, an extremely popular topic in economics since 2008 where the
+NBER series has really grown, so it seems papers involving bubbles are most likely to reach publication fruition.
+Temperature on the other hand is the opposite; perhaps economics papers on climate change aren't doing quite as well, it 
+after all does not even have its own NBER research programme oustude of the energy subfield.
+* Unpublished words involve a few health-related words, such as pharmaceutical and uninsured -- 
+health economics working papers are not actually less likely to be published, so it's not clear what significance these words play.  The second through seventh words have a connection to public economics, with some successful papers relating to tax credits (some unanticipated).  
+* Algorithm and identification are words related to more recent advances in empiricsm 
+and new software, yet are more likely to be in unpublished papers.  It's suprising to me that
+empiricism does not play an obvious role here, yet the issue could do wth further digging.
 
 
 ## Empiricism
 
 Economics is far, far more of an empirical discpline than when the NBER series began in 1973:
-let's show test this <i>empirically</i>.
+let's show test this <i>empirically</i> beyond word counts or ratios.
 
+Sentiment analysis is commonly applied to text data as an easy coding operation
+to measure -- commonly to measure happiness, or perhaps [1am angry tweets](http://varianceexplained.org/r/trump-tweets/#fnref:fullcode).
+The same process can textually measure rate of empiricism.
 
-Form a pseudo dictionary of words related to empiricism, and then run the ``sentiment'' analysis with this lexicon.
-Test the empirism of published articles over time.
-
-```{r, echo=T}
+First I'll form a list of 100 words most likely to appear in abstracts that use the words
+``empirical'', ``instrument'', ``metrics'' -- and call these empirical papers --
+and top 100 in ones that don't -- non-empirical papers.  
+This plays the role of a sentiment dictionary, say a pseudo lexicon, with a log ratio of inclusion 
+giving a score of likelihood to be in an empirical paper -- a value of 100 is the most likely to be a word
+in an empirical paper, -100 in a non-empirical paper.
+```{r, echo=F}
 # Which words coincide with data or empirical?
 empirical_words <- Papers_abtracts.data %>%
-  mutate(empirical = stri_detect_fixed(abstract, 'empiric') > 0) %>%
+  mutate(empirical = 0 < (
+    stri_detect_fixed(abstract, 'empiric') + 
+    stri_detect_fixed(abstract, 'instrument') + 
+    stri_detect_fixed(abstract, 'metric'))) %>%
   select(empirical, abstract) %>%
   unnest_tokens(word, abstract, token = 'regex', pattern = reg) %>%
   filter(!word %in% c(stop_words$word, 'working', 'paper'), str_detect(word, '[a-z]')) %>%
@@ -277,26 +289,53 @@ empirical_words <- Papers_abtracts.data %>%
   arrange(-count) %>%
   filter(count >= 5) %>%
   spread(empirical, count, fill = 0) %>% ungroup() %>%
+  transmute(word = word, empirical = `TRUE`, non_empirical = `FALSE`) %>%
   mutate_each(funs((. + 1) / sum(. + 1)), -word) %>%
-  mutate(logratio = log2(`TRUE` / `FALSE`)) %>%
-  arrange(logratio) %>% group_by(logratio > 0) %>% top_n(100, abs(logratio)) %>%
-  ungroup() %>% mutate(word = reorder(word, logratio)) %>% pull(word)
-
-empirical_words %>% head(10)
-empirical_words %>% tail(10)
+  mutate(logratio = log2(empirical / non_empirical)) %>%
+  mutate(logratio = 100*logratio/max(logratio)) %>%
+  arrange(logratio) %>% group_by(logratio > 0) %>% top_n(200, abs(logratio)) %>%
+  ungroup() %>% mutate(word = reorder(word, logratio))
 ```
 
+Here are the top 10 for empirical papers.
+```{r, echo=F}
+empirical_words %>% arrange(-logratio) %>% select(word, logratio) %>% head(10) %>%
+  transmute(word = paste0(word, ' : ', as.character(round(logratio)))) %>% pull(word) %>% 
+              paste(sep = ', ', collapse = ', ') %>% print()
+```
+
+And for non-empirical papers.
+```{r, echo=F}
+empirical_words %>% arrange(logratio) %>% select(word, logratio) %>% head(10) %>%
+  transmute(word = paste0(word, ' : ', as.character(round(logratio)))) %>% pull(word) %>% 
+              paste(sep = ', ', collapse = ', ') %>% print()
+```
 <!-- Dictionary-based sentiment --> 
 <!-- https://cbail.github.io/SICSS_Dictionary-Based_Text_Analysis.html#dictionary-based-quantitative-text-analysis --> 
+
+Take a step back and make sure the words make sense -- one would hope that ``econometrics'' is an empirical word!
+
+Now use the log ratio measure of empiricism to clasify the papers with a sentiment measure of empiricism:
+```{r, echo=T}
+# Sentiment analysis with my own dictionary here
+# Reference Dictionary-based sentiment here
+# https://cbail.github.io/SICSS_Dictionary-Based_Text_Analysis.html#dictionary-based-quantitative-text-analysis
+
+```
+
+
+
+## Empiricism and other measures
 
 Examine the outcome within groups -> are there any NBER programmes we would expect to have changed specifically?  
 Perhaps the rise in empiricism is more pronounced in labour than, say, macroeconomics
 and that this can be tested.
 
-Word stemming maybe for duture deeper analysis -- too detailed for a blog post.
 
 
 ### Conclusion: the wider economics publishing pipeline
+
+Word stemming maybe for future deeper analysis -- too detailed for a blog post.
 
 Write about the starting point of my wider research project.
 
