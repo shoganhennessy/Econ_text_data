@@ -3,6 +3,7 @@
 library(tidyverse)
 library(data.table)
 library(RColorBrewer)
+library(stringi)
 
 # Load the raw working papers data
 Papers.data <- fread('../Data/NBER_data/Papers_data/Working_papers_data_new.csv')
@@ -113,7 +114,7 @@ Papers.data %>%
   theme_bw() +
   scale_x_continuous(name = 'Year', breaks = seq(1975, 2015, by = 5)) +
   scale_y_continuous(name = 'Publish Rate (%)', 
-                     breaks = seq(0, 1, by = 0.2), limits = c(0,1))
+                     breaks = seq(0.6, 1, by = 0.05), limits = c(0.6,1))
 # Note sharp drop off 2015, work still yet to be published?
 
 # Show rate of publishing by area
@@ -163,7 +164,27 @@ Papers_published.data <- Papers.data %>%
     year = as.integer(format(as.Date(date), format = '%Y'))) %>%
   group_by(year) %>%
   summarise_all(sum) %>%
-  transmute()
+  transmute(year = year,
+            aging = aging_publish / aging,
+            assets = assets_publish / assets,
+            corporate_finance = corporate_finance_publish / corporate_finance,
+            children = children_publish / children,
+            american_history = american_history_publish / american_history,
+            development = development_publish / development,
+            education = education_publish / education,
+            energy = energy_publish / energy,
+            growth = growth_publish / growth,
+            care = care_publish / care,
+            health = health_publish / health,
+            finance_macro = finance_macro_publish / finance_macro,
+            indust_org = indust_org_publish / indust_org,
+            trade_invest = trade_invest_publish / trade_invest,
+            law = law_publish / law,
+            labour = labour_publish / labour,
+            monetary = monetary_publish / monetary,
+            public = public_publish / public,
+            poli_econ = poli_econ_publish / poli_econ,
+            productivity = productivity_publish / productivity) %>%
   reshape(timevar = 'nber_area',
           times = c('aging', 'assets', 'corporate_finance', 'children', 'american_history', 'development', 'education',
                     'energy', 'growth', 'care', 'health', 'finance_macro', 'indust_org', 'trade_invest', 'law', 'labour', 
@@ -171,7 +192,31 @@ Papers_published.data <- Papers.data %>%
           varying = c('aging', 'assets', 'corporate_finance', 'children', 'american_history', 'development', 'education',
                       'energy', 'growth', 'care', 'health', 'finance_macro', 'indust_org', 'trade_invest', 'law', 'labour', 
                       'monetary', 'public', 'poli_econ', 'productivity'),
-          v.names = 'count', direction = 'long', new.row.names = 1:1000) %>% group_by(year)
+          v.names = 'publish_rate', direction = 'long', new.row.names = 1:1000) %>% group_by(year)
+
+# Choose most popular areas :
+published_areas <- Papers_published.data %>% 
+  group_by(nber_area) %>% summarise_all(funs(mean(., na.rm = TRUE))) %>% 
+  arrange(-publish_rate) %>% pull(nber_area)
+published_areas <- head(published_areas, 5) %>% c(tail(published_areas, 5))
+published_areas <- published_areas %>% setdiff(c('law', 'poli_econ', 'education', 'development'))
+
+Papers_published.data %>%
+  filter(nber_area %in% published_areas & year < 2015) %>%
+  group_by(nber_area) %>%
+  mutate(label = if_else(year == min(year), nber_area, NA_character_)) %>%
+  ggplot(aes(x = year, y = publish_rate, group = nber_area, colour = nber_area)) +
+  geom_smooth(span = 20,  se = F) + #, position = position_dodge(w = 2)) + # geom_line() + geom_point() +
+  scale_x_continuous(name = 'Year', breaks = seq(1975, 2015, by = 5)) +
+  scale_y_continuous(name = 'Publish Rate (%)', 
+                     breaks = seq(0.75, 1, by = 0.05), limits = c(0.75,1)) + 
+  theme_classic() + theme(legend.position = c(0.175, 0.60)) +
+  scale_color_brewer(palette = 'Paired') + 
+  geom_label_repel(aes(label = label), 
+                   nudge_x = 1, direction = 'y', hjust = 2, segment.alpha = 0, na.rm = T) + 
+  scale_color_discrete(guide = F) + 
+  scale_x_continuous(limits = c(1970,2025))
+
 
 # Show number of authors per paper
 Papers.data %>%

@@ -220,23 +220,76 @@ Most common for published articles: `r published_words`.
 
 Most common for the unpublished: `r unpublished_words`.
 
-The ten most common words are almost identical across publication outcome, yet this measure is crude.
+The ten most common words are almost identical across publication outcome, 
+so this hardly counts as a textual difference.  However, a raw word count measure is a crude measure that can be affected
+by confounding factors.
+Instead consider a log odds ratio to show which words are relatively more likely to be in (eventually) published papers.
 
-Next do a relative word usage textual analysis along the publication outcome.
+```{r, echo=F, fig.height = 4.5, fig.width = 8, fig.align = 'center'}
+# Calculate odds ratio
+relative_abstract_words <- abstracts_words %>%
+  filter(count >= 5) %>%
+  spread(published, count, fill = 0) %>%
+  mutate(published = `TRUE`, unpublished = `FALSE`) %>%
+  filter(published + unpublished > 50) %>% ungroup() %>%
+  mutate_each(funs((. + 1) / sum(. + 1)), -word) %>%
+  mutate(logratio = log2(published / unpublished)) %>%
+  arrange(desc(logratio))
+
+# Draw up the bar chart
+relative_abstract_words %>%
+  group_by(logratio > 0) %>% top_n(15, abs(logratio)) %>%
+  ungroup() %>% mutate(word = reorder(word, logratio)) %>%
+  mutate(label = if_else(logratio > 0, 'Published', 'Unpublished')) %>%
+  ggplot(aes(word, logratio, fill = label)) +
+  geom_bar(stat = 'identity') + coord_flip() +
+  ylab('Published - Unpublished relative log ratio') + xlab('') +
+  scale_fill_manual(name = '', values = c('red', 'darkblue'))
+```
+* Coal is least likely to be in a published paper, with many papers tackling the economic issues of coal production and
+pollution (see WP 23417, 26551, etc.) yet apparently going on to make the lowest rate of successful publication.
+Comment on ``cocaine'' 
+
+* Comment on unpublished words
+* ``afdc'' (WP 7240)
 
 
+## Empiricism
 
-section on measure of mathematical/empirical words across publication outcome.
-Follow the papers which include the use of the word ``data'' in the abstract (and/or similar words).
-Are they new?  are they just in a few areas?
-Are they rising in publication rate?
+Economics is far, far more of an empirical discpline than when the NBER series began in 1973:
+let's show test this <i>empirically</i>.
+
+
+Form a pseudo dictionary of words related to empiricism, and then run the ``sentiment'' analysis with this lexicon.
+Test the empirism of published articles over time.
+
+```{r, echo=T}
+# Which words coincide with data or empirical?
+empirical_words <- Papers_abtracts.data %>%
+  mutate(empirical = stri_detect_fixed(abstract, 'empiric') > 0) %>%
+  select(empirical, abstract) %>%
+  unnest_tokens(word, abstract, token = 'regex', pattern = reg) %>%
+  filter(!word %in% c(stop_words$word, 'working', 'paper'), str_detect(word, '[a-z]')) %>%
+  group_by(empirical, word) %>% summarise(count = n()) %>%
+  arrange(-count) %>%
+  filter(count >= 5) %>%
+  spread(empirical, count, fill = 0) %>% ungroup() %>%
+  mutate_each(funs((. + 1) / sum(. + 1)), -word) %>%
+  mutate(logratio = log2(`TRUE` / `FALSE`)) %>%
+  arrange(logratio) %>% group_by(logratio > 0) %>% top_n(100, abs(logratio)) %>%
+  ungroup() %>% mutate(word = reorder(word, logratio)) %>% pull(word)
+
+```
+
+<!-- Dictionary-based sentiment --> 
+<!-- https://cbail.github.io/SICSS_Dictionary-Based_Text_Analysis.html#dictionary-based-quantitative-text-analysis --> 
 
 Examine the outcome within groups -> are there any NBER programmes we would expect to have changed specifically?  
 Perhaps the rise in empiricism is more pronounced in labour than, say, macroeconomics
-and that this can be tested <i>empirically</i>.
-
+and that this can be tested 
 
 
 ### Conclusion: the wider economics publishing pipeline
 
 Write about the starting point of my wider research project.
+
