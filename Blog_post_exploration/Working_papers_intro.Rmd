@@ -248,13 +248,18 @@ relative_abstract_words %>%
   ylab('Published - Unpublished relative log ratio') + xlab('') +
   scale_fill_manual(name = '', values = c('red', 'darkblue'))
 ```
-* Bubble is th word most likely to be among published papers, temperature among those not published. 
+
+* Bubble is most likely to be among published papers, temperature among those not published. 
 Bubble can most commonly be associated with asset bubbles, an extremely popular topic in economics since 2008 where the
 NBER series has really grown, so it seems papers involving bubbles are most likely to reach publication fruition.
 Temperature on the other hand is the opposite; perhaps economics papers on climate change aren't doing quite as well, it 
 after all does not even have its own NBER research programme oustude of the energy subfield.
+
 * Unpublished words involve a few health-related words, such as pharmaceutical and uninsured -- 
-health economics working papers are not actually less likely to be published, so it's not clear what significance these words play.  The second through seventh words have a connection to public economics, with some successful papers relating to tax credits (some unanticipated).  
+health economics working papers are not actually less likely to be published, so it's not clear what significance these
+words play.  The second through seventh words have a connection to public economics, with some successful papers relating 
+to tax credits (some unanticipated).  
+
 * Algorithm and identification are words related to more recent advances in empiricsm 
 and new software, yet are more likely to be in unpublished papers.  It's suprising to me that
 empiricism does not play an obvious role here, yet the issue could do wth further digging.
@@ -266,11 +271,11 @@ Economics is far, far more of an empirical discpline than when the NBER series b
 let's show test this <i>empirically</i> beyond word counts or ratios.
 
 Sentiment analysis is commonly applied to text data as an easy coding operation
-to measure -- commonly to measure happiness, or perhaps [1am angry tweets](http://varianceexplained.org/r/trump-tweets/#fnref:fullcode).
+to measure -- commonly to measure happiness, or perhaps [1am angry tweets](http://varianceexplained.org/r/trump-tweets/).
 The same process can textually measure rate of empiricism.
 
 First I'll form a list of 100 words most likely to appear in abstracts that use the words
-``empirical'', ``instrument'', ``metrics'' -- and call these empirical papers --
+''empirical'', ''instrument'', ''metrics'' -- and call these empirical papers --
 and top 100 in ones that don't -- non-empirical papers.  
 This plays the role of a sentiment dictionary, say a pseudo lexicon, with a log ratio of inclusion 
 giving a score of likelihood to be in an empirical paper -- a value of 100 is the most likely to be a word
@@ -312,7 +317,6 @@ empirical_words %>% arrange(logratio) %>% select(word, logratio) %>% head(10) %>
 ```
 <!-- Dictionary-based sentiment --> 
 <!-- https://cbail.github.io/SICSS_Dictionary-Based_Text_Analysis.html#dictionary-based-quantitative-text-analysis --> 
-
 Take a step back and make sure the words make sense -- one would hope that ``econometrics'' is an empirical word!
 
 Now use the log ratio measure of empiricism to clasify the papers with a sentiment measure of empiricism:
