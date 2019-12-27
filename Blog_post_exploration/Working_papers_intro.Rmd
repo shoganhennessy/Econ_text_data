@@ -181,7 +181,7 @@ Papers.data %>%
 # Note sharp drop off 2015, work still yet to be published?
 ```
 
-Yet the publication rate has not been constant.  What explains the changes in publication rate among these working papers?
+Yet the publication rate has not been constant even before 2015.  What explains the changes in publication rate among these working papers?
 
 
 ### Textual difference
@@ -195,9 +195,12 @@ First take a look at the most common words used for each classification.
 
 ```{r, echo=F}
 # Demark published papers and only take those with abstracts
+# Before 2016 because of publishing lag
 Papers_abtracts.data <- Papers.data %>% 
-  mutate(published = (published != '')) %>%
-  filter(abstract != '')
+  mutate(published = (published != ''),
+         date     = as.Date(date), 
+         year = as.integer(format(date, '%Y'))) %>%
+  filter(abstract != '' & year < 2016)
 
 # Take out the most common
 reg <- "([^A-Za-z\\d#@']|'(?![A-Za-z\\d#@]))"
@@ -231,7 +234,7 @@ relative_abstract_words <- abstracts_words %>%
   filter(count >= 5) %>%
   spread(published, count, fill = 0) %>%
   mutate(published = `TRUE`, unpublished = `FALSE`) %>%
-  filter(published + unpublished > 50) %>% ungroup() %>%
+  filter(published + unpublished > 120) %>% ungroup() %>%
   mutate_each(funs((. + 1) / sum(. + 1)), -word) %>%
   mutate(logratio = log2(published / unpublished)) %>%
   arrange(desc(logratio))
@@ -279,6 +282,8 @@ empirical_words <- Papers_abtracts.data %>%
   arrange(logratio) %>% group_by(logratio > 0) %>% top_n(100, abs(logratio)) %>%
   ungroup() %>% mutate(word = reorder(word, logratio)) %>% pull(word)
 
+empirical_words %>% head(10)
+empirical_words %>% tail(10)
 ```
 
 <!-- Dictionary-based sentiment --> 
@@ -286,7 +291,9 @@ empirical_words <- Papers_abtracts.data %>%
 
 Examine the outcome within groups -> are there any NBER programmes we would expect to have changed specifically?  
 Perhaps the rise in empiricism is more pronounced in labour than, say, macroeconomics
-and that this can be tested 
+and that this can be tested.
+
+Word stemming maybe for duture deeper analysis -- too detailed for a blog post.
 
 
 ### Conclusion: the wider economics publishing pipeline
