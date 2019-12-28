@@ -275,8 +275,8 @@ to measure sentiment -- commonly to measure happiness, or perhaps [1am angry twe
 First I'll form a list of a hundred words most likely to appear in abstracts that use the words
 'empirical', 'instrument', 'metrics' -- denoting these as empirical papers.
 Also list the top hundred words in papers that use the words 
-'theretical', 'theory', and 'general equilibrium' -- denoting these theoretical papers.  
-This words listing can play the role of a sentiment dictionary (call it a a pseudo sentiment lexicon) with a 
+'theretical', 'theory', and 'general equilibrium' -- denoting these theoretical papers. This words listing 
+can play the role of a sentiment dictionary (call it a a pseudo sentiment lexicon) with a 
 log ratio of inclusion in the type of paper, where a value of 100 is the most likely to be a word
 in that type of paper.
 ```{r, echo=F}
@@ -325,9 +325,13 @@ top_theoretical_words <- theoretical_words %>%
               paste(sep = ', ', collapse = ', ')
 ```
 
-Here are the top 10 for empirical papers with scores : `r top_empirical_words`.
+Here are the top 10 for empirical papers with scores :
 
-And for theoretical papers: `r top_theoretical_words`.
+`r top_empirical_words`.
+
+And for theoretical papers: 
+
+`r top_theoretical_words`.
 
 <!-- Dictionary-based sentiment --> 
 <!-- https://cbail.github.io/SICSS_Dictionary-Based_Text_Analysis.html#dictionary-based-quantitative-text-analysis --> 
