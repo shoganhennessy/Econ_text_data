@@ -261,7 +261,7 @@ and new software, yet are more likely to be in unpublished papers.  It's suprisi
 empiricism does not play an obvious role here, yet the issue could do wth further digging.
 
 
-## Empiricism \& Causal Inference
+### Empiricism \& Causal Inference
 
 Economics is far more concerned with empirical, causal inference than when the NBER series began in 1973:
 let's show test this <i>empirically</i>.
