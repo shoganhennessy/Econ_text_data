@@ -74,7 +74,7 @@ release of working papers in general, or because of an individual rise in the us
 It is clear, however, that the internet has been a major part of disseminating research in-progress,
 as before the online listing of working papers researchers would only have the chance to read colleague manuscripts in person
 or at conferences.  Today we can take a phone from our pockets, google 
-something like ``NBER working paper on economics publishing'' and read cutting edge research before it is even published.
+something like 'NBER working paper on economics publishing' and read cutting edge research before it is even published.
 I will make a note to count the number of working papers from all sources with the next data source, 
 to measure rise in internet listing of working papers in general.
 
@@ -189,7 +189,7 @@ Yet the publication rate has not been constant even before 2015.  What explains 
 It's unclear whether there is an observable difference between the published and non-published papers
 -- other than the outcome itself!
 We have access to the abstract of every paper, however, so I was inspired by the David Robinson's famous blog
-[post](http://varianceexplained.org/r/trump-tweets/#fnref:fullcode) to investigate the text
+[post](http://varianceexplained.org/r/trump-tweets) to investigate the text
 with some tools in R -- take a look [here](https://github.com/shoganhennessy/Econ_text_data/blob/master/Blog_post_exploration/Working_papers_intro.Rmd) if you want to follow the code.
 First take a look at the most common words used for each classification.
 
@@ -268,56 +268,72 @@ empiricism does not play an obvious role here, yet the issue could do wth furthe
 ## Empiricism
 
 Economics is far, far more of an empirical discpline than when the NBER series began in 1973:
-let's show test this <i>empirically</i> beyond word counts or ratios.
+let's show test this <i>empirically</i>.
 
 Sentiment analysis is commonly applied to text data as an easy coding operation
-to measure -- commonly to measure happiness, or perhaps [1am angry tweets](http://varianceexplained.org/r/trump-tweets/).
-The same process can textually measure rate of empiricism.
-
-First I'll form a list of 100 words most likely to appear in abstracts that use the words
-''empirical'', ''instrument'', ''metrics'' -- and call these empirical papers --
-and top 100 in ones that don't -- non-empirical papers.  
-This plays the role of a sentiment dictionary, say a pseudo lexicon, with a log ratio of inclusion 
-giving a score of likelihood to be in an empirical paper -- a value of 100 is the most likely to be a word
-in an empirical paper, -100 in a non-empirical paper.
+to measure sentiment -- commonly to measure happiness, or perhaps [1am angry tweets](http://varianceexplained.org/r/trump-tweets/) -- and the same process can textually measure rate of empiricism.
+First I'll form a list of a hundred words most likely to appear in abstracts that use the words
+'empirical', 'instrument', 'metrics' -- denoting these as empirical papers.
+Also list the top hundred words in papers that use the words 
+'theretical', 'theory', and 'general equilibrium' -- denoting these theoretical papers.  
+This words listing can play the role of a sentiment dictionary (call it a a pseudo sentiment lexicon) with a 
+log ratio of inclusion in the type of paper, where a value of 100 is the most likely to be a word
+in that type of paper.
 ```{r, echo=F}
 # Which words coincide with data or empirical?
-empirical_words <- Papers_abtracts.data %>%
+empirical_theoretical_words <- Papers_abtracts.data %>%
   mutate(empirical = 0 < (
     stri_detect_fixed(abstract, 'empiric') + 
     stri_detect_fixed(abstract, 'instrument') + 
     stri_detect_fixed(abstract, 'metric'))) %>%
-  select(empirical, abstract) %>%
+  mutate(theoretical = 0 < (
+    stri_detect_fixed(abstract, 'theor') + 
+    stri_detect_fixed(abstract, 'equilibrium'))) %>%
+  select(empirical, theoretical, abstract) %>%
   unnest_tokens(word, abstract, token = 'regex', pattern = reg) %>%
   filter(!word %in% c(stop_words$word, 'working', 'paper'), str_detect(word, '[a-z]')) %>%
-  group_by(empirical, word) %>% summarise(count = n()) %>%
+  group_by(empirical, theoretical, word) %>% summarise(count = n()) %>%
   arrange(-count) %>%
-  filter(count >= 5) %>%
+  filter(count >= 5)
+
+empirical_words <- empirical_theoretical_words %>%
   spread(empirical, count, fill = 0) %>% ungroup() %>%
   transmute(word = word, empirical = `TRUE`, non_empirical = `FALSE`) %>%
   mutate_each(funs((. + 1) / sum(. + 1)), -word) %>%
   mutate(logratio = log2(empirical / non_empirical)) %>%
   mutate(logratio = 100*logratio/max(logratio)) %>%
-  arrange(logratio) %>% group_by(logratio > 0) %>% top_n(200, abs(logratio)) %>%
+  arrange(logratio) %>% group_by(logratio > 0) %>% top_n(100, logratio) %>%
   ungroup() %>% mutate(word = reorder(word, logratio))
+
+theoretical_words <- empirical_theoretical_words %>%
+  spread(theoretical, count, fill = 0) %>% ungroup() %>%
+  transmute(word = word, theoretical = `TRUE`, non_theoretical = `FALSE`) %>%
+  mutate_each(funs((. + 1) / sum(. + 1)), -word) %>%
+  mutate(logratio = log2(theoretical / non_theoretical)) %>%
+  mutate(logratio = 100*logratio/max(logratio)) %>%
+  arrange(logratio) %>% group_by(logratio > 0) %>% top_n(100, logratio) %>%
+  ungroup() %>% mutate(word = reorder(word, logratio))
+
+top_empirical_words <- empirical_words %>% 
+  arrange(-logratio) %>% select(word, logratio) %>% head(10) %>%
+  transmute(word = paste0(word, ' : ', as.character(round(logratio)))) %>% pull(word) %>% 
+              paste(sep = ', ', collapse = ', ')
+
+top_theoretical_words <- theoretical_words %>% 
+  arrange(-logratio) %>% select(word, logratio) %>% head(10) %>%
+  transmute(word = paste0(word, ' : ', as.character(round(logratio)))) %>% pull(word) %>% 
+              paste(sep = ', ', collapse = ', ')
 ```
 
-Here are the top 10 for empirical papers.
-```{r, echo=F}
-empirical_words %>% arrange(-logratio) %>% select(word, logratio) %>% head(10) %>%
-  transmute(word = paste0(word, ' : ', as.character(round(logratio)))) %>% pull(word) %>% 
-              paste(sep = ', ', collapse = ', ') %>% print()
-```
+Here are the top 10 for empirical papers with scores : `r top_empirical_words`.
 
-And for non-empirical papers.
-```{r, echo=F}
-empirical_words %>% arrange(logratio) %>% select(word, logratio) %>% head(10) %>%
-  transmute(word = paste0(word, ' : ', as.character(round(logratio)))) %>% pull(word) %>% 
-              paste(sep = ', ', collapse = ', ') %>% print()
-```
+And for theoretical papers: `r top_theoretical_words`.
+
 <!-- Dictionary-based sentiment --> 
 <!-- https://cbail.github.io/SICSS_Dictionary-Based_Text_Analysis.html#dictionary-based-quantitative-text-analysis --> 
-Take a step back and make sure the words make sense -- one would hope that ``econometrics'' is an empirical word!
+Take a step back and make sure the words make sense -- one would hope that 'econometrics' is an empirical word, and that 
+'theory' is a theoretical word!
+
 
 Now use the log ratio measure of empiricism to clasify the papers with a sentiment measure of empiricism:
 ```{r, echo=T}
@@ -329,7 +345,7 @@ Now use the log ratio measure of empiricism to clasify the papers with a sentime
 
 
 
-## Empiricism and other measures
+### Empiricism and other measures
 
 Examine the outcome within groups -> are there any NBER programmes we would expect to have changed specifically?  
 Perhaps the rise in empiricism is more pronounced in labour than, say, macroeconomics
