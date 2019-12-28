@@ -15,9 +15,6 @@ Papers.data <- fread('../Data/Master_data/Working_papers_data_new.csv')
 # Analyse the workd usage of published vs non-published and put in an RMD, 
 # link in econ applications
 
-Papers_words.data <- Papers.data %>%
-  transmute(nber_index = nber_index,
-            title      = title,
-            abstract   = abstract,
-            published  = (published == ''), 'un-published', 'published')
 
+data(nrc_emotions)
+nrc_emotions

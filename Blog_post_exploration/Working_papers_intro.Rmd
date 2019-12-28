@@ -8,13 +8,8 @@ output: html_document
 body {
 text-align: justify}
 </style>
-
-## UNFINISED, TO BE COMPLETED OVER THE NEXT WEEK
-<!-- Look at blog post   : http://varianceexplained.org/r/trump-tweets/#fnref:fullcode --> 
-<!-- Look at source code : https://github.com/dgrtwo/dgrtwo.github.com/blob/master/_R/2016-08-09-trump-tweets.Rmd --> 
-
 ```{r setup, include=F}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = F)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = F)
 library(tidyverse)
 library(data.table)
 library(stringi)
@@ -22,6 +17,7 @@ library(ggplot2)
 library(RColorBrewer)
 library(ggrepel)
 library(tidytext)
+library(scales)
 theme_set(theme_bw())
 
 # Load the raw working papers data
@@ -205,16 +201,16 @@ Papers_abtracts.data <- Papers.data %>%
 # Take out the most common
 reg <- "([^A-Za-z\\d#@']|'(?![A-Za-z\\d#@]))"
 abstracts_words <- Papers_abtracts.data %>%
-  select(published, abstract) %>%
+  select(nber_index,published, abstract) %>%
   unnest_tokens(word, abstract, token = 'regex', pattern = reg) %>%
   filter(!word %in% c(stop_words$word, 'working', 'paper'), str_detect(word, '[a-z]')) %>%
-  group_by(published, word) %>%
-  summarise(count = n()) %>%
-  arrange(-count)
+  group_by(published, word) #  %>% summarise(count = n()) %>% arrange(-count)
 
-published_words <- abstracts_words %>% filter(published == T) %>% head(10) %>%
+abstracts_words_count <- abstracts_words %>%
+  group_by(published, word) %>% summarise(count = n()) %>% arrange(-count)
+published_words <- abstracts_words_count %>% filter(published == T) %>% head(10) %>%
   pull(word) %>% paste(sep = ', ', collapse = ', ') 
-unpublished_words <- abstracts_words %>% filter(published == F) %>% head(10) %>%
+unpublished_words <- abstracts_words_count %>% filter(published == F) %>% head(10) %>%
   pull(word) %>% paste(sep = ', ', collapse = ', ') 
 ```
 
@@ -229,7 +225,7 @@ Instead consider a log odds ratio to show which words are relatively more likely
 
 ```{r, echo=F, fig.height = 4.5, fig.width = 8, fig.align = 'center'}
 # Calculate odds ratio
-relative_abstract_words <- abstracts_words %>%
+relative_abstract_words <- abstracts_words_count %>%
   filter(count >= 5) %>%
   spread(published, count, fill = 0) %>%
   mutate(published = `TRUE`, unpublished = `FALSE`) %>%
@@ -265,30 +261,63 @@ and new software, yet are more likely to be in unpublished papers.  It's suprisi
 empiricism does not play an obvious role here, yet the issue could do wth further digging.
 
 
-## Empiricism
+## Empiricism \& Causal Inference
 
-Economics is far, far more of an empirical discpline than when the NBER series began in 1973:
+Economics is far more concerned with empirical, causal inference than when the NBER series began in 1973:
 let's show test this <i>empirically</i>.
 
 Sentiment analysis is commonly applied to text data as an easy coding operation
 to measure sentiment -- commonly to measure happiness, or perhaps [1am angry tweets](http://varianceexplained.org/r/trump-tweets/) -- and the same process can textually measure rate of empiricism.
-First I'll form a list of a hundred words most likely to appear in abstracts that use the words
-'empirical', 'instrument', 'metrics' -- denoting these as empirical papers.
+First I'll form a list of a hundred words most likely to appear in abstracts that use the word
+'causal' -- denoting these as causal papers.
 Also list the top hundred words in papers that use the words 
-'theretical', 'theory', and 'general equilibrium' -- denoting these theoretical papers. This words listing 
+'theory' and 'equilibrium' -- denoting these theoretical papers.
+
+```{r, echo=F, fig.height = 3.5, fig.width = 6.5, fig.align = 'center'}
+# Calculate odds ratio
+Papers.data %>% 
+  transmute(published = (published != ''),
+            date     = as.Date(date),
+            abstract = abstract,
+            year = as.integer(format(date, '%Y'))) %>%
+  mutate(empirical = 0 < str_detect(abstract, 'causal|cause'),
+         theoretical = 0 < str_detect(abstract, 'theory|equilib')) %>%
+  group_by(year) %>% 
+  summarise(empirical = sum(empirical),
+            theoretical = sum(theoretical),
+            count = n()) %>%
+  transmute(year = year,
+            empirical = empirical / count,
+            theoretical = theoretical / count) %>%
+  reshape(timevar = 'paper_type',
+          times = c('empirical', 'theoretical'),
+          varying = c('empirical', 'theoretical'),
+          v.names = 'count', direction = 'long', new.row.names = 1:1000) %>%
+  mutate(label = if_else(year == max(year), paper_type, NA_character_)) %>%
+  ggplot(aes(x = year, y = count, 
+             group = paper_type, colour = paper_type)) + 
+  geom_smooth(span = 0.2, se = F) + 
+  scale_x_continuous(name = 'Year', breaks = seq(1975, 2020, by = 5)) +
+  scale_y_continuous(name = 'Preportion of Papers (%)') + 
+  theme_classic() + theme(legend.position = c(0.175, 0.60)) +
+  scale_color_brewer(palette = 'Paired') +
+  geom_label_repel(aes(label = label), 
+    nudge_x = 1, direction = 'y', hjust = -2, segment.alpha = 0, na.rm = T) + 
+  scale_color_discrete(guide = F) + 
+  scale_x_continuous(limits = c(1975,2025))
+```
+
+A listing of words most likely (relatively) to appear in a causal or ethoretical paper
 can play the role of a sentiment dictionary (call it a a pseudo sentiment lexicon) with a 
 log ratio of inclusion in the type of paper, where a value of 100 is the most likely to be a word
-in that type of paper.
+in that type of paper.  It easily reframes the topic of measuring causal inference in the working papers
+as simple sentiment classifcation problem.
+
 ```{r, echo=F}
 # Which words coincide with data or empirical?
 empirical_theoretical_words <- Papers_abtracts.data %>%
-  mutate(empirical = 0 < (
-    stri_detect_fixed(abstract, 'empiric') + 
-    stri_detect_fixed(abstract, 'instrument') + 
-    stri_detect_fixed(abstract, 'metric'))) %>%
-  mutate(theoretical = 0 < (
-    stri_detect_fixed(abstract, 'theor') + 
-    stri_detect_fixed(abstract, 'equilibrium'))) %>%
+  mutate(empirical = 0 < str_detect(abstract, 'causal|cause'),
+         theoretical = 0 < str_detect(abstract, 'theory|equilib')) %>%
   select(empirical, theoretical, abstract) %>%
   unnest_tokens(word, abstract, token = 'regex', pattern = reg) %>%
   filter(!word %in% c(stop_words$word, 'working', 'paper'), str_detect(word, '[a-z]')) %>%
@@ -302,7 +331,7 @@ empirical_words <- empirical_theoretical_words %>%
   mutate_each(funs((. + 1) / sum(. + 1)), -word) %>%
   mutate(logratio = log2(empirical / non_empirical)) %>%
   mutate(logratio = 100*logratio/max(logratio)) %>%
-  arrange(logratio) %>% group_by(logratio > 0) %>% top_n(100, logratio) %>%
+  arrange(logratio) %>% group_by(logratio > 0) %>% top_n(200, logratio) %>%
   ungroup() %>% mutate(word = reorder(word, logratio))
 
 theoretical_words <- empirical_theoretical_words %>%
@@ -311,7 +340,7 @@ theoretical_words <- empirical_theoretical_words %>%
   mutate_each(funs((. + 1) / sum(. + 1)), -word) %>%
   mutate(logratio = log2(theoretical / non_theoretical)) %>%
   mutate(logratio = 100*logratio/max(logratio)) %>%
-  arrange(logratio) %>% group_by(logratio > 0) %>% top_n(100, logratio) %>%
+  arrange(logratio) %>% group_by(logratio > 0) %>% top_n(200, logratio) %>%
   ungroup() %>% mutate(word = reorder(word, logratio))
 
 top_empirical_words <- empirical_words %>% 
@@ -325,7 +354,7 @@ top_theoretical_words <- theoretical_words %>%
               paste(sep = ', ', collapse = ', ')
 ```
 
-Here are the top 10 for empirical papers with scores :
+Here are the top 10 for causal papers with scores:
 
 `r top_empirical_words`.
 
@@ -335,31 +364,91 @@ And for theoretical papers:
 
 <!-- Dictionary-based sentiment --> 
 <!-- https://cbail.github.io/SICSS_Dictionary-Based_Text_Analysis.html#dictionary-based-quantitative-text-analysis --> 
-Take a step back and make sure the words make sense -- one would hope that 'econometrics' is an empirical word, and that 
-'theory' is a theoretical word!
+Take a step back and make sure the words make sense -- one would hope that 'causalityy' is a causal
+word, and that 'theory' is a theoretical word!
 
-
-Now use the log ratio measure of empiricism to clasify the papers with a sentiment measure of empiricism:
-```{r, echo=T}
+```{r, echo=F, fig.height = 3.5, fig.width = 5.5, fig.align = 'center'}
 # Sentiment analysis with my own dictionary here
 # Reference Dictionary-based sentiment here
 # https://cbail.github.io/SICSS_Dictionary-Based_Text_Analysis.html#dictionary-based-quantitative-text-analysis
+pseudo_dictionary <- theoretical_words %>% select(word) %>%
+  mutate(sentiment = 'Theoretical')
+pseudo_dictionary <- empirical_words %>% select(word) %>%
+  mutate(sentiment = 'Causal') %>% rbind(pseudo_dictionary)
+
+published_word_count <- abstracts_words %>%
+  group_by(published) %>%
+  mutate(total_words = n()) %>%
+  ungroup() %>%
+  distinct(id, published, total_words)
+
+abstracts_words_sentiment <- abstracts_words %>%
+  inner_join(pseudo_dictionary, by = 'word') %>%
+  count(sentiment, nber_index) %>%
+  ungroup() %>%
+  complete(sentiment, nber_index, fill = list(n = 0)) %>%
+  inner_join(published_word_count) %>%
+  group_by(published, sentiment, total_words) %>%
+  summarize(words = sum(n)) %>%
+  ungroup()
+
+# graph the sentiment differences
+sentiment_differences <- abstracts_words_sentiment %>%
+  group_by(sentiment) %>%
+  do(tidy(poisson.test(.$words, .$total_words)))
+
+sentiment_differences %>%
+  ungroup() %>%
+  mutate(sentiment = reorder(sentiment, estimate)) %>%
+  mutate_each(funs(. - 1), estimate, conf.low, conf.high) %>%
+  ggplot(aes(estimate, sentiment)) +
+  geom_point() +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high)) +
+  scale_x_continuous(labels = percent_format()) +
+  labs(x = 'Inclusion in a Published Paper relative to Unpublished, increase (%)', y = 'pseudo-Sentiment')
 
 ```
 
+The list of causal or theoretical words are then counted among published and unpublished (pre-2016)
+papers, and a Poisson count tets to estimate whether they are more likely to be in published or 
+unpublished papers.  Both estimates are negative, as in both types are words are less likely to be 
+in a published paper than a standard word, with overlap in the plausible estimate regions.
 
+To see in granual detail, the words at the extreme of these sentiments withing published
+and unpublished papers.
 
-### Empiricism and other measures
+```{r, echo=F, fig.height = 4.5, fig.width = 9, fig.align = 'center'}
+relative_abstract_words %>%
+  inner_join(pseudo_dictionary, by = 'word') %>%
+  mutate(sentiment = reorder(sentiment, -logratio),
+         word = reorder(word, -logratio)) %>%
+  group_by(sentiment) %>%
+  top_n(20, abs(logratio)) %>%
+  ungroup() %>%
+  ggplot(aes(word, logratio, fill = logratio < 0)) +
+  facet_wrap(~ sentiment, scales = 'free', nrow = 1) +
+  geom_bar(stat = 'identity') +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = '', y = 'Android / iPhone log ratio"') +
+  scale_fill_manual(name = "", labels = c("Android", "iPhone"),
+                    values = c("red", "lightblue")) +
+  ylab('Published - Unpublished relative log ratio') + xlab('') +
+  scale_fill_manual(name = '', labels = c('Published','Unpublished'),
+                    values = c('red', 'darkblue')) +
+  theme(legend.position = c(0.9, 0.85))
+```
 
-Examine the outcome within groups -> are there any NBER programmes we would expect to have changed specifically?  
-Perhaps the rise in empiricism is more pronounced in labour than, say, macroeconomics
-and that this can be tested.
-
+Take a look at the words used here.  I can't for one draw a specific difference in themes,
+so perhaps the NBER papers that do get published vs theose that don't really aren't so different!
 
 
 ### Conclusion: the wider economics publishing pipeline
 
-Word stemming maybe for future deeper analysis -- too detailed for a blog post.
+This was just a quick dive in to some data I've been collecting and working with recently, 
+a way of documenting things that I have looked at and practicing writing at the same time.
 
-Write about the starting point of my wider research project.
-
+I hope you enjoyed the post; I have some bigger ideas in the work
+research in this arae beyond the small scope of 
+publication outcomes of the NBER working papers.
+Follow on for updates over the next few months as I 
+collect more data sources, get a better idea of what I'm dealing with and form a more direct research question.
