@@ -2,11 +2,10 @@
 This repository contains all the files to work with the publishing pipeline in economics.
 Looking in to who gets published in economics, the role of working papers and the NBER in general.
 
-**Work in progress.  Stage of progress: **
-
+### Work in progress.  Stage of progress:
 Building fuller dataset of economics authors and publications.
 
-Blog posts:
+## Blog posts:
 1. The NBER working papers, read [here.](http://htmlpreview.github.io/?https://github.com/shoganhennessy/Econ_text_data/blob/master/Blog_post_exploration/1_NBER_working_papers.html)
 2. The ideas.repec listings (in progress, up soon)
 3. NBER inclusion, what is it good for? (in progress, up later)
