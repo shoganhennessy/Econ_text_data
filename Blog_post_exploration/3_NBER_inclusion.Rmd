@@ -1,0 +1,50 @@
+---
+title: "NBER inclusion, What is it Good For?"
+author: "Senan Hogan-Hennesssy"
+date: "`r format(Sys.time(), '%d %b %Y')`"
+output: html_document
+---
+<style>
+body {
+text-align: justify}
+</style>
+```{r setup, include=F}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = F)
+library(tidyverse)
+library(data.table)
+library(stringi)
+library(ggplot2)
+library(RColorBrewer)
+library(ggrepel)
+library(tidytext)
+library(scales)
+theme_set(theme_bw())
+
+# Load the raw working papers data
+Papers.data <- fread('../Data/NBER_data/Papers_data/Working_papers_data_new.csv')
+Papers.data <- Papers.data %>% filter(title != 'Paper Not Found', !is.na(date), date != '') # FIlter empty entries 
+# Load the data on Economists
+Economists.data <- fread('../Data/RePEc_data/Economists_data/Economists_repec_data.csv')
+```
+
+
+I tried to post a comment on NBER (National Bureau of Economic Research), 
+but was rejected for not being an approved “NBER family member”. 
+If any of our readers is a ”NBER family member” feel free to post the 
+above. — Judea pearl on Angrist paper
+
+Topic for blog post 3 is discussion of inclusion in nber — see quote above.
+Draw some graphs of how NBER members fill the economics publishing sphere,
+and establish the issue of benefits from NBER membership.
+^ Will require reforming the time series listing of fellow appointments -- easy work yet.
+
+Look over the paper here:
+"Undergraduate Econometrics Instruction: Through Our Classes, Darkly"
+Joshua D. Angrist, Joern-Steffen Pischke
+http://www.nber.org/papers/w23144
+
+Comment on the same here:
+https://p-hunermund.com/2017/02/22/judea-pearl-on-angrist-and-pischke/
+
+
+

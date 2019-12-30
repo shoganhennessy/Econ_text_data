@@ -1,0 +1,454 @@
+---
+title: "Working Papers in Economics: the NBER Series"
+author: "Senan Hogan-Hennesssy"
+date: "`r format(Sys.time(), '%d %b %Y')`"
+output: html_document
+---
+<style>
+body {
+text-align: justify}
+</style>
+```{r setup, include=F}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = F)
+library(tidyverse)
+library(data.table)
+library(stringi)
+library(ggplot2)
+library(RColorBrewer)
+library(ggrepel)
+library(tidytext)
+library(scales)
+theme_set(theme_bw())
+
+# Load the raw working papers data
+Papers.data <- fread('../Data/NBER_data/Papers_data/Working_papers_data_new.csv')
+Papers.data <- Papers.data %>% filter(title != 'Paper Not Found', !is.na(date), date != '') # FIlter empty entries 
+```
+
+Publishing is a main goal of academic economists, but rarely is it as simple
+as write the paper then publish.
+Projects can take years and often transform over the work, data analysis and 
+dissemination of results.
+An important part of gauging the impact of research in progress is releasing a working paper.
+The National Bureau of Economic Research (NBER) hosts a heavily circulated 
+[series](https://www.nber.org/papers)
+for its affiliates to register working papers, and the series includes pre-published versions
+of some very famous research papers and some heavily cited working papers themselves.
+
+> ``We owe a tremendous amount to the NBER working Paper series.
+> It has filled a huge gap in in our ability to dissemniate knowledge before publication [...], 
+> sharing knowledge as it is produced.''
+> 
+> -- Claudia Goldin, 2014 at a conference on the NBER history.
+<!-- Presentation on the series : https://www.nber.org/WPat20K/summary.html# --> 
+
+
+### The dataset
+
+I have retreieved the listing of all NBER working papers, a collection of 
+`r nrow(Papers.data)` papers  (as of `r as.Date(max(Papers.data$date)) %>% format("%d %b %Y")`),
+starting with a small number of technical reports in 1973
+to hundreds of modern research papers every year in the 2000s.
+
+```{r, echo=F, fig.height = 3.5, fig.width = 6, fig.align = 'center'}
+# SHow count per year
+Papers.data %>%
+  mutate(date = as.Date(date),
+         year = as.integer(format(date, format = '%Y'))) %>%
+  group_by(year) %>%
+  summarise(count = n()) %>%
+  ggplot(aes(x = year, y = count)) +
+  geom_line() + geom_smooth(span = 5, se = F) +
+  #geom_point() + geom_smooth(span = 5, se = F) +
+  scale_x_continuous(name = 'Year', breaks = seq(1970, 2020, by = 5)) +
+  scale_y_continuous(name = 'Count of Working Papers')
+```
+
+The series has constantly been growing as a source of presentable research in-progress.
+It is unclear whether the gowth in size of this listing is because of the rise in 
+release of working papers in general, or because of an individual rise in the use of the NBER series.
+It is clear, however, that the internet has been a major part of disseminating research in-progress,
+as before the online listing of working papers researchers would only have the chance to read colleague manuscripts in person
+or at conferences.  Today we can take a phone from our pockets, google 
+something like 'NBER working paper on economics publishing' and read cutting edge research before it is even published.
+I will make a note to count the number of working papers from all sources with the next data source, 
+to measure rise in internet listing of working papers in general.
+
+The papers are sorted in to subjects areas, the [NBER research area programmes](https://www.nber.org/programs/) (the graph below only shows top 10 areas).
+Note: papers can be cross registered to multiple areas, and are more likely to be so for recent years.
+
+```{r, echo=F, fig.height = 4.5, fig.width = 7, fig.align = 'center'}
+# SHow count per year, for each area
+Papers_subjects.data <- Papers.data %>% transmute(
+  aging = stri_detect_fixed(nber_area, 'Program on the Economics of Aging'),
+  assets = stri_detect_fixed(nber_area, 'Asset Pricing Program'),
+  corporate_finance = stri_detect_fixed(nber_area, 'Corporate Finance Program'),
+  children = stri_detect_fixed(nber_area, 'Program on Children'),
+  american_history = stri_detect_fixed(nber_area, 'Program on the Development of the American Economy'),
+  development = stri_detect_fixed(nber_area, 'Development Economics Progra'),
+  education = stri_detect_fixed(nber_area, 'Economics of Education Program'),
+  energy = stri_detect_fixed(nber_area, 'Environment and Energy Program'),
+  growth = stri_detect_fixed(nber_area, 'Economic Fluctuations and Growth Program'),
+  care = stri_detect_fixed(nber_area, 'Health Care Program'),
+  health = stri_detect_fixed(nber_area, 'Health Economics Program'),
+  finance_macro = stri_detect_fixed(nber_area, 'International Finance and Macroeconomics Program'),
+  indust_org = stri_detect_fixed(nber_area, 'Industrial Organization Program'),
+  trade_invest = stri_detect_fixed(nber_area, 'International Trade and Investment Program'),
+  law = stri_detect_fixed(nber_area, 'Law and Economics Program'),
+  labour = stri_detect_fixed(nber_area, 'Labor Studies Program'),
+  monetary = stri_detect_fixed(nber_area, 'Monetary Economics Program'),
+  public = stri_detect_fixed(nber_area, 'Public Economics Program'),
+  poli_econ = stri_detect_fixed(nber_area, 'Political Economy Program'),
+  productivity = stri_detect_fixed(nber_area, 'Productivity, Innovation, and Entrepreneurship Program'),
+  date = as.Date(date),
+  year = as.integer(format(date, format = '%Y'))) %>%
+  group_by(year) %>%
+  summarise(count = n(),
+            aging = sum(aging),
+            assets = sum(assets),
+            corporate_finance = sum(corporate_finance),
+            children = sum(children),
+            american_history = sum(american_history),
+            development = sum(development),
+            education = sum(education),
+            energy = sum(energy),
+            growth = sum(growth),
+            care = sum(care),
+            health = sum(health),
+            finance_macro = sum(finance_macro),
+            indust_org = sum(indust_org),
+            trade_invest = sum(trade_invest),
+            law = sum(law),
+            labour = sum(labour),
+            monetary = sum(monetary),
+            public = sum(public),
+            poli_econ = sum(poli_econ),
+            productivity = sum(productivity)) %>%
+  reshape(timevar = 'nber_area',
+          times = c('aging', 'assets', 'corporate_finance', 'children', 'american_history', 'development', 'education',
+                      'energy', 'growth', 'care', 'health', 'finance_macro', 'indust_org', 'trade_invest', 'law', 'labour', 
+                      'monetary', 'public', 'poli_econ', 'productivity'),
+          varying = c('aging', 'assets', 'corporate_finance', 'children', 'american_history', 'development', 'education',
+                      'energy', 'growth', 'care', 'health', 'finance_macro', 'indust_org', 'trade_invest', 'law', 'labour', 
+                      'monetary', 'public', 'poli_econ', 'productivity'),
+          v.names = 'count', direction = 'long', new.row.names = 1:1000) %>% group_by(year)
+
+# Choose most popular areas :
+popular_areas <- Papers_subjects.data %>% 
+  group_by(nber_area) %>% summarise_all(sum) %>% 
+  arrange(-count) %>% head(10) %>% pull(nber_area)
+
+# Graph the cumulative count of the the most popular areas
+Papers_subjects.data %>%
+  filter(nber_area %in% popular_areas) %>% arrange(year) %>%
+  group_by(nber_area) %>% mutate(cumul_count = cumsum(count)) %>%
+  mutate(label = if_else(year == max(year), nber_area, NA_character_)) %>%
+  ggplot(aes(x = year, y = cumul_count, 
+             group = nber_area, colour = nber_area)) +
+  geom_line(position = position_dodge(w = 2)) +
+  scale_x_continuous(name = 'Year', breaks = seq(1975, 2020, by = 5)) +
+  scale_y_continuous(name = 'Cumulative Count of Working Papers') + 
+  theme_classic() + theme(legend.position = c(0.175, 0.60)) +
+  scale_color_brewer(palette = 'Paired') + 
+  geom_label_repel(aes(label = label), 
+    nudge_x = 1, direction = 'y', hjust = -2, segment.alpha = 0, na.rm = T) + 
+  scale_color_discrete(guide = F) + 
+  scale_x_continuous(limits = c(1975,2025))
+```
+
+Most of the papers go on to be published, but the rate of publishing is certainly not constant.
+In the early days, around 60\% of the working papers are published in peer reviewed journals, going on to peak at 94\% in 1987 before falling to common day.  What drives this ride and fall?
+It is clear that papers since 2015 are still in the pipeline, afterall the NBER series was started
+partially to disseminate knowledge current knowledge in light of publishing lags.
+
+```{r, echo=F, fig.height = 3, fig.width = 7, fig.align = 'center'}
+# Show rate of publishing by year
+Papers.data %>%
+  transmute(publish_rate = (published != ''),
+            date         = as.Date(date)) %>%
+  mutate(year = as.integer(format(date, '%Y'))) %>%
+  group_by(year) %>%
+  summarise(publish_rate = mean(publish_rate)) %>%
+  ggplot(aes(x = year, y = publish_rate)) +
+  geom_point() +  geom_smooth(span = 15, se = F) + theme_bw() +
+  scale_x_continuous(name = 'Year', breaks = seq(1975, 2020, by = 5)) +
+  scale_y_continuous(name = 'Publish Rate (%)', 
+                     breaks = seq(0, 1, by = 0.1), limits = c(0,1))
+# Note sharp drop off 2015, work still yet to be published?
+```
+
+Yet the publication rate has not been constant even before 2015.  What explains the changes in publication rate among these working papers?
+
+
+### Textual difference
+
+It's unclear whether there is an observable difference between the published and non-published papers
+-- other than the outcome itself!
+We have access to the abstract of every paper, however, so I was inspired by the David Robinson's famous blog
+[post](http://varianceexplained.org/r/trump-tweets) to investigate the text
+with some tools in R -- take a look [here](https://github.com/shoganhennessy/Econ_text_data/blob/master/Blog_post_exploration/Working_papers_intro.Rmd) if you want to follow the code.
+First take a look at the most common words used for each classification.
+
+```{r, echo=F}
+# Demark published papers and only take those with abstracts
+# Before 2016 because of publishing lag
+Papers_abtracts.data <- Papers.data %>% 
+  mutate(published = (published != ''),
+         date     = as.Date(date), 
+         year = as.integer(format(date, '%Y'))) %>%
+  filter(abstract != '' & year < 2016)
+
+# Take out the most common
+reg <- "([^A-Za-z\\d#@']|'(?![A-Za-z\\d#@]))"
+abstracts_words <- Papers_abtracts.data %>%
+  select(nber_index,published, abstract) %>%
+  unnest_tokens(word, abstract, token = 'regex', pattern = reg) %>%
+  filter(!word %in% c(stop_words$word, 'working', 'paper'), str_detect(word, '[a-z]')) %>%
+  group_by(published, word) #  %>% summarise(count = n()) %>% arrange(-count)
+
+abstracts_words_count <- abstracts_words %>%
+  group_by(published, word) %>% summarise(count = n()) %>% arrange(-count)
+published_words <- abstracts_words_count %>% filter(published == T) %>% head(10) %>%
+  pull(word) %>% paste(sep = ', ', collapse = ', ') 
+unpublished_words <- abstracts_words_count %>% filter(published == F) %>% head(10) %>%
+  pull(word) %>% paste(sep = ', ', collapse = ', ') 
+```
+
+Most common for published articles: `r published_words`.
+
+Most common for the unpublished: `r unpublished_words`.
+
+The ten most common words are almost identical across publication outcome, 
+so this hardly counts as a textual difference.  However, a raw word count measure is a crude measure that can be affected
+by confounding factors.
+Instead consider a log odds ratio to show which words are relatively more likely to be in (eventually) published papers.
+
+```{r, echo=F, fig.height = 4.5, fig.width = 8, fig.align = 'center'}
+# Calculate odds ratio
+relative_abstract_words <- abstracts_words_count %>%
+  filter(count >= 5) %>%
+  spread(published, count, fill = 0) %>%
+  mutate(published = `TRUE`, unpublished = `FALSE`) %>%
+  filter(published + unpublished > 120) %>% ungroup() %>%
+  mutate_each(funs((. + 1) / sum(. + 1)), -word) %>%
+  mutate(logratio = log2(published / unpublished)) %>%
+  arrange(desc(logratio))
+
+# Draw up the bar chart
+relative_abstract_words %>%
+  group_by(logratio > 0) %>% top_n(15, abs(logratio)) %>%
+  ungroup() %>% mutate(word = reorder(word, logratio)) %>%
+  mutate(label = if_else(logratio > 0, 'Published', 'Unpublished')) %>%
+  ggplot(aes(word, logratio, fill = label)) +
+  geom_bar(stat = 'identity') + coord_flip() +
+  ylab('Published - Unpublished relative log ratio') + xlab('') +
+  scale_fill_manual(name = '', values = c('red', 'darkblue'))
+```
+
+* Bubble is most likely to be among published papers, temperature among those not published. 
+Bubble can most commonly be associated with asset bubbles, an extremely popular topic in economics since 2008 where the
+NBER series has really grown, so it seems papers involving bubbles are most likely to reach publication fruition.
+Temperature on the other hand is the opposite; perhaps economics papers on climate change aren't doing quite as well, it 
+after all does not even have its own NBER research programme oustude of the energy subfield.
+
+* Unpublished words involve a few health-related words, such as pharmaceutical and uninsured -- 
+health economics working papers are not actually less likely to be published, so it's not clear what significance these
+words play.  The second through seventh words have a connection to public economics, with some successful papers relating 
+to tax credits (some unanticipated).  
+
+* Algorithm and identification are words related to more recent advances in empiricsm 
+and new software, yet are more likely to be in unpublished papers.  It's suprising to me that
+empiricism does not play an obvious role here, yet the issue could do wth further digging.
+
+
+### Empiricism \& Causal Inference
+
+Economics is far more concerned with empirical, causal inference than when the NBER series began in 1973:
+let's show test this <i>empirically</i>.
+
+Sentiment analysis is commonly applied to text data as an easy coding operation
+to measure sentiment -- commonly to measure happiness, or perhaps [1am angry tweets](http://varianceexplained.org/r/trump-tweets/) -- and the same process can textually measure rate of empiricism.
+First I'll form a list of a hundred words most likely to appear in abstracts that use the word
+'causal' -- denoting these as causal papers.
+Also list the top hundred words in papers that use the words 
+'theory' and 'equilibrium' -- denoting these theoretical papers.
+
+```{r, echo=F, fig.height = 3.5, fig.width = 6.5, fig.align = 'center'}
+# Calculate odds ratio
+Papers.data %>% 
+  transmute(published = (published != ''),
+            date     = as.Date(date),
+            abstract = abstract,
+            year = as.integer(format(date, '%Y'))) %>%
+  mutate(empirical = 0 < str_detect(abstract, 'causal|cause'),
+         theoretical = 0 < str_detect(abstract, 'theory|equilib')) %>%
+  group_by(year) %>% 
+  summarise(empirical = sum(empirical),
+            theoretical = sum(theoretical),
+            count = n()) %>%
+  transmute(year = year,
+            empirical = empirical / count,
+            theoretical = theoretical / count) %>%
+  reshape(timevar = 'paper_type',
+          times = c('empirical', 'theoretical'),
+          varying = c('empirical', 'theoretical'),
+          v.names = 'count', direction = 'long', new.row.names = 1:1000) %>%
+  mutate(label = if_else(year == max(year), paper_type, NA_character_)) %>%
+  ggplot(aes(x = year, y = count, 
+             group = paper_type, colour = paper_type)) + 
+  geom_smooth(span = 0.2, se = F) + 
+  scale_x_continuous(name = 'Year', breaks = seq(1975, 2020, by = 5)) +
+  scale_y_continuous(name = 'Preportion of Papers (%)') + 
+  theme_classic() + theme(legend.position = c(0.175, 0.60)) +
+  scale_color_brewer(palette = 'Paired') +
+  geom_label_repel(aes(label = label), 
+    nudge_x = 1, direction = 'y', hjust = -2, segment.alpha = 0, na.rm = T) + 
+  scale_color_discrete(guide = F) + 
+  scale_x_continuous(limits = c(1975,2025))
+```
+
+A listing of words most likely (relatively) to appear in a causal or ethoretical paper
+can play the role of a sentiment dictionary (call it a a pseudo sentiment lexicon) with a 
+log ratio of inclusion in the type of paper, where a value of 100 is the most likely to be a word
+in that type of paper.  It easily reframes the topic of measuring causal inference in the working papers
+as simple sentiment classifcation problem.
+
+```{r, echo=F}
+# Which words coincide with data or empirical?
+empirical_theoretical_words <- Papers_abtracts.data %>%
+  mutate(empirical = 0 < str_detect(abstract, 'causal|cause'),
+         theoretical = 0 < str_detect(abstract, 'theory|equilib')) %>%
+  select(empirical, theoretical, abstract) %>%
+  unnest_tokens(word, abstract, token = 'regex', pattern = reg) %>%
+  filter(!word %in% c(stop_words$word, 'working', 'paper'), str_detect(word, '[a-z]')) %>%
+  group_by(empirical, theoretical, word) %>% summarise(count = n()) %>%
+  arrange(-count) %>%
+  filter(count >= 5)
+
+empirical_words <- empirical_theoretical_words %>%
+  spread(empirical, count, fill = 0) %>% ungroup() %>%
+  transmute(word = word, empirical = `TRUE`, non_empirical = `FALSE`) %>%
+  mutate_each(funs((. + 1) / sum(. + 1)), -word) %>%
+  mutate(logratio = log2(empirical / non_empirical)) %>%
+  mutate(logratio = 100*logratio/max(logratio)) %>%
+  arrange(logratio) %>% group_by(logratio > 0) %>% top_n(200, logratio) %>%
+  ungroup() %>% mutate(word = reorder(word, logratio))
+
+theoretical_words <- empirical_theoretical_words %>%
+  spread(theoretical, count, fill = 0) %>% ungroup() %>%
+  transmute(word = word, theoretical = `TRUE`, non_theoretical = `FALSE`) %>%
+  mutate_each(funs((. + 1) / sum(. + 1)), -word) %>%
+  mutate(logratio = log2(theoretical / non_theoretical)) %>%
+  mutate(logratio = 100*logratio/max(logratio)) %>%
+  arrange(logratio) %>% group_by(logratio > 0) %>% top_n(200, logratio) %>%
+  ungroup() %>% mutate(word = reorder(word, logratio))
+
+top_empirical_words <- empirical_words %>% 
+  arrange(-logratio) %>% select(word, logratio) %>% head(10) %>%
+  transmute(word = paste0(word, ' : ', as.character(round(logratio)))) %>% pull(word) %>% 
+              paste(sep = ', ', collapse = ', ')
+
+top_theoretical_words <- theoretical_words %>% 
+  arrange(-logratio) %>% select(word, logratio) %>% head(10) %>%
+  transmute(word = paste0(word, ' : ', as.character(round(logratio)))) %>% pull(word) %>% 
+              paste(sep = ', ', collapse = ', ')
+```
+
+Here are the top 10 for causal papers with scores:
+
+`r top_empirical_words`.
+
+And for theoretical papers: 
+
+`r top_theoretical_words`.
+
+<!-- Dictionary-based sentiment --> 
+<!-- https://cbail.github.io/SICSS_Dictionary-Based_Text_Analysis.html#dictionary-based-quantitative-text-analysis --> 
+Take a step back and make sure the words make sense -- one would hope that 'causalityy' is a causal
+word, and that 'theory' is a theoretical word!
+
+```{r, echo=F, fig.height = 3.5, fig.width = 5.5, fig.align = 'center'}
+# Sentiment analysis with my own dictionary here
+# Reference Dictionary-based sentiment here
+# https://cbail.github.io/SICSS_Dictionary-Based_Text_Analysis.html#dictionary-based-quantitative-text-analysis
+pseudo_dictionary <- theoretical_words %>% select(word) %>%
+  mutate(sentiment = 'Theoretical')
+pseudo_dictionary <- empirical_words %>% select(word) %>%
+  mutate(sentiment = 'Causal') %>% rbind(pseudo_dictionary)
+
+published_word_count <- abstracts_words %>%
+  group_by(published) %>%
+  mutate(total_words = n()) %>%
+  ungroup() %>%
+  distinct(id, published, total_words)
+
+abstracts_words_sentiment <- abstracts_words %>%
+  inner_join(pseudo_dictionary, by = 'word') %>%
+  count(sentiment, nber_index) %>%
+  ungroup() %>%
+  complete(sentiment, nber_index, fill = list(n = 0)) %>%
+  inner_join(published_word_count) %>%
+  group_by(published, sentiment, total_words) %>%
+  summarize(words = sum(n)) %>%
+  ungroup()
+
+# graph the sentiment differences
+sentiment_differences <- abstracts_words_sentiment %>%
+  group_by(sentiment) %>%
+  do(tidy(poisson.test(.$words, .$total_words)))
+
+sentiment_differences %>%
+  ungroup() %>%
+  mutate(sentiment = reorder(sentiment, estimate)) %>%
+  mutate_each(funs(. - 1), estimate, conf.low, conf.high) %>%
+  ggplot(aes(estimate, sentiment)) +
+  geom_point() +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high)) +
+  scale_x_continuous(labels = percent_format()) +
+  labs(x = 'Inclusion in a Published Paper relative to Unpublished, increase (%)', y = 'pseudo-Sentiment')
+
+```
+
+The list of causal or theoretical words are then counted among published and unpublished (pre-2016)
+papers, and a Poisson count tets to estimate whether they are more likely to be in published or 
+unpublished papers.  Both estimates are negative, as in both types are words are less likely to be 
+in a published paper than a standard word, with overlap in the plausible estimate regions.
+
+To see in granual detail, the words at the extreme of these sentiments withing published
+and unpublished papers.
+
+```{r, echo=F, fig.height = 4.5, fig.width = 9, fig.align = 'center'}
+relative_abstract_words %>%
+  inner_join(pseudo_dictionary, by = 'word') %>%
+  mutate(sentiment = reorder(sentiment, -logratio),
+         word = reorder(word, -logratio)) %>%
+  group_by(sentiment) %>%
+  top_n(20, abs(logratio)) %>%
+  ungroup() %>%
+  ggplot(aes(word, logratio, fill = logratio < 0)) +
+  facet_wrap(~ sentiment, scales = 'free', nrow = 1) +
+  geom_bar(stat = 'identity') +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = '', y = 'Android / iPhone log ratio"') +
+  scale_fill_manual(name = "", labels = c("Android", "iPhone"),
+                    values = c("red", "lightblue")) +
+  ylab('Published - Unpublished relative log ratio') + xlab('') +
+  scale_fill_manual(name = '', labels = c('Published','Unpublished'),
+                    values = c('red', 'darkblue')) +
+  theme(legend.position = c(0.9, 0.85))
+```
+
+Take a look at the words used here.  I can't for one draw a specific difference in themes,
+so perhaps the NBER papers that do get published vs theose that don't really aren't so different!
+
+
+### Conclusion: the wider economics publishing pipeline
+
+This was just a quick dive in to some data I've been collecting and working with recently, 
+a way of documenting things that I have looked at and practicing writing at the same time.
+
+I hope you enjoyed the post; I have some bigger ideas in the work
+research in this arae beyond the small scope of 
+publication outcomes of the NBER working papers.
+Follow on for updates over the next few months as I 
+collect more data sources, get a better idea of what I'm dealing with and form a more direct research question.

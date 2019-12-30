@@ -1,0 +1,30 @@
+---
+title: Articles in Economics: the ideas.RePEc Listing"
+author: "Senan Hogan-Hennesssy"
+date: "`r format(Sys.time(), '%d %b %Y')`"
+output: html_document
+---
+<style>
+body {
+text-align: justify}
+</style>
+```{r setup, include=F}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = F)
+library(tidyverse)
+library(data.table)
+library(stringi)
+library(ggplot2)
+library(RColorBrewer)
+library(ggrepel)
+library(tidytext)
+library(scales)
+theme_set(theme_bw())
+
+# Load the data on Economists
+Economists.data <- fread('../Data/RePEc_data/Economists_data/Economists_repec_data.csv')
+```
+
+
+
+Here I'm going to explore published articles listed on ideas.repec
+-> compare to the NBER listings by area
