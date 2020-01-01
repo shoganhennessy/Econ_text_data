@@ -1,5 +1,5 @@
 ---
-title: "NBER inclusion, What is it Good For?"
+title: "NBER Inclusion, What is it Good For?"
 author: "Senan Hogan-Hennesssy"
 date: "`r format(Sys.time(), '%d %b %Y')`"
 output: html_document
@@ -9,7 +9,7 @@ body {
 text-align: justify}
 </style>
 ```{r setup, include=F}
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = F)
+knitr::opts_chunk$set(echo = F, message = F, warning = F, cache = F, fig.align = 'center')
 library(tidyverse)
 library(data.table)
 library(stringi)
@@ -22,7 +22,8 @@ theme_set(theme_bw())
 
 # Load the raw working papers data
 Papers.data <- fread('../Data/NBER_data/Papers_data/Working_papers_data_new.csv')
-Papers.data <- Papers.data %>% filter(title != 'Paper Not Found', !is.na(date), date != '') # FIlter empty entries 
+Papers.data <- Papers.data %>% filter(title != 'Paper Not Found', !is.na(date), date != '') # Filter empty entries 
+# Load the data on published articles
 # Load the data on Economists
 Economists.data <- fread('../Data/RePEc_data/Economists_data/Economists_repec_data.csv')
 ```
@@ -47,4 +48,4 @@ Comment on the same here:
 https://p-hunermund.com/2017/02/22/judea-pearl-on-angrist-and-pischke/
 
 
-
+Echo chamber idea 

@@ -9,7 +9,7 @@ body {
 text-align: justify}
 </style>
 ```{r setup, include=F}
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = F)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = F, fig.align = 'center')
 library(tidyverse)
 library(data.table)
 library(stringi)
@@ -22,9 +22,11 @@ theme_set(theme_bw())
 
 # Load the data on Economists
 Economists.data <- fread('../Data/RePEc_data/Economists_data/Economists_repec_data.csv')
+# Load the data on published articles
+Articles.data <- fread('../Data/RePEc_data/Papers_data/Article_repec_data.csv')
 ```
 
 
 
 Here I'm going to explore published articles listed on ideas.repec
--> compare to the NBER listings by area
+-> compare to the NBER listings by area(?)
