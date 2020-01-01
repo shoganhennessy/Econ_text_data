@@ -11,10 +11,5 @@ library(caret)
 Papers.data <- fread('../Data/Master_data/Working_papers_data_new.csv')
 
 
-# http://varianceexplained.org/r/trump-tweets/
-# Analyse the workd usage of published vs non-published and put in an RMD, 
-# link in econ applications
-
-
 data(nrc_emotions)
 nrc_emotions

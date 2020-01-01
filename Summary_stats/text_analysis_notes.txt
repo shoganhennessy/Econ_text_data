@@ -23,13 +23,5 @@ https://voxeu.org/article/economics-gets-out-more-often
 Idea of getting abstracts for published econ articles:
 First go through every ideas.respec url and take eveyr abstract
 
-Then get more creative with the abstract collection ->
-Use Hollis.
-Run Selenium across the Hollis search box (slowly!)
-OR: ECONLIT https://www.library.hbs.edu/dbroute/330/standard-EconLit
-across the Hollis website, taking the abstract of each one.
-1. clean published option
-2. put in Hollis search box
-3. click on first result
-4. Take the abstract
-
+Then get more creative with the entire paper collection ->
+Use Harvard Hollis?
