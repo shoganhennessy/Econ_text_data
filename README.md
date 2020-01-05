@@ -11,5 +11,5 @@ Building fuller dataset of economics authors and publications.
 3. NBER inclusion, what is it good for? (in progress, up later).
 4. Forming a research question and economic causal graph (in progress, up later).
 
-Note: I do not list the code to build the data used in this work -- for which most of this project's work has in to creating.  
+Note: I do not list the code to build the data used in this work -- for which most of this project's work is creating.  
 If you are interested in using these data, then contact me.
