@@ -1,5 +1,5 @@
 ---
-title: Articles in Economics: the ideas.RePEc Listing"
+title: "The Ideas.RePEc Listings of Articles in Economics"
 author: "Senan Hogan-Hennesssy"
 date: "`r format(Sys.time(), '%d %b %Y')`"
 output: html_document
@@ -23,10 +23,37 @@ theme_set(theme_bw())
 # Load the data on Economists
 Economists.data <- fread('../Data/RePEc_data/Economists_data/Economists_repec_data.csv')
 # Load the data on published articles
-Articles.data <- fread('../Data/RePEc_data/Papers_data/Article_repec_data.csv')
+Articles.data <- fread('../Data/RePEc_data/Papers_data/Journal_articles_repec.csv')
 ```
 
+# WORK IN PROGRESS, FINISHED BY END OF THE WEEK
+
+The NBER series is a great source of research in our profession, but it isn't the full picture of research in the field.
+It is, after all, a listing of working papers which are by definition not yet publications -- though most do go on to be published,
+as I noted in the [last post.](http://htmlpreview.github.io/?https://github.com/shoganhennessy/Econ_text_data/blob/master/Blog_post_exploration/1_NBER_working_papers.html)
+
+Forunately, [Research Papers in Economics (RePEc)'s Ideas](https://ideas.repec.org/) provides a large listing of economics research which I can 
+use as a complement to the NBER listings.
+
+> ''IDEAS is the largest bibliographic database dedicated to Economics and available freely on the Internet. 
+> Based on RePEc, it indexes over 3,000,000 items of research, including over 2,700,000 that can be downloaded in full text.''
+> 
+> -- What is IDEAS?  [Ideas.RePEc.org/](https://ideas.repec.org/) 
+
+To be specific, RePEc lists information on `r nrow(Economists.data)` economists 
+and `r nrow(Articles.data)` published articles papers -- considering only those in English as of 31 December 2019.
 
 
-Here I'm going to explore published articles listed on ideas.repec
--> compare to the NBER listings by area(?)
+### Economists
+
+Describe set of data on economists, including PhD attendence.
+
+
+### Published Articles
+
+Describe set of data on articles 
+
+
+
+opportunity link to NBER working paper and measure change from WP to published article
+
