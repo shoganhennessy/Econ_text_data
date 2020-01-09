@@ -1,6 +1,6 @@
 The Ideas.RePEc Listings of Articles in Economics
 ================
-Senan Hogan-Hennesssy
+Senan Hogan-Hennessy
 09 Jan 2020
 
 # WORK IN PROGRESS, FINISHED BY END OF THE WEEK
