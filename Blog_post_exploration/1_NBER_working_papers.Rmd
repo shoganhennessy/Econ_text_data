@@ -1,13 +1,9 @@
 ---
 title: "Working Papers in Economics: the NBER Series"
-author: "Senan Hogan-Hennesssy"
+author: "Senan Hogan-Hennessy"
 date: "`r format(Sys.time(), '%d %b %Y')`"
 output: github_document
 ---
-<style>
-body {
-text-align: justify}
-</style>
 ```{r setup, include=F}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = F)
 library(tidyverse)

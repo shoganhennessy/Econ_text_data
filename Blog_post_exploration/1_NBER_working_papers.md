@@ -1,12 +1,7 @@
 Working Papers in Economics: the NBER Series
 ================
-Senan Hogan-Hennesssy
+Senan Hogan-Hennessy
 09 Jan 2020
-
-<style>
-body {
-text-align: justify}
-</style>
 
 Publishing is a main goal of academic economists, but rarely is it as
 simple as write the paper then publish. Projects can take years and
