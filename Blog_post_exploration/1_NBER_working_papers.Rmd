@@ -2,7 +2,7 @@
 title: "Working Papers in Economics: the NBER Series"
 author: "Senan Hogan-Hennesssy"
 date: "`r format(Sys.time(), '%d %b %Y')`"
-output: html_document
+output: github_document
 ---
 <style>
 body {
@@ -451,4 +451,8 @@ I hope you enjoyed the post; I have some bigger ideas in the work
 research in this area beyond the small scope of 
 publication outcomes of the NBER working papers.
 Follow on for updates over the next few months as I 
-collect more data sources, get a better idea of what I'm dealing with and form a more direct research question.
+collect more data sources, get a better idea of what I'm dealing with and form a 
+more direct research question.
+
+Note: text analysis methods and code in R are inspired by an [older post on political tweets](
+http://varianceexplained.org/r/trump-tweets), which I also thoroughly recommend.

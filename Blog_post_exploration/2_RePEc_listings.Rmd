@@ -37,7 +37,6 @@ use as a complement to the NBER listings.
 
 > ''IDEAS is the largest bibliographic database dedicated to Economics and available freely on the Internet. 
 > Based on RePEc, it indexes over 3,000,000 items of research, including over 2,700,000 that can be downloaded in full text.''
-> 
 > -- What is IDEAS?  [Ideas.RePEc.org/](https://ideas.repec.org/) 
 
 To be specific, RePEc lists information on `r nrow(Economists.data)` economists 
