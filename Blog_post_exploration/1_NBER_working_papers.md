@@ -164,7 +164,7 @@ word\!
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
 
 The list of causal or theoretical words are then counted among published
-and unpublished (pre-2016) papers, and a Poisson count tets to estimate
+and unpublished (pre-2016) papers, and a Poisson count test to estimate
 whether they are more likely to be in published or unpublished papers.
 Both estimates are negative, as in both types are words are less likely
 to be in a published paper than a standard word, with overlap in the
@@ -191,6 +191,9 @@ research in this area beyond the small scope of publication outcomes of
 the NBER working papers. Follow on for updates over the next few months
 as I collect more data sources, get a better idea of what I’m dealing
 with and form a more direct research question.
+
+<span style="font-weight:bold">Next up:</span> A dive in to a more
+complete source of economics research papers.
 
 Note: text analysis methods and code in R are inspired by an [older post
 on political tweets](http://varianceexplained.org/r/trump-tweets), which

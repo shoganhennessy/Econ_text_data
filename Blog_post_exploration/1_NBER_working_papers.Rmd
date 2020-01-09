@@ -294,7 +294,7 @@ Papers.data %>%
              group = paper_type, colour = paper_type)) + 
   geom_smooth(span = 0.2, se = F) + 
   scale_x_continuous(name = 'Year', breaks = seq(1975, 2020, by = 5)) +
-  scale_y_continuous(name = 'Preportion of Papers (%)') + 
+  scale_y_continuous(name = 'Proportion of Papers (%)') + 
   theme_classic() + theme(legend.position = c(0.175, 0.60)) +
   scale_color_brewer(palette = 'Paired') +
   geom_label_repel(aes(label = label), 
@@ -302,7 +302,7 @@ Papers.data %>%
   scale_color_discrete(guide = F) + 
   scale_x_continuous(limits = c(1975,2025))
 ```
-
+ 
 A listing of words most likely (relatively) to appear in a causal or ethoretical paper
 can play the role of a sentiment dictionary (call it a a pseudo sentiment lexicon) with a 
 log ratio of inclusion in the type of paper, where a value of 100 is the most likely to be a word
@@ -406,7 +406,7 @@ sentiment_differences %>%
 ```
 
 The list of causal or theoretical words are then counted among published and unpublished (pre-2016)
-papers, and a Poisson count tets to estimate whether they are more likely to be in published or 
+papers, and a Poisson count test to estimate whether they are more likely to be in published or 
 unpublished papers.  Both estimates are negative, as in both types are words are less likely to be 
 in a published paper than a standard word, with overlap in the plausible estimate regions.
 
@@ -449,6 +449,8 @@ publication outcomes of the NBER working papers.
 Follow on for updates over the next few months as I 
 collect more data sources, get a better idea of what I'm dealing with and form a 
 more direct research question.
+
+<span style="font-weight:bold">Next up:</span> A dive in to a more complete source of economics research papers.
 
 Note: text analysis methods and code in R are inspired by an [older post on political tweets](
 http://varianceexplained.org/r/trump-tweets), which I also thoroughly recommend.

@@ -2,12 +2,8 @@
 title: "The Ideas.RePEc Listings of Articles in Economics"
 author: "Senan Hogan-Hennesssy"
 date: "`r format(Sys.time(), '%d %b %Y')`"
-output: html_document
+output: github_document
 ---
-<style>
-body {
-text-align: justify}
-</style>
 ```{r setup, include=F}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = F, fig.align = 'center')
 library(tidyverse)
@@ -19,7 +15,6 @@ library(ggrepel)
 library(tidytext)
 library(scales)
 theme_set(theme_bw())
-
 # Load the data on Economists
 Economists.data <- fread('../Data/RePEc_data/Economists_data/Economists_repec_data.csv')
 # Load the data on published articles
@@ -37,6 +32,7 @@ use as a complement to the NBER listings.
 
 > ''IDEAS is the largest bibliographic database dedicated to Economics and available freely on the Internet. 
 > Based on RePEc, it indexes over 3,000,000 items of research, including over 2,700,000 that can be downloaded in full text.''
+> 
 > -- What is IDEAS?  [Ideas.RePEc.org/](https://ideas.repec.org/) 
 
 To be specific, RePEc lists information on `r nrow(Economists.data)` economists 
