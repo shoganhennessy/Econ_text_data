@@ -62,6 +62,7 @@ Most profilific publications?  // Compared to the ranking listing.
 ### Economists
 
 Describe set of data on economists, including PhD attendence.
+note: most entries are empty, however.
 
 
 
