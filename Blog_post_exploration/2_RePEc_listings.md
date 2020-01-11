@@ -1,11 +1,7 @@
 The Ideas.RePEc Listings of Articles in Economics
 ================
-<<<<<<< HEAD
 Senan Hogan-Hennesssy
-=======
-Senan Hogan-Hennessy
->>>>>>> master
-09 Jan 2020
+11 Jan 2020
 
 # WORK IN PROGRESS, FINISHED BY END OF THE WEEK
 
@@ -30,13 +26,28 @@ To be specific, RePEc lists information on 57532 economists and 425459
 published articles papers – considering only those in English as of 31
 December 2019.
 
-### Economists
-
-Describe set of data on economists, including PhD attendence.
-
 ### Published Articles
 
-Describe set of data on articles
+425459 is a huge number of articles to consider, and as far as I can
+gather, it is the largest set yet analysed – Hamermesh
+([2007](https://www.nber.org/papers/w6761),
+[2012](https://www.nber.org/papers/w18635)) consider only subsamples for
+example. Lucky for us, computing power and open access to information on
+published research have advanced enough to allow analyse of a more
+complete set of the data.
+
+So who are the most problific authors, by article count?
+
+…
+
+Most profilific publications? // Compared to the ranking listing.
+
+…
+
+### Economists
+
+Describe set of data on economists, including PhD attendence. note: most
+entries are empty, however.
 
 opportunity link to NBER working paper and measure change from WP to
 published article

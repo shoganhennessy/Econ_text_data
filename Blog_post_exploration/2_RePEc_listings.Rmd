@@ -27,8 +27,7 @@ The NBER series is a great source of research in our profession, but it isn't th
 It is, after all, a listing of working papers which are by definition not yet publications -- though most do go on to be published,
 as I noted in the [last post.](http://htmlpreview.github.io/?https://github.com/shoganhennessy/Econ_text_data/blob/master/Blog_post_exploration/1_NBER_working_papers.html)
 
-Forunately, [Research Papers in Economics (RePEc)'s Ideas](https://ideas.repec.org/) provides a large listing of economics research which I can 
-use as a complement to the NBER listings.
+Forunately, [Research Papers in Economics (RePEc)'s Ideas](https://ideas.repec.org/) provides a large listing of economics research which I can use as a complement to the NBER listings.
 
 > ''IDEAS is the largest bibliographic database dedicated to Economics and available freely on the Internet. 
 > Based on RePEc, it indexes over 3,000,000 items of research, including over 2,700,000 that can be downloaded in full text.''
@@ -42,7 +41,7 @@ and `r nrow(Articles.data)` published articles papers -- considering only those 
 
 `r nrow(Articles.data)` is a huge number of articles to consider, and as far as I can gather, it is the
 largest set yet analysed -- Hamermesh ([2007](https://www.nber.org/papers/w6761),
-[2012](https://www.nber.org/papers/w18635), consider only subsamples for example.
+[2012](https://www.nber.org/papers/w18635)) consider only subsamples for example.
 Lucky for us, computing power and open access to information on published research
 have advanced enough to allow analyse of a more complete set of the data.
 
