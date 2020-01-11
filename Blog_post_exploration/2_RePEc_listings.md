@@ -1,6 +1,10 @@
 The Ideas.RePEc Listings of Articles in Economics
 ================
+<<<<<<< HEAD
+Senan Hogan-Hennesssy
+=======
 Senan Hogan-Hennessy
+>>>>>>> master
 09 Jan 2020
 
 # WORK IN PROGRESS, FINISHED BY END OF THE WEEK
