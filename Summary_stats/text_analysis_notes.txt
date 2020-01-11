@@ -21,7 +21,6 @@ https://voxeu.org/article/economics-gets-out-more-often
 
 
 Idea of getting abstracts for published econ articles:
-First go through every ideas.respec url and take eveyr abstract
+First go through every ideas.respec url and take every abstract
 
-Then get more creative with the entire paper collection ->
-Use Harvard Hollis?
+Then get more creative with the entire paper pdf/text collection 
