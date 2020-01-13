@@ -34,8 +34,6 @@ papers – considering only those in English as of 31 December 2019.
 > 
 > – What is IDEAS? [Ideas.RePEc.org/](https://ideas.repec.org/)
 
-### Published Articles
-
 425459 is a huge number of articles to consider, and as far as I can
 gather, it is the largest set yet analysed – Hamermesh
 ([2007](https://www.nber.org/papers/w6761),
@@ -51,9 +49,6 @@ top_journal <- Journals.data %>%
 # Get the bottom Journal
 bottom_journal <- Journals.data %>% 
   arrange(rank) %>% tail(1) %>% pull(journal_title)
-
-# SUbset to the top 200 journals
-Journals.data <- Journals.data %>% head(200)
 ```
 
 The set is certainly much larger than the NBER listings, but it is so
@@ -65,21 +60,41 @@ seen at the bottom of [this
 table](https://ideas.repec.org/top/top.journals.all.html)). Perhaps
 economics articles published in *The Quarterly Journal of Economics* are
 worth keeping, yet those in *Journal of Nonparametric Statistics* are
-worth taking out of the sample. SO for convenience, I’m subsetting to
-the top 200 journals.
+worth taking out of the sample.
 
-So who are the most problific authors, by article count?
+### The Top 5
 
-…
+Quote book (name?) about survey for economists : an article in the top 5
+makes a career?
 
-Most profilific publications? // Compared to the ranking listing.
+SHow how many articles in the top 10.
 
-…
+    ## # A tibble: 10 x 3
+    ##     rank journal_title                          n
+    ##    <int> <chr>                              <int>
+    ##  1     1 The Quarterly Journal of Economics  1727
+    ##  2     2 American Economic Review            6769
+    ##  3     3 Journal of Political Economy        2391
+    ##  4     4 Econometrica                        2433
+    ##  5     5 Journal of Economic Literature       637
+    ##  6     6 Journal of Financial Economics      1421
+    ##  7     7 Review of Economic Studies          1876
+    ##  8     8 Journal of Finance                  1654
+    ##  9     9 Journal of Economic Growth           284
+    ## 10    10 Journal of Monetary Economics       2188
 
-### Economists
+^ Test the correlation for an article in top 10 making a career.
 
-Describe set of data on economists, including PhD attendence. note: most
-entries are empty, however.
+^ Compare to people who make 6-10 : weak discontinuity, perhaps.
+
+Draw maps of where they’re from and test a correlation: distance to
+publication home institution and economist base. ^ Start of testing
+locality or inclusion.
+
+### Link to the NBER
 
 opportunity link to NBER working paper and measure change from WP to
 published article
+
+<span style="font-weight:bold">Next up:</span> Looking at inclusion in
+the *NBER family*.

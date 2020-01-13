@@ -8,13 +8,9 @@ output: github_document
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = F, fig.align = 'center')
 library(tidyverse)
 library(data.table)
-library(stringi)
-library(ggplot2)
-library(RColorBrewer)
-library(ggrepel)
 library(tidytext)
-library(scales)
-theme_set(theme_bw())
+# https://github.com/dgrtwo/fuzzyjoin
+library(fuzzyjoin)
 ```
 
 ## WORK IN PROGRESS -- to be finished this week
@@ -40,9 +36,6 @@ and `r nrow(Articles.data)` published articles papers -- considering only those 
 > 
 > -- What is IDEAS?  [Ideas.RePEc.org/](https://ideas.repec.org/) 
 
-
-### Published Articles
-
 `r nrow(Articles.data)` is a huge number of articles to consider, and as far as I can gather, it is the
 largest set yet analysed -- Hamermesh ([2007](https://www.nber.org/papers/w6761),
 [2012](https://www.nber.org/papers/w18635)) consider only subsamples of the top three journals for example.
@@ -56,9 +49,6 @@ top_journal <- Journals.data %>%
 # Get the bottom Journal
 bottom_journal <- Journals.data %>% 
   arrange(rank) %>% tail(1) %>% pull(journal_title)
-
-# SUbset to the top 200 journals
-Journals.data <- Journals.data %>% head(200)
 ```
 The set is certainly much larger than the NBER listings, but it is so far unclear whether it is 
 representative of the universe of economics publications.
@@ -67,33 +57,39 @@ a simple scan of the journals included in these data show some *not so important
 publications (also seen at the bottom of [this table](https://ideas.repec.org/top/top.journals.all.html)).
 Perhaps economics articles published in *`r top_journal`* are worth keeping, 
 yet those in *`r bottom_journal`* are worth taking out of the sample.
-SO for convenience, I'm subsetting to the top 200 journals.
 
 
+### The Top 5
+
+Quote book (name?) about survey for economists :
+an article in the top 5 makes a career?
+
+SHow how many articles in the top 10.
+```{r}
+Journals_tomerge.data <- Journals.data %>%
+  mutate(journal_id_publisher = paste(journal_title, publisher, sep = ', ')) %>%
+  select(rank, journal_id_publisher)
+
+Articles.data <- Articles.data %>%
+  mutate(journal_id_article = paste(journal_title, publisher, sep = ', ')) %>%
+  stringdist_inner_join(Journals_tomerge.data,
+                        by = c(journal_id_article = 'journal_id_publisher')) %>%
+  select(-journal_id_article, -journal_id_publisher)
+
+Articles.data %>% count(rank, journal_title) %>% filter(rank <= 10) %>% arrange(rank)
+```
+
+^ Test the correlation for an article in top 10 making a career.
+
+^ Compare to people who make 6-10 : weak discontinuity, perhaps.
+
+Draw maps of where they're from
+and test a correlation: distance to publication home institution and economist base.
+^ Start of testing locality or inclusion.
 
 
-
-
-So who are the most problific authors, by article count?
-
-...
-
-
-Most profilific publications?  // Compared to the ranking listing.
-
-...
-
-
-
-
-
-### Economists
-
-Describe set of data on economists, including PhD attendence.
-note: most entries are empty, however.
-
-
-
+### Link to the NBER
 
 opportunity link to NBER working paper and measure change from WP to published article
 
+<span style="font-weight:bold">Next up:</span> Looking at inclusion in the *NBER family*.

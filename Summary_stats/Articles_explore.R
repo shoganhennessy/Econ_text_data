@@ -2,26 +2,32 @@
 ## Maniuplate and explore Articles and Economcists from RePEc data.
 library(tidyverse)
 library(data.table)
-library(stringi)
-library(ggplot2)
-library(RColorBrewer)
-library(ggrepel)
-library(tidytext)
-library(scales)
-theme_set(theme_bw())
+# https://github.com/dgrtwo/fuzzyjoin
+library(fuzzyjoin)
 
 # Load the data on Economists
 Economists.data <- fread('../Data/RePEc_data/Economists_data/Economists_repec_data.csv')
 # Load the data on published articles
 Articles.data <- fread('../Data/RePEc_data/Papers_data/Journal_articles_repec.csv')
-# Load data on Journals, collected 09/01/2020
-# https://ideas.repec.org/top/top.journals.all.html
-Journals.data <- fread('../Data/RePEc_data/Journals_data/Journal_info_repec.csv', nrows = 500) %>%
-  mutate(publisher = sub('^[^,]*', '', journal_title),
-         journal_title = sub('\\,.*', '', journal_title) %>% str_replace(', ', ''))
+# Load data on Journals, collected 09/01/2020 : https://ideas.repec.org/top/top.journals.all.html
+Journals.data <- fread('../Data/RePEc_data/Journals_data/Journal_info_repec.csv')
+
+
+### 
+Journals_tomerge.data <- Journals.data %>%
+  mutate(journal_id_publisher = paste(journal_title, publisher, sep = ', ')) %>%
+  select(rank, journal_id_publisher)
+
+Articles.data %>%
+  mutate(journal_id_article = paste(journal_title, publisher, sep = ', ')) %>%
+  stringdist_inner_join(Journals_tomerge.data,
+                        by = c(journal_id_article = 'journal_id_publisher')) %>%
+  filter(rank <= 5) %>% count(journal_id_article, journal_id_publisher, rank)
+  
+
 
 ## Look at the distibution of PhDs for economists
-Economists.data %>% group_by(degree) %>%
+Economists.data %>% count(degree) %>%
   summarise(count = n()) %>%
   arrange(-count)
 
