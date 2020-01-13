@@ -1,7 +1,7 @@
 ---
 title: "Working Papers in Economics: the NBER Series"
 author: "Senan Hogan-Hennessy"
-date: "`r 01/01/2020`"
+date: "2 January 2020"
 output: github_document
 ---
 ```{r setup, include=F}
