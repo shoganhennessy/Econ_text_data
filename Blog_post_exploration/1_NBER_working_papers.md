@@ -1,7 +1,7 @@
 Working Papers in Economics: the NBER Series
 ================
 Senan Hogan-Hennessy
-09 Jan 2020
+4.950495 imes 10^{-4}
 
 Publishing is a main goal of academic economists, but rarely is it as
 simple as write the paper then publish. Projects can take years and
@@ -22,8 +22,8 @@ heavily cited working papers themselves.
 
 ### The dataset
 
-I have retreieved the listing of all NBER working papers, a collection
-of 26393 papers (as of 25 Oct 2019), starting with a small number of
+I have retrieved the listing of all NBER working papers, a collection of
+26393 papers (as of 25 Oct 2019), starting with a small number of
 technical reports in 1973 to hundreds of modern research papers every
 year in the
 2000s.
