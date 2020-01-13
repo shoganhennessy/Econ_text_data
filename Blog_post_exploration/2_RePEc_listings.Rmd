@@ -21,7 +21,7 @@ theme_set(theme_bw())
 
 The NBER series is a great source of research in our profession, but it isn't the full picture of research in the field.
 It is, after all, a listing of working papers which are by definition not yet publications -- though most do go on to be published,
-as I noted in the [last post.](http://htmlpreview.github.io/?https://github.com/shoganhennessy/Econ_text_data/blob/master/Blog_post_exploration/1_NBER_working_papers.html)
+as I noted in the [last post.](https://github.com/shoganhennessy/Econ_text_data/blob/master/Blog_post_exploration/1_NBER_working_papers.md)
 
 ```{r, echo = T}
 # Load the data on Economists
