@@ -1,9 +1,9 @@
 The Ideas.RePEc Listings of Articles in Economics
 ================
 Senan Hogan-Hennesssy
-11 Jan 2020
+13 Jan 2020
 
-# WORK IN PROGRESS, FINISHED BY END OF THE WEEK
+## WORK IN PROGRESS – to be finished this week
 
 The NBER series is a great source of research in our profession, but it
 isn’t the full picture of research in the field. It is, after all, a
@@ -22,9 +22,19 @@ research which I can use as a complement to the NBER listings.
 > 
 > – What is IDEAS? [Ideas.RePEc.org/](https://ideas.repec.org/)
 
-To be specific, RePEc lists information on 57532 economists and 425459
-published articles papers – considering only those in English as of 31
-December 2019.
+``` r
+# Load the data on Economists
+Economists.data <- fread('../Data/RePEc_data/Economists_data/Economists_repec_data.csv')
+# Load the data on published articles
+Articles.data <- fread('../Data/RePEc_data/Papers_data/Journal_articles_repec.csv')
+# Load data on Journals, collected 09/01/2020
+# https://ideas.repec.org/top/top.journals.all.html
+Journals.data <- fread('../Data/RePEc_data/Journals_data/Journal_info_repec.csv')
+```
+
+RePEc lists information on 57532 economists and 425459 published
+articles papers – considering only those in English as of 31 December
+2019.
 
 ### Published Articles
 
@@ -35,6 +45,30 @@ gather, it is the largest set yet analysed – Hamermesh
 example. Lucky for us, computing power and open access to information on
 published research have advanced enough to allow analyse of a more
 complete set of the data.
+
+``` r
+# Get the top Journal
+top_journal <- Journals.data %>% 
+  arrange(rank) %>% head(1) %>% pull(journal_title)
+# Get the bottom Journal
+bottom_journal <- Journals.data %>% 
+  arrange(rank) %>% tail(1) %>% pull(journal_title)
+
+# SUbset to the top 200 journals
+Journals.data <- Journals.data %>% head(200)
+```
+
+The set is certainly much larger than te NBER listings, but it is so far
+unclear whether it is representative of the universe of economics
+publications. Similarly the universe of economics publications may turn
+out not to be the target of these data: a simple scan of the journals
+included in these data show some *not so important* publications (also
+seen at the bottom of [this
+table](https://ideas.repec.org/top/top.journals.all.html)). Perhaps
+economics articles published in *The Quarterly Journal of Economics* are
+worth keeping, yet those in *Journal of Nonparametric Statistics* are
+worth taking out of the sample. SO for convenience, I’m subsetting to
+the top 200 journals.
 
 So who are the most problific authors, by article count?
 

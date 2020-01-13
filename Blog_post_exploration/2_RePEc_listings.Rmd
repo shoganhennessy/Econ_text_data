@@ -15,13 +15,9 @@ library(ggrepel)
 library(tidytext)
 library(scales)
 theme_set(theme_bw())
-# Load the data on Economists
-Economists.data <- fread('../Data/RePEc_data/Economists_data/Economists_repec_data.csv')
-# Load the data on published articles
-Articles.data <- fread('../Data/RePEc_data/Papers_data/Journal_articles_repec.csv')
 ```
 
-# WORK IN PROGRESS, FINISHED BY END OF THE WEEK
+## WORK IN PROGRESS -- to be finished this week
 
 The NBER series is a great source of research in our profession, but it isn't the full picture of research in the field.
 It is, after all, a listing of working papers which are by definition not yet publications -- though most do go on to be published,
@@ -34,7 +30,16 @@ Forunately, [Research Papers in Economics (RePEc)'s Ideas](https://ideas.repec.o
 > 
 > -- What is IDEAS?  [Ideas.RePEc.org/](https://ideas.repec.org/) 
 
-To be specific, RePEc lists information on `r nrow(Economists.data)` economists 
+```{r, echo = T}
+# Load the data on Economists
+Economists.data <- fread('../Data/RePEc_data/Economists_data/Economists_repec_data.csv')
+# Load the data on published articles
+Articles.data <- fread('../Data/RePEc_data/Papers_data/Journal_articles_repec.csv')
+# Load data on Journals, collected 09/01/2020
+# https://ideas.repec.org/top/top.journals.all.html
+Journals.data <- fread('../Data/RePEc_data/Journals_data/Journal_info_repec.csv')
+```
+RePEc lists information on `r nrow(Economists.data)` economists 
 and `r nrow(Articles.data)` published articles papers -- considering only those in English as of 31 December 2019.
 
 ### Published Articles
@@ -44,6 +49,31 @@ largest set yet analysed -- Hamermesh ([2007](https://www.nber.org/papers/w6761)
 [2012](https://www.nber.org/papers/w18635)) consider only subsamples for example.
 Lucky for us, computing power and open access to information on published research
 have advanced enough to allow analyse of a more complete set of the data.
+```{r, echo=T}
+# Get the top Journal
+top_journal <- Journals.data %>% 
+  arrange(rank) %>% head(1) %>% pull(journal_title)
+# Get the bottom Journal
+bottom_journal <- Journals.data %>% 
+  arrange(rank) %>% tail(1) %>% pull(journal_title)
+
+# SUbset to the top 200 journals
+Journals.data <- Journals.data %>% head(200)
+```
+
+The set is certainly much larger than te NBER listings, but it is so far unclear whether it is 
+representative of the universe of economics publications.
+Similarly the universe of economics publications may turn out not to be the target of these data:
+a simple scan of the journals included in these data show some *not so important*
+publications (also seen at the bottom of [this table](https://ideas.repec.org/top/top.journals.all.html)).
+Perhaps economics articles published in *`r top_journal`* are worth keeping, 
+yet those in *`r bottom_journal`* are worth taking out of the sample.
+SO for convenience, I'm subsetting to the top 200 journals.
+
+
+
+
+
 
 So who are the most problific authors, by article count?
 

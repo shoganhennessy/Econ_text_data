@@ -16,7 +16,7 @@ Economists.data <- fread('../Data/RePEc_data/Economists_data/Economists_repec_da
 Articles.data <- fread('../Data/RePEc_data/Papers_data/Journal_articles_repec.csv')
 # Load data on Journals, collected 09/01/2020
 # https://ideas.repec.org/top/top.journals.all.html
-Journals.data <- fread('../Data/RePEc_data/Journals_data/Journal_info.tsv', sep = '\t', nrows = 11) %>%
+Journals.data <- fread('../Data/RePEc_data/Journals_data/Journal_info_repec.csv', nrows = 500) %>%
   mutate(publisher = sub('^[^,]*', '', journal_title),
          journal_title = sub('\\,.*', '', journal_title) %>% str_replace(', ', ''))
 

@@ -8,7 +8,7 @@ Building fuller dataset of economics authors and publications.
 ## Blog posts:
 1. [The NBER working papers, read here.](
 https://github.com/shoganhennessy/Econ_text_data/blob/master/Blog_post_exploration/1_NBER_working_papers.md)
-2. [The Ideas.RePEc listings (in progress, to be finished by 13/01/2019).](
+2. [The Ideas.RePEc listings (in progress, to be finished this week).](
 https://github.com/shoganhennessy/Econ_text_data/blob/master/Blog_post_exploration/2_RePEc_listings.md)
 3. NBER inclusion, what is it good for? (in progress, up later).
 4. Forming a research question and economic causal graph (in progress, up later).
