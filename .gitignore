@@ -1,0 +1,8 @@
+.Rproj.user
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+.ipynb_checkpoints
+Data/
+Data_backup/
