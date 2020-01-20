@@ -14,7 +14,7 @@ print(date_today)
 
 
 # Publishing and Appointment, a Causal Exercise
-### Senan Hogan-Hennessy, {{date_today}} 
+### Senan Hogan-Hennessy, 20/01/2020 
 
 I have been reading a fair amount on statistics causal approaches recently,
 and thought it would be agood opportunity to document a research question
