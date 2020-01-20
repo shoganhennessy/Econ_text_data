@@ -10,7 +10,8 @@ date_today = date.today().strftime('%d/%m/%Y')
 ```
 
 # Publishing and Appointment, a Causal Exercise
-### Senan Hogan-Hennessy, {{print(date_today)}}
+### Senan Hogan-Hennessy, {{ date_today }} 
+
 I have been reading a fair amount on statistics causal approaches recently,
 and thought it would be agood opportunity to document a research question
 in economics with a more statistics approach.
