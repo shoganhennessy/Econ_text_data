@@ -65,7 +65,7 @@ Quote book (name?) about survey for economists :
 an article in the top 5 makes a career?
 
 SHow how many articles in the top 10.
-```{r}
+```{r, results='asis'}
 Journals_tomerge.data <- Journals.data %>%
   mutate(journal_id_publisher = paste(journal_title, publisher, sep = ', ')) %>%
   select(rank, journal_id_publisher)
@@ -76,7 +76,9 @@ Articles.data <- Articles.data %>%
                         by = c(journal_id_article = 'journal_id_publisher')) %>%
   select(-journal_id_article, -journal_id_publisher)
 
-Articles.data %>% count(rank, journal_title) %>% filter(rank <= 10) %>% arrange(rank)
+Articles.data %>% count(rank, journal_title) %>% 
+  filter(rank <= 10) %>% arrange(rank) %>% 
+  knitr::kable(format = 'markdown')
 ```
 
 ^ Test the correlation for an article in top 10 making a career.

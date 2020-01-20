@@ -1,6 +1,6 @@
 ---
 title: "Forming a Causal Research Idea"
-author: "Senan Hogan-Hennesssy"
+author: "Senan Hogan-Hennessy"
 date: "`r format(Sys.time(), '%d %b %Y')`"
 output: html_document
 ---

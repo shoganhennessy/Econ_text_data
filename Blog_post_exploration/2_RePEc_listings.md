@@ -69,19 +69,22 @@ makes a career?
 
 SHow how many articles in the top 10.
 
-    ## # A tibble: 10 x 3
-    ##     rank journal_title                          n
-    ##    <int> <chr>                              <int>
-    ##  1     1 The Quarterly Journal of Economics  1727
-    ##  2     2 American Economic Review            6769
-    ##  3     3 Journal of Political Economy        2391
-    ##  4     4 Econometrica                        2433
-    ##  5     5 Journal of Economic Literature       637
-    ##  6     6 Journal of Financial Economics      1421
-    ##  7     7 Review of Economic Studies          1876
-    ##  8     8 Journal of Finance                  1654
-    ##  9     9 Journal of Economic Growth           284
-    ## 10    10 Journal of Monetary Economics       2188
+<center>
+
+| rank | journal\_title                     |    n |
+| ---: | :--------------------------------- | ---: |
+|    1 | The Quarterly Journal of Economics | 1727 |
+|    2 | American Economic Review           | 6769 |
+|    3 | Journal of Political Economy       | 2391 |
+|    4 | Econometrica                       | 2433 |
+|    5 | Journal of Economic Literature     |  637 |
+|    6 | Journal of Financial Economics     | 1421 |
+|    7 | Review of Economic Studies         | 1876 |
+|    8 | Journal of Finance                 | 1654 |
+|    9 | Journal of Economic Growth         |  284 |
+|   10 | Journal of Monetary Economics      | 2188 |
+
+</center>
 
 ^ Test the correlation for an article in top 10 making a career.
 
