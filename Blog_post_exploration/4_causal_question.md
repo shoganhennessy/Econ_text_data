@@ -7,10 +7,14 @@ import seaborn as sns
 sns.set(style='darkgrid')
 from datetime import date
 date_today = date.today().strftime('%d/%m/%Y')
+print(date_today)
 ```
 
+    20/01/2020
+
+
 # Publishing and Appointment, a Causal Exercise
-### Senan Hogan-Hennessy, {{ date_today }} 
+### Senan Hogan-Hennessy, {{date_today}} 
 
 I have been reading a fair amount on statistics causal approaches recently,
 and thought it would be agood opportunity to document a research question
@@ -42,8 +46,22 @@ https://towardsdatascience.com/jupyter-notebook-in-visual-studio-code-3fc21a36fe
 
 
 ```python
-
+import os
+from jupyter_nbextensions_configurator import __file__
+print(os.path.realpath(__file__))
 ```
+
+    /home/shoganhennessy/anaconda3/lib/python3.7/site-packages/jupyter_nbextensions_configurator/__init__.py
+
+
+
+```sh
+%%sh
+which jupyter
+```
+
+    /home/shoganhennessy/anaconda3/bin/jupyter
+
 
 
 ```python
