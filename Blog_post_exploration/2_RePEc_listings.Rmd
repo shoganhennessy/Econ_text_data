@@ -1,6 +1,6 @@
 ---
 title: "The Ideas.RePEc Listings of Articles in Economics"
-author: "Senan Hogan-Hennesssy"
+author: "Senan Hogan-Hennessy"
 date: "`r format(Sys.time(), '%d %b %Y')`"
 output: github_document
 ---
@@ -19,7 +19,7 @@ The NBER series is a great source of research in our profession, but it isn't th
 It is, after all, a listing of working papers which are by definition not yet publications -- though most do go on to be published,
 as I noted in the [last post.](https://github.com/shoganhennessy/Econ_text_data/blob/master/Blog_post_exploration/1_NBER_working_papers.md)
 
-```{r, echo = T}
+```{r, echo = F}
 # Load the data on Economists
 Economists.data <- fread('../Data/RePEc_data/Economists_data/Economists_repec_data.csv')
 # Load the data on published articles
@@ -28,35 +28,24 @@ Articles.data <- fread('../Data/RePEc_data/Papers_data/Journal_articles_repec.cs
 # https://ideas.repec.org/top/top.journals.all.html
 Journals.data <- fread('../Data/RePEc_data/Journals_data/Journal_info_repec.csv')
 ```
-Forunately, [Research Papers in Economics (RePEc)'s Ideas](https://ideas.repec.org/) provides a large listing of economics research which I can use as a complement to the NBER listings as it lists information on `r nrow(Economists.data)` economists 
-and `r nrow(Articles.data)` published articles papers -- considering only those in English as of 31 December 2019.
+Forunately, [Research Papers in Economics (RePEc)'s Ideas](https://ideas.repec.org/) provides a large listing of economics research which I can use as a complement to the NBER listings as it lists information on `r nrow(Economists.data)` economists and `r nrow(Articles.data)` published articles papers -- considering only those in English as of 9 January 2020.
 
 > ''IDEAS is the largest bibliographic database dedicated to Economics and available freely on the Internet. 
 > Based on RePEc, it indexes over 3,000,000 items of research, including over 2,700,000 that can be downloaded in full text.''
 > 
 > -- What is IDEAS?  [Ideas.RePEc.org/](https://ideas.repec.org/) 
 
-`r nrow(Articles.data)` is a huge number of articles to consider, and as far as I can gather, it is the
-largest set yet analysed -- Hamermesh ([2007](https://www.nber.org/papers/w6761),
-[2012](https://www.nber.org/papers/w18635)) consider only subsamples of the top three journals for example.
-Lucky for us, computing power and open access to research
-have advanced enough to allow analysis of a more complete view of research in economics.
+`r nrow(Articles.data)` is a huge number of articles to consider, and comparable in size to articles that use the near complete set of publcations.([^1]: [Angrist et al. 2015](https://www.nber.org/papers/w23698) link Econlit and Web of Science for similar coverage, for example.)
+RePEc has certain advantages: it is more open and it has a clear link to authors -- and importantly some of their characteristics -- to working and published papers, all within the field of ecoomics.
+It is however, a repository only within the economics sphere: citations are only counted among other papers in the database, and not among the universe of publications.
 
 ```{r, echo=T}
-# Get the top Journal
-top_journal <- Journals.data %>% 
-  arrange(rank) %>% head(1) %>% pull(journal_title)
-# Get the bottom Journal
-bottom_journal <- Journals.data %>% 
-  arrange(rank) %>% tail(1) %>% pull(journal_title)
+# The most prolific articles, within these data
+Articles.data %>% 
+  select(author, title, publication_date, journal_title, citation_count) %>%
+  arrange(-citation_count) %>% head(10) %>%
+  knitr::kable(format = 'markdown')
 ```
-The set is certainly much larger than the NBER listings, but it is so far unclear whether it is 
-representative of the universe of economics publications.
-Similarly the universe of economics publications may turn out not to be the target of these data:
-a simple scan of the journals included in these data show some *not so important*
-publications (also seen at the bottom of [this table](https://ideas.repec.org/top/top.journals.all.html)).
-Perhaps economics articles published in *`r top_journal`* are worth keeping, 
-yet those in *`r bottom_journal`* are worth taking out of the sample.
 
 
 ### The Top 5
@@ -66,18 +55,11 @@ an article in the top 5 makes a career?
 
 SHow how many articles in the top 10.
 ```{r, results='asis'}
-Journals_tomerge.data <- Journals.data %>%
-  mutate(journal_id_publisher = paste(journal_title, publisher, sep = ', ')) %>%
-  select(rank, journal_id_publisher)
-
-Articles.data <- Articles.data %>%
-  mutate(journal_id_article = paste(journal_title, publisher, sep = ', ')) %>%
-  stringdist_inner_join(Journals_tomerge.data,
-                        by = c(journal_id_article = 'journal_id_publisher')) %>%
-  select(-journal_id_article, -journal_id_publisher)
-
-Articles.data %>% count(rank, journal_title) %>% 
-  filter(rank <= 10) %>% arrange(rank) %>% 
+Articles.data %>% 
+  group_by(journal_title) %>%
+  summarise(mean_citations = round(mean(citation_count, na.rm = T)),
+            citation_count = sum(citation_count, na.rm = T)) %>%
+  arrange(-citation_count) %>% head(10) %>%
   knitr::kable(format = 'markdown')
 ```
 
@@ -94,4 +76,4 @@ and test a correlation: distance to publication home institution and economist b
 
 opportunity link to NBER working paper and measure change from WP to published article
 
-<span style="font-weight:bold">Next up:</span> Looking at inclusion in the *NBER family*.
+**Next up:** Looking at inclusion in the *NBER family*.

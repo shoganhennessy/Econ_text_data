@@ -13,6 +13,19 @@ Articles.data <- fread('../Data/RePEc_data/Papers_data/Journal_articles_repec.cs
 Journals.data <- fread('../Data/RePEc_data/Journals_data/Journal_info_repec.csv')
 
 
+# The most prolific articles, within these data
+Articles.data %>%
+  arrange(-citation_count) %>% head(10)
+
+## WHo have the most citations, in these data
+Articles.data %>% 
+  group_by(author) %>%
+  summarise(citation_count = sum(citation_count)) %>% 
+  arrange(-citation_count) %>% head(10)
+# Note: equally assigns citations to authors in spite of its inappropriateness (Sarsons 2017)
+
+
+
 ### 
 Journals_tomerge.data <- Journals.data %>%
   mutate(journal_id_publisher = paste(journal_title, publisher, sep = ', ')) %>%
@@ -30,8 +43,6 @@ Articles.data %>%
 Economists.data %>% count(degree) %>%
   summarise(count = n()) %>%
   arrange(-count)
-
-
 
 
 #### INVESTIGATE: years since phd that the article is published, by journal
