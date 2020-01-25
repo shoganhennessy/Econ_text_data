@@ -1,7 +1,7 @@
 The Ideas.RePEc Listings of Articles in Economics
 ================
-Senan Hogan-Hennessy
-23 Jan 2020
+Senan Hogan-Hennessy,
+25 Jan 2020
 
 ## WORK IN PROGRESS – to be finished soon.
 
@@ -25,31 +25,18 @@ papers – considering only those in English as of 9 January 2020.
 > – What is IDEAS? [Ideas.RePEc.org/](https://ideas.repec.org/)
 
 421348 is a huge number of articles to consider, and comparable in size
-to articles that use the near complete set of publcations.\[1\] RePEc
-has certain advantages: it is more open and it has a clear link to
-authors – and importantly some of their characteristics – to working and
-published papers, all within the field of ecoomics. It is however, a
-repository only within the economics sphere: citations are only counted
-among other papers in the database, and not among the universe of
-publications.
+to articles that use the near complete set of
+publcations.<sup id="a1">[1](#f1)</sup> RePEc has certain advantages: it
+is more open and it has a clear link to authors – and importantly some
+of their characteristics – to working and published papers, all within
+the field of economics. It is however, a repository only within the
+economics sphere: citations are only counted among other papers in the
+database, and not among the universe of publications.
 
 ### Citations
 
-``` r
-# The most prolific articles, within these data
-Articles.data %>% 
-  select(author, title, publication_date, journal_title, citation_count) %>%
-  arrange(-citation_count) %>% head(5) %>%
-  knitr::kable(format = 'markdown')
-```
-
-| author                                     | title                                                                              | publication\_date | journal\_title                        | citation\_count |
-| :----------------------------------------- | :--------------------------------------------------------------------------------- | :---------------- | :------------------------------------ | --------------: |
-| John C. Harsanyi                           | Cardinal Welfare, Individualistic Ethics, and Interpersonal Comparisons of Utility | 1955              | Journal of Political Economy          |             473 |
-| Diebold, Francis X.; Inoue, Atsushi        | Long memory and regime switching                                                   | 2001              | Journal of Econometrics               |             472 |
-| Lucas, Robert E, Jr                        | Supply-Side Economics: An Analytical Review                                        | 1990              | Oxford Economic Papers                |             472 |
-| Ben S. Bernanke; Mark Gertler; Mark Watson | Systematic Monetary Policy and the Effects of Oil Price Shocks                     | 1997              | Brookings Papers on Economic Activity |             471 |
-| David Neumark                              | Employers’ Discriminatory Behavior and the Estimation of Wage Discrimination       | 1988              | Journal of Human Resources            |             471 |
+For sanity, take a look at the most prolific authors in the field, by
+citation count.<sup id="a1">[2](#f2)</sup>
 
 ``` r
 # The most prolific authors, within these data
@@ -62,7 +49,7 @@ Economists_articles.links %>%
   filter(!is.na(citation_count)) %>%
   group_by(author_name) %>%
   summarise(total_citations = sum(citation_count, na.rm = T),
-            mean_citations = mean(citation_count, na.rm = T),
+            mean_citations = round(mean(citation_count, na.rm = T)),
             total_articles = n()) %>%
   arrange(-total_citations) %>% head(10) %>%
   knitr::kable(format = 'markdown')
@@ -70,21 +57,47 @@ Economists_articles.links %>%
 
 | author\_name                  | total\_citations | mean\_citations | total\_articles |
 | :---------------------------- | ---------------: | --------------: | --------------: |
-| Andrei Shleifer               |            13816 |       150.17391 |              92 |
-| James J. Heckman              |            12845 |       129.74747 |              99 |
-| Daron Acemoglu                |            12007 |       111.17593 |             108 |
-| Jean Tirole                   |            11602 |       130.35955 |              89 |
-| Joseph E. Stiglitz            |            11070 |       100.63636 |             110 |
-| René M. Stulz (Rene M. Stulz) |             9884 |       145.35294 |              68 |
-| John List                     |             8559 |        93.03261 |              92 |
-| John Y. Campbell              |             8423 |       153.14545 |              55 |
-| David E. Card                 |             8159 |       138.28814 |              59 |
-| Asli Demirguc-Kunt            |             8150 |       142.98246 |              57 |
+| Andrei Shleifer               |            13816 |             150 |              92 |
+| James J. Heckman              |            12845 |             130 |              99 |
+| Daron Acemoglu                |            12007 |             111 |             108 |
+| Jean Tirole                   |            11602 |             130 |              89 |
+| Joseph E. Stiglitz            |            11070 |             101 |             110 |
+| René M. Stulz (Rene M. Stulz) |             9884 |             145 |              68 |
+| John List                     |             8559 |              93 |              92 |
+| John Y. Campbell              |             8423 |             153 |              55 |
+| David E. Card                 |             8159 |             138 |              59 |
+| Asli Demirguc-Kunt            |             8150 |             143 |              57 |
+
+There are some familiar faces among the names, which is to be expected\!
+The process to make the list isn’t exactly perfect however: it asigns
+citations from each article to each of the authors and then counts the
+total. [Sarsons
+(2017)](https://www.aeaweb.org/articles?id=10.1257/aer.p20171126)
+exhibits the unequal rate of return in citations of academic work among
+economists – and inspired me to work with economics publishing data in
+the first place\!
+
+### Inequality in Publications
+
+Draw a Gini coefficient for citations.
+
+^ Is it possible to normalise for time since PhD.
+
+^ Draw a coefficient for the earlier period vs later period : larger
+field, more economists, but is it more top loaded now than before? Think
+about whether sharing of publications/work over the internet leads to
+more or less inequality -\> perhaps a better question for the upcoming
+network analyses.
 
 ### The Top 5
 
+Economists aim for the top 5 -\> measure citations from making a top 5,
+and follow on. ^Note that the graph or statistics on that LOOK like some
+causal identification of the effect, which is not what is to be
+visualised.
+
 Quote book (name?) about survey for economists : an article in the top 5
-makes a career?
+makes a career and/or tenure.
 
 SHow how many articles in the top
 10.
@@ -104,20 +117,27 @@ SHow how many articles in the top
 
 ^ Test the correlation for an article in top 10 making a career.
 
-^ Compare to people who make 6-10 : weak discontinuity, perhaps.
+^ Compare to people who make 6-10 : weakly comaprable, perhaps, so note
+the thoughts.
+
+### Link to the NBER
 
 Draw maps of where they’re from and test a correlation: distance to
 publication home institution and economist base. ^ Start of testing
 locality or inclusion.
 
-### Link to the NBER
-
-opportunity link to NBER working paper and measure change from WP to
-published article
+Further opportunity link to NBER working paper and measure change from
+WP to published article
 
 **Next up:** Looking at inclusion in the *NBER family*.
 
 -----
 
-1.  [Angrist et al. 2015](https://www.nber.org/papers/w23698) link
-    Econlit and Web of Science for similar coverage, for example.
+<b id="f1">1</b> Angrist et
+al. 2015\](<https://www.nber.org/papers/w23698>) link Econlit and Web
+of Science for similar coverage, for example.[↩](#a1)
+
+<b id="f2">2</b> Again, note that this citation count is not the same as
+that in the universe of academic publications or Google Scholar, it is a
+count of the citations within the RePEc listings so a measure of
+citations within only this large coverage of the field.[↩](#a1)

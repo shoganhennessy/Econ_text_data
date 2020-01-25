@@ -1,6 +1,6 @@
 ---
 title: "Working Papers in Economics: the NBER Series"
-author: "Senan Hogan-Hennessy"
+author: "Senan Hogan-Hennessy, "
 date: "2 January 2020"
 output: github_document
 ---
@@ -450,7 +450,7 @@ Follow on for updates over the next few months as I
 collect more data sources, get a better idea of what I'm dealing with and form a 
 more direct research question.
 
-<span style="font-weight:bold">Next up:</span> A dive in to a more complete source of economics research papers.
-
-Note: text analysis methods and code in R are inspired by an [older post on political tweets](
+*Note:* text analysis methods and code in R are inspired by an [older post on political tweets](
 http://varianceexplained.org/r/trump-tweets), which I also thoroughly recommend.
+
+**Next up:** A dive in to a more complete source of economics research papers.

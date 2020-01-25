@@ -1,6 +1,6 @@
 Working Papers in Economics: the NBER Series
 ================
-Senan Hogan-Hennessy
+Senan Hogan-Hennessy,
 2 January 2020
 
 Publishing is a main goal of academic economists, but rarely is it as
@@ -192,9 +192,9 @@ the NBER working papers. Follow on for updates over the next few months
 as I collect more data sources, get a better idea of what I’m dealing
 with and form a more direct research question.
 
-<span style="font-weight:bold">Next up:</span> A dive in to a more
-complete source of economics research papers.
+*Note:* text analysis methods and code in R are inspired by an [older
+post on political tweets](http://varianceexplained.org/r/trump-tweets),
+which I also thoroughly recommend.
 
-Note: text analysis methods and code in R are inspired by an [older post
-on political tweets](http://varianceexplained.org/r/trump-tweets), which
-I also thoroughly recommend.
+**Next up:** A dive in to a more complete source of economics research
+papers.
