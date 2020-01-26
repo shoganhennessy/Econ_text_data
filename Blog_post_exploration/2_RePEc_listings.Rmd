@@ -42,15 +42,17 @@ It is however, a repository only within the economics sphere: citations are only
 
 ### Citations
 
-For sanity, take a look at the most prolific authors in the field, by citation count.<sup id="a1">[2](#f2)</sup>
-```{r, echo=T}
+For sanity, take a look at the most prolific authors in the field by citation count.<sup id="a1">[2](#f2)</sup>
+```{r, echo=F}
 # The most prolific authors, within these data
 ## WHo have the most citations, in these data
 Economists_articles.links %>% 
-  left_join(select(Economists.data, url, name) %>% 
+  left_join(select(Economists.data, url, name, 
+                   institution, affiliation, degree,) %>% 
               rename(author_name = name, author_url = url), by = 'author_url') %>%
   left_join(rename(Articles.data, article_url = url), by = 'article_url') %>%
-  select(author_name, title, publication_date, journal_title, citation_count) %>%
+  select(author_name, institution, affiliation, degree, 
+         title, publication_date, journal_title, citation_count) %>%
   filter(!is.na(citation_count)) %>%
   group_by(author_name) %>%
   summarise(total_citations = sum(citation_count, na.rm = T),
@@ -59,22 +61,68 @@ Economists_articles.links %>%
   arrange(-total_citations) %>% head(10) %>%
   knitr::kable(format = 'markdown')
 ```
-There are some familiar faces among the names, which is to be expected! The process to make the list isn't exactly perfect however: it asigns citations from each article to each of the authors and then counts the total.  [Sarsons (2017)](https://www.aeaweb.org/articles?id=10.1257/aer.p20171126) exhibits the unequal rate of return in citations of academic work among economists -- and inspired me to work with economics publishing data in the first place!
+There are some familiar faces among the names, which is to be expected! The process of assigning is, however, not perfect: citations are assigned from each article to each author equally when there are multiple authors.
+Yet [Sarsons (2017)](https://www.aeaweb.org/articles?id=10.1257/aer.p20171126) show how innapropriate this accounting is by exhibiting the unequal citation rate of return in among economists by gender -- which actually inspired me to work with economics publishing data in the first place!
+Call it a point of interest to rank economists by better measures, as this project progresses.
 
 
 ### Inequality in Publications
 
-Draw a Gini coefficient for citations.
+Draw a Gini coefficient for citations among articles.
+```{r, echo=T}
+# Gini coefficient for article citations.
+Articles.data %>% 
+  filter(!is.na(citation_count)) %>%
+  pull(citation_count) %>% reldist::gini()
+```
 
-^ Is it possible to normalise for time since PhD.
+
+Histogram of citations for different periods
+```{r, echo=T}
+# Gini coefficient for article citations.
+Articles.data %>% 
+  filter(!is.na(citation_count)) %>%
+  ggplot(aes(x = citation_count)) + 
+  geom_histogram(binwidth = 1)
+
+# Per year
+# Gini coefficient for article citations.
+Articles.data %>% 
+  filter(!is.na(citation_count)) %>%
+  group_by(publication_date) %>%
+  summarise(total_citations = sum(citation_count, na.rm = T),
+            mean_citations = round(mean(citation_count, na.rm = T)),
+            total_articles = n(),
+            gini_coefficient = reldist::gini(citation_count)) %>%
+  knitr::kable(format = 'markdown')
+```
 
 ^ Draw a coefficient for the earlier period vs later period : larger field, more economists, but is it more top loaded now than before?
+
+
+
+Draw a Gini coefficient for citations among authors.
+```{r, echo=T}
+# Gini coefficient for article citations.
+Economists_articles.links %>% 
+  left_join(select(Economists.data, url, name, degree) %>% 
+              rename(author_name = name, author_url = url), by = 'author_url') %>%
+  left_join(rename(Articles.data, article_url = url), by = 'article_url') %>%
+  select(author_name, degree, title, publication_date, journal_title, citation_count) %>%
+  filter(!is.na(citation_count)) %>%
+  group_by(author_name) %>%
+  summarise(total_citations = sum(citation_count, na.rm = T)) %>%
+  pull(total_citations) %>% reldist::gini()
+```
+
 Think about whether sharing of publications/work over the internet leads to more or less inequality -> perhaps a better question for the upcoming network analyses.
 
 
 ### The Top 5
 
-Economists aim for the top 5 -> measure citations from making a top 5, and follow on.
+Economists aim for the top 5 
+
+-> measure citations from making a top 5, and follow on.
 ^Note that the graph or statistics on that LOOK like some causal identification of the effect, which is not what is to be visualised.
 
 Quote book (name?) about survey for economists :
@@ -92,7 +140,7 @@ Articles.data %>%
 
 ^ Test the correlation for an article in top 10 making a career.
 
-^ Compare to people who make 6-10 : weakly comaprable, perhaps, so note the thoughts.
+^ Compare to people who make 6-10 : weakly comparable, perhaps, so note the thoughts.
 
 
 
@@ -107,6 +155,6 @@ Further opportunity link to NBER working paper and measure change from WP to pub
 **Next up:** Looking at inclusion in the *NBER family*.
 
 ***
-<b id="f1">1</b> Angrist et al. 2015](https://www.nber.org/papers/w23698) link Econlit and Web of Science for similar coverage, for example.[↩](#a1)
+<b id="f1">1</b> [Angrist et al. (2017)](https://www.nber.org/papers/w23698) link Econlit and Web of Science for similar coverage, for example.[↩](#a1)
 
 <b id="f2">2</b> Again, note that this citation count is not the same as that in the universe of academic publications or Google Scholar, it is a count of the citations within the RePEc listings so a measure of citations within only this large coverage of the field.[↩](#a1)
