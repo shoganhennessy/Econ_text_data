@@ -23,9 +23,6 @@ as I noted in the [last post.](https://github.com/shoganhennessy/Econ_text_data/
 Economists.data <- fread('../Data/RePEc_data/Economists_data/Economists_repec_data.csv')
 # Load the data on published articles
 Articles.data <- fread('../Data/RePEc_data/Papers_data/Journal_articles_repec.csv')
-# Load data on Journals, collected 09/01/2020
-# https://ideas.repec.org/top/top.journals.all.html
-Journals.data <- fread('../Data/RePEc_data/Journals_data/Journal_info_repec.csv')
 # Load Economist-article individual links -- made externally in Python
 Economists_articles.links <- fread('../Data/RePEc_data/Economists_data/Economists_articles_repec.csv')
 ```
@@ -42,11 +39,11 @@ It is however, a repository only within the economics sphere: citations are only
 
 ### Citations
 
-For sanity, take a look at the most prolific authors in the field by citation count.<sup id="a1">[2](#f2)</sup>
+For a sanity check, take a look at the most prolific authors in the field by citation count.<sup id="a1">[2](#f2)</sup>
 ```{r, echo=F}
 # The most prolific authors, within these data
 ## WHo have the most citations, in these data
-Economists_articles.links %>% 
+Economists_citations.data <- Economists_articles.links %>% 
   left_join(select(Economists.data, url, name, 
                    institution, affiliation, degree,) %>% 
               rename(author_name = name, author_url = url), by = 'author_url') %>%
@@ -58,12 +55,15 @@ Economists_articles.links %>%
   summarise(total_citations = sum(citation_count, na.rm = T),
             mean_citations = round(mean(citation_count, na.rm = T)),
             total_articles = n()) %>%
-  arrange(-total_citations) %>% head(10) %>%
+  arrange(-total_citations) 
+
+# SHow the top ten 
+Economists_citations.data %>% head(10) %>%
   knitr::kable(format = 'markdown')
 ```
 There are some familiar faces among the names, which is to be expected! The process of assigning is, however, not perfect: citations are assigned from each article to each author equally when there are multiple authors.
-Yet [Sarsons (2017)](https://www.aeaweb.org/articles?id=10.1257/aer.p20171126) show how innapropriate this accounting is by exhibiting the unequal citation rate of return in among economists by gender -- which actually inspired me to work with economics publishing data in the first place!
-Call it a point of interest to rank economists by better measures, as this project progresses.
+Yet [Sarsons (2017)](https://www.aeaweb.org/articles?id=10.1257/aer.p20171126) shows how innapropriate this accounting is by exhibiting the unequal citation rate of return in among economists by gender -- which actually inspired me to work with economics publishing data in the first place!
+Call it a point of interest to rank economists by better measures as this project progresses.
 
 
 ### Inequality in Publications
@@ -85,34 +85,54 @@ Articles.data %>%
   ggplot(aes(x = citation_count)) + 
   geom_histogram(binwidth = 1)
 
-# Per year
-# Gini coefficient for article citations.
-Articles.data %>% 
-  filter(!is.na(citation_count)) %>%
+# Per year summarise 
+Citation_count.data <- Articles.data %>% 
+  filter(!is.na(citation_count) & !is.na(publication_date)) %>%
   group_by(publication_date) %>%
   summarise(total_citations = sum(citation_count, na.rm = T),
             mean_citations = round(mean(citation_count, na.rm = T)),
             total_articles = n(),
-            gini_coefficient = reldist::gini(citation_count)) %>%
-  knitr::kable(format = 'markdown')
+            gini_coefficient = reldist::gini(citation_count)) 
+
+# Gini coefficient for article citations.
+Citation_count.data %>%
+  filter(total_articles	> 100) %>%
+  ggplot(aes(x = publication_date, y = gini_coefficient)) +
+  geom_line() +
+  scale_x_continuous(name = 'Year Published', breaks = seq(1975, 2020, by = 5)) +
+  scale_y_continuous(name = 'Citations Gini Index (among articles)',
+                     breaks = seq(0, 0.5, by = 0.1), limits = c(0,0.5))
 ```
 
-^ Draw a coefficient for the earlier period vs later period : larger field, more economists, but is it more top loaded now than before?
+^ Draw a coefficient for the earlier period vs later period : larger field, more economists, but is it more top loaded now than before?  Perhaps less so now?
 
 
 
-Draw a Gini coefficient for citations among authors.
+Draw a Gini coefficient for citations among authors per year.
+
+Note: if going with the Gini index, then perhaps this should be collapsing a cumulative count of citations
+per year among authors -- or at least consider that idea as collecting 'wealth' of citations.
 ```{r, echo=T}
-# Gini coefficient for article citations.
+# Gini coefficient for authors.
 Economists_articles.links %>% 
-  left_join(select(Economists.data, url, name, degree) %>% 
+  left_join(select(Economists.data, url, name, 
+                   institution, affiliation, degree,) %>% 
               rename(author_name = name, author_url = url), by = 'author_url') %>%
   left_join(rename(Articles.data, article_url = url), by = 'article_url') %>%
-  select(author_name, degree, title, publication_date, journal_title, citation_count) %>%
+  select(author_name, institution, affiliation, degree, 
+         title, publication_date, journal_title, citation_count) %>%
   filter(!is.na(citation_count)) %>%
-  group_by(author_name) %>%
+  group_by(author_name, publication_date) %>%
   summarise(total_citations = sum(citation_count, na.rm = T)) %>%
-  pull(total_citations) %>% reldist::gini()
+  group_by(publication_date) %>%
+  summarise(gini_coefficient = reldist::gini(total_citations)) %>%
+  filter(publication_date > 1975) %>%
+  ggplot(aes(x = publication_date, y = gini_coefficient)) +
+  geom_line() +
+  scale_x_continuous(name = 'Year Published', breaks = seq(1975, 2020, by = 5)) +
+  scale_y_continuous(name = 'Citations Gini Index (among authors)',
+                     breaks = seq(0, 0.5, by = 0.1), limits = c(0,0.5))
+  
 ```
 
 Think about whether sharing of publications/work over the internet leads to more or less inequality -> perhaps a better question for the upcoming network analyses.
