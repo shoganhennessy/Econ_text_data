@@ -142,21 +142,62 @@ Think about whether sharing of publications/work over the internet leads to more
 
 Economists aim for the top 5 
 
+CITE:
+Top Five journals in economics: the American Economic Review, Econometrica,the Journal of Political Economy,the Quarterly Journal of Economics, and the Review of Economic Studies.
+https://voxeu.org/article/publishing-and-promotion-economics-tyranny-top-five
+https://www.nber.org/papers/w25093 
+
+
 -> measure citations from making a top 5, and follow on.
-^Note that the graph or statistics on that LOOK like some causal identification of the effect, which is not what is to be visualised.
+^Note that the graph or statistics on that LOOK like some causal identification of the effect, which is not the case
+so be careful to not use causal language.
 
-Quote book (name?) about survey for economists :
-an article in the top 5 makes a career and/or tenure.
-
-SHow how many articles in the top 10.
+SHow how many articles in the top 10 (by simple citations count).
 ```{r, results='asis'}
 Articles.data %>% 
+  filter(!is.na(citation_count) & !is.na(publication_date)) %>%
   group_by(journal_title) %>%
   summarise(mean_citations = round(mean(citation_count, na.rm = T)),
-            citation_count = sum(citation_count, na.rm = T)) %>%
-  arrange(-citation_count) %>% head(10) %>% arrange(-mean_citations) %>%
+            total_citations = sum(citation_count, na.rm = T),
+            total_articles = n()) %>%
+  arrange(-total_citations) %>% head(10) %>% 
   knitr::kable(format = 'markdown')
 ```
+
+
+Draw a line graph for author cumulative citations, years after first publication.
+NOTE: attributing citations to year of publication and not year an reader cites the previous work (which I will consider later in network effects).
+```{r, results='asis'}
+Author_citation_count.data <- Economists_articles.links %>% 
+  left_join(select(Economists.data, url, name, 
+                   institution, affiliation, degree,) %>% 
+              rename(author_name = name, author_url = url), by = 'author_url') %>%
+  left_join(rename(Articles.data, article_url = url), by = 'article_url') %>%
+  select(author_name, institution, affiliation, degree, 
+         title, publication_date, journal_title, citation_count) %>%
+  filter(!is.na(citation_count)) %>%
+  group_by(author_name, publication_date) %>%
+  summarise(total_citations = sum(citation_count, na.rm = T)) 
+
+Author_cumulative_citations.data <- 
+  Author_citation_count.data %>%
+  arrange(author_name, publication_date) %>%
+  group_by(author_name) %>%
+  mutate(cum_citations = cumsum(total_citations),
+         since_first = c(1:n())-1)
+
+Author_cumulative_citations.data %>%
+  group_by(since_first) %>%
+  summarise(cum_citations = mean(cum_citations)) %>%
+  ggplot(aes(x = since_first, y = cum_citations)) +
+  geom_point()
+## MAKE ZERO ENTRIES FOR WHEN NO ENTRIES UP TO 40
+
+
+```
+
+
+
 
 ^ Test the correlation for an article in top 10 making a career.
 

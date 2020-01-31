@@ -1,7 +1,7 @@
 The Ideas.RePEc Listings of Articles in Economics
 ================
 Senan Hogan-Hennessy,
-30 Jan 2020
+31 Jan 2020
 
 ## WORK IN PROGRESS – to be finished soon.
 
@@ -152,28 +152,38 @@ upcoming network analyses.
 
 Economists aim for the top 5
 
+CITE: Top Five journals in economics: the American Economic Review,
+Econometrica,the Journal of Political Economy,the Quarterly Journal of
+Economics, and the Review of Economic Studies.
+<https://voxeu.org/article/publishing-and-promotion-economics-tyranny-top-five>
+<https://www.nber.org/papers/w25093>
+
 \-\> measure citations from making a top 5, and follow on. ^Note that
 the graph or statistics on that LOOK like some causal identification of
-the effect, which is not what is to be visualised.
+the effect, which is not the case so be careful to not use causal
+language.
 
-Quote book (name?) about survey for economists : an article in the top 5
-makes a career and/or tenure.
+SHow how many articles in the top 10 (by simple citations
+count).
 
-SHow how many articles in the top
-10.
+| journal\_title                         | mean\_citations | total\_citations | total\_articles |
+| :------------------------------------- | --------------: | ---------------: | --------------: |
+| American Economic Review               |             102 |           301142 |            2954 |
+| Journal of Political Economy           |             112 |           142477 |            1271 |
+| The Quarterly Journal of Economics     |             137 |           129378 |             945 |
+| Econometrica                           |             103 |           129028 |            1247 |
+| The Review of Economics and Statistics |              84 |            97737 |            1169 |
+| Journal of Finance                     |             112 |            97687 |             870 |
+| Economic Journal                       |              83 |            93447 |            1132 |
+| Journal of Financial Economics         |             107 |            92602 |             866 |
+| Journal of Econometrics                |              84 |            89413 |            1068 |
+| Journal of Public Economics            |              73 |            88089 |            1207 |
 
-| journal\_title                         | mean\_citations | citation\_count |
-| :------------------------------------- | --------------: | --------------: |
-| The Quarterly Journal of Economics     |             137 |          129378 |
-| Journal of Political Economy           |             112 |          142477 |
-| Journal of Finance                     |             112 |           97687 |
-| Journal of Financial Economics         |             107 |           92602 |
-| Econometrica                           |             103 |          129028 |
-| American Economic Review               |             102 |          301142 |
-| The Review of Economics and Statistics |              84 |           97737 |
-| Journal of Econometrics                |              84 |           89413 |
-| Economic Journal                       |              83 |           93447 |
-| Journal of Public Economics            |              73 |           88089 |
+Draw a line graph for author cumulative citations, years after first
+publication. NOTE: attributing citations to year of publication and not
+year an reader cites the previous work (which I will consider later in
+network effects).
+<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
 
 ^ Test the correlation for an article in top 10 making a career.
 
