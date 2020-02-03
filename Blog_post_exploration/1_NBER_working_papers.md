@@ -5,9 +5,9 @@ Senan Hogan-Hennessy,
 
 Publishing is a main goal of academic economists, but rarely is it as
 simple as write the paper then publish. Projects can take years and
-often transform over the work, data analysis and dissemination of
-results. An important part of gauging the impact of research in progress
-is releasing a working paper. The National Bureau of Economic Research
+often transform over work, data analysis and dissemination of results.
+An important part of gauging the impact of research in progress is
+releasing a working paper. The National Bureau of Economic Research
 (NBER) hosts a heavily circulated [series](https://www.nber.org/papers)
 for its affiliates to register working papers, and the series includes
 pre-published versions of some very famous research papers and some
@@ -39,15 +39,12 @@ research in-progress, as before the online listing of working papers
 researchers would only have the chance to read colleague manuscripts in
 person or at conferences. Today we can take a phone from our pockets,
 google something like ‘NBER working paper on economics publishing’ and
-read cutting edge research before it is even published. I will make a
-note to count the number of working papers from all sources with the
-next data source, to measure rise in internet listing of working papers
-in general.
+read cutting edge research before it is even published.
 
 The papers are sorted in to subjects areas, the [NBER research area
 programmes](https://www.nber.org/programs/) (the graph below only shows
-top 10 areas). Note: papers can be cross registered to multiple areas,
-and are more likely to be so for recent
+top 10 areas). Note, however, that papers can be cross registered to
+multiple areas, and are more likely to be so for recent
 years.
 
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
@@ -55,10 +52,10 @@ years.
 Most of the papers go on to be published, but the rate of publishing is
 certainly not constant. In the early days, around 60% of the working
 papers are published in peer reviewed journals, going on to peak at 94%
-in 1987 before falling to common day. What drives this ride and fall? It
-is clear that papers since 2015 are still in the pipeline, afterall the
-NBER series was started partially to disseminate knowledge current
-knowledge in light of publishing
+in 1987 before falling to common day. What drives this rise and fall? It
+is clear that papers since 2015 are still in the pipeline: the NBER
+series was, afterall, started partially to disseminate current knowledge
+in light of publication
 lags.
 
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
@@ -113,29 +110,28 @@ papers.
   - Algorithm and identification are words related to more recent
     advances in empiricsm and new software, yet are more likely to be in
     unpublished papers. It’s suprising to me that empiricism does not
-    play an obvious role here, yet the issue could do wth further
+    play an obvious role here, yet the issue could do with further
     digging.
 
 ### Empiricism & Causal Inference
 
 Economics is far more concerned with empirical, causal inference than
-when the NBER series began in 1973: let’s show test this
-<i>empirically</i>.
+when the NBER series began in 1973: let’s show this <i>empirically</i>.
 
 Sentiment analysis is commonly applied to text data as an easy coding
 operation to measure sentiment – commonly to measure happiness, or
 perhaps [1am angry tweets](http://varianceexplained.org/r/trump-tweets/)
-– and the same process can textually measure rate of empiricism. First
-I’ll form a list of a hundred words most likely to appear in abstracts
-that use the word ‘causal’ – denoting these as causal papers. Also list
-the top hundred words in papers that use the words ‘theory’ and
-‘equilibrium’ – denoting these theoretical
+– and the same process can textually measure allignment with causal or
+theortical papers. First I’ll form a list of a hundred words most likely
+to appear in abstracts that use the word ‘causal’ – denoting these as
+causal papers. Also list the top hundred words in papers that use the
+words ‘theory’ and ‘equilibrium’ – denoting these theoretical
 papers.
 
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
 
 A listing of words most likely (relatively) to appear in a causal or
-ethoretical paper can play the role of a sentiment dictionary (call it a
+theoretical paper can play the role of a sentiment dictionary (call it a
 a pseudo sentiment lexicon) with a log ratio of inclusion in the type of
 paper, where a value of 100 is the most likely to be a word in that type
 of paper. It easily reframes the topic of measuring causal inference in
@@ -171,26 +167,26 @@ to be in a published paper than a standard word, with overlap in the
 plausible estimate regions.
 
 To see in granual detail, the words at the extreme of these sentiments
-withing published and unpublished
+within published and unpublished
 papers.
 
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
 
 Take a look at the words used here. I can’t for one draw a specific
 difference in themes, so perhaps the NBER papers that do get published
-vs those that don’t really aren’t so different\!
+vs unpublished really are not so different\!
 
 ### Conclusion: the wider economics publishing pipeline
 
-This was just a quick dive in to some data I’ve been collecting and
-working with recently, a way of documenting things that I have looked at
-and practicing writing at the same time.
+This was a quick dive in to some data I’ve been collecting and working
+with recently, a way of documenting things that I have looked over,
+practising writing at the same time.
 
-I hope you enjoyed the post; I have some bigger ideas in the work
-research in this area beyond the small scope of publication outcomes of
-the NBER working papers. Follow on for updates over the next few months
-as I collect more data sources, get a better idea of what I’m dealing
-with and form a more direct research question.
+I hope you enjoyed the post; I have some bigger ideas in the work beyond
+the scope of publication outcomes of the NBER working papers. Follow for
+updates over the next few months as I collect more data sources, get a
+better idea of what I’m dealing with and form a more direct research
+question.
 
 *Note:* text analysis methods and code in R are inspired by an [older
 post on political tweets](http://varianceexplained.org/r/trump-tweets),

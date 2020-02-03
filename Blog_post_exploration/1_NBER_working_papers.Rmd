@@ -1,8 +1,12 @@
 ---
-title: "Working Papers in Economics: the NBER Series"
-author: "Senan Hogan-Hennessy, "
+title: 'Working Papers in Economics: the NBER Series'
+author: 'Senan Hogan-Hennessy, '
 date: "2 January 2020"
-output: github_document
+output:
+  github_document: default
+  html_document:
+    df_print: paged
+  pdf_document: default
 ---
 ```{r setup, include=F}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = F)
@@ -23,7 +27,7 @@ Papers.data <- Papers.data %>% filter(title != 'Paper Not Found', !is.na(date), 
 
 Publishing is a main goal of academic economists, but rarely is it as simple
 as write the paper then publish.
-Projects can take years and often transform over the work, data analysis and 
+Projects can take years and often transform over work, data analysis and 
 dissemination of results.
 An important part of gauging the impact of research in progress is releasing a working paper.
 The National Bureau of Economic Research (NBER) hosts a heavily circulated 
@@ -67,13 +71,11 @@ It is clear, however, that the internet has been a major part of disseminating r
 as before the online listing of working papers researchers would only have the chance to read colleague manuscripts in person
 or at conferences.  Today we can take a phone from our pockets, google 
 something like 'NBER working paper on economics publishing' and read cutting edge research before it is even published.
-I will make a note to count the number of working papers from all sources with the next data source, 
-to measure rise in internet listing of working papers in general.
 
 The papers are sorted in to subjects areas, the [NBER research area programmes](https://www.nber.org/programs/) (the graph below only shows top 10 areas).
-Note: papers can be cross registered to multiple areas, and are more likely to be so for recent years.
+Note, however, that papers can be cross registered to multiple areas, and are more likely to be so for recent years.
 
-```{r, echo=F, fig.height = 4.5, fig.width = 7, fig.align = 'center'}
+```{r, echo=F, fig.height = 4, fig.width = 8, fig.align = 'center'}
 # SHow count per year, for each area
 Papers_subjects.data <- Papers.data %>% transmute(
   aging = stri_detect_fixed(nber_area, 'Program on the Economics of Aging'),
@@ -153,9 +155,9 @@ Papers_subjects.data %>%
 ```
 
 Most of the papers go on to be published, but the rate of publishing is certainly not constant.
-In the early days, around 60\% of the working papers are published in peer reviewed journals, going on to peak at 94\% in 1987 before falling to common day.  What drives this ride and fall?
-It is clear that papers since 2015 are still in the pipeline, afterall the NBER series was started
-partially to disseminate knowledge current knowledge in light of publishing lags.
+In the early days, around 60\% of the working papers are published in peer reviewed journals, going on to peak at 94\% in 1987 before falling to common day.  What drives this rise and fall?
+It is clear that papers since 2015 are still in the pipeline: the NBER series was, afterall, started
+partially to disseminate current knowledge in light of publication lags.
 
 ```{r, echo=F, fig.height = 3, fig.width = 7, fig.align = 'center'}
 # Show rate of publishing by year
@@ -219,7 +221,7 @@ so this hardly counts as a textual difference.  However, a raw word count measur
 by confounding factors.
 Instead consider a log odds ratio to show which words are relatively more likely to be in (eventually) published papers.
 
-```{r, echo=F, fig.height = 4.5, fig.width = 8, fig.align = 'center'}
+```{r, echo=F, fig.height = 5, fig.width = 8, fig.align = 'center'}
 # Calculate odds ratio
 relative_abstract_words <- abstracts_words_count %>%
   filter(count >= 5) %>%
@@ -254,40 +256,41 @@ to tax credits (some unanticipated).
 
 * Algorithm and identification are words related to more recent advances in empiricsm 
 and new software, yet are more likely to be in unpublished papers.  It's suprising to me that
-empiricism does not play an obvious role here, yet the issue could do wth further digging.
+empiricism does not play an obvious role here, yet the issue could do with further digging.
 
 
 ### Empiricism \& Causal Inference
 
 Economics is far more concerned with empirical, causal inference than when the NBER series began in 1973:
-let's show test this <i>empirically</i>.
+let's show this <i>empirically</i>.
 
 Sentiment analysis is commonly applied to text data as an easy coding operation
-to measure sentiment -- commonly to measure happiness, or perhaps [1am angry tweets](http://varianceexplained.org/r/trump-tweets/) -- and the same process can textually measure rate of empiricism.
+to measure sentiment -- commonly to measure happiness, or perhaps [1am angry tweets](http://varianceexplained.org/r/trump-tweets/) -- and the same process can textually measure 
+allignment with causal or theortical papers.
 First I'll form a list of a hundred words most likely to appear in abstracts that use the word
 'causal' -- denoting these as causal papers.
 Also list the top hundred words in papers that use the words 
 'theory' and 'equilibrium' -- denoting these theoretical papers.
 
-```{r, echo=F, fig.height = 3.5, fig.width = 6.5, fig.align = 'center'}
+```{r, echo=F, fig.height = 3, fig.width = 6.5, fig.align = 'center'}
 # Calculate odds ratio
 Papers.data %>% 
   transmute(published = (published != ''),
             date     = as.Date(date),
             abstract = abstract,
             year = as.integer(format(date, '%Y'))) %>%
-  mutate(empirical = 0 < str_detect(abstract, 'causal|cause'),
+  mutate(causal = 0 < str_detect(abstract, 'causal|cause'),
          theoretical = 0 < str_detect(abstract, 'theory|equilib')) %>%
   group_by(year) %>% 
-  summarise(empirical = sum(empirical),
+  summarise(causal = sum(causal),
             theoretical = sum(theoretical),
             count = n()) %>%
   transmute(year = year,
-            empirical = empirical / count,
+            causal = causal / count,
             theoretical = theoretical / count) %>%
   reshape(timevar = 'paper_type',
-          times = c('empirical', 'theoretical'),
-          varying = c('empirical', 'theoretical'),
+          times = c('causal', 'theoretical'),
+          varying = c('causal', 'theoretical'),
           v.names = 'count', direction = 'long', new.row.names = 1:1000) %>%
   mutate(label = if_else(year == max(year), paper_type, NA_character_)) %>%
   ggplot(aes(x = year, y = count, 
@@ -303,7 +306,7 @@ Papers.data %>%
   scale_x_continuous(limits = c(1975,2025))
 ```
  
-A listing of words most likely (relatively) to appear in a causal or ethoretical paper
+A listing of words most likely (relatively) to appear in a causal or theoretical paper
 can play the role of a sentiment dictionary (call it a a pseudo sentiment lexicon) with a 
 log ratio of inclusion in the type of paper, where a value of 100 is the most likely to be a word
 in that type of paper.  It easily reframes the topic of measuring causal inference in the working papers
@@ -363,7 +366,7 @@ And for theoretical papers:
 Take a step back and make sure the words make sense -- one would hope that 'causality' is a causal
 word, and that 'theory' is a theoretical word!
 
-```{r, echo=F, fig.height = 3.5, fig.width = 5.5, fig.align = 'center'}
+```{r, echo=F, fig.height = 2.5, fig.width = 5.5, fig.align = 'center'}
 # Sentiment analysis with my own dictionary here
 # Reference Dictionary-based sentiment here
 # https://cbail.github.io/SICSS_Dictionary-Based_Text_Analysis.html#dictionary-based-quantitative-text-analysis
@@ -410,10 +413,10 @@ papers, and a Poisson count test to estimate whether they are more likely to be 
 unpublished papers.  Both estimates are negative, as in both types are words are less likely to be 
 in a published paper than a standard word, with overlap in the plausible estimate regions.
 
-To see in granual detail, the words at the extreme of these sentiments withing published
+To see in granual detail, the words at the extreme of these sentiments within published
 and unpublished papers.
 
-```{r, echo=F, fig.height = 4.5, fig.width = 9, fig.align = 'center'}
+```{r, echo=F, fig.height = 5.5, fig.width = 9, fig.align = 'center'}
 relative_abstract_words %>%
   inner_join(pseudo_dictionary, by = 'word') %>%
   mutate(sentiment = reorder(sentiment, -logratio),
@@ -435,18 +438,18 @@ relative_abstract_words %>%
 ```
 
 Take a look at the words used here.  I can't for one draw a specific difference in themes,
-so perhaps the NBER papers that do get published vs those that don't really aren't so different!
+so perhaps the NBER papers that do get published vs unpublished really are not so different!
 
 
 ### Conclusion: the wider economics publishing pipeline
 
-This was just a quick dive in to some data I've been collecting and working with recently, 
-a way of documenting things that I have looked at and practicing writing at the same time.
+This was a quick dive in to some data I've been collecting and working with recently, 
+a way of documenting things that I have looked over, practising writing at the same time.
 
 I hope you enjoyed the post; I have some bigger ideas in the work
-research in this area beyond the small scope of 
+beyond the scope of 
 publication outcomes of the NBER working papers.
-Follow on for updates over the next few months as I 
+Follow for updates over the next few months as I 
 collect more data sources, get a better idea of what I'm dealing with and form a 
 more direct research question.
 

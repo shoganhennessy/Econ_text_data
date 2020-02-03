@@ -147,6 +147,11 @@ Top Five journals in economics: the American Economic Review, Econometrica,the J
 https://voxeu.org/article/publishing-and-promotion-economics-tyranny-top-five
 https://www.nber.org/papers/w25093 
 
+> Indeed, serious theoretical and empirical
+> work should be conducted to understand this disease better and suggest possible treatments. The problem
+> will probably require challenging techniques in applied mechanism design.
+> 
+> -- [Top5itis, R Serrano (2018)](http://hdl.handle.net/10419/202594)
 
 -> measure citations from making a top 5, and follow on.
 ^Note that the graph or statistics on that LOOK like some causal identification of the effect, which is not the case
@@ -166,8 +171,9 @@ Articles.data %>%
 
 
 Draw a line graph for author cumulative citations, years after first publication.
-NOTE: attributing citations to year of publication and not year an reader cites the previous work (which I will consider later in network effects).
+NOTE: attributing citations to year of publication and not year in which a reader cites the previous work in a new publication (which I will consider later in network effects).
 ```{r, results='asis'}
+# create a citation count per economist per year and year since first publication
 Author_citation_count.data <- Economists_articles.links %>% 
   left_join(select(Economists.data, url, name, 
                    institution, affiliation, degree,) %>% 
@@ -177,32 +183,51 @@ Author_citation_count.data <- Economists_articles.links %>%
          title, publication_date, journal_title, citation_count) %>%
   filter(!is.na(citation_count)) %>%
   group_by(author_name, publication_date) %>%
-  summarise(total_citations = sum(citation_count, na.rm = T)) 
-
-Author_cumulative_citations.data <- 
-  Author_citation_count.data %>%
+  summarise(total_citations = sum(citation_count, na.rm = T)) %>%
   arrange(author_name, publication_date) %>%
   group_by(author_name) %>%
-  mutate(cum_citations = cumsum(total_citations),
-         since_first = c(1:n())-1)
+  mutate(since_first = publication_date - first(publication_date))
 
+# Add empty values for years since up to 40 if not listed in data (i.e. didn't publish in that year)
+distinct_names <- Author_citation_count.data %>% 
+  select(author_name) %>% distinct() %>% pull(author_name)
+
+balanced_data <- matrix(ncol = 2, nrow = 41*length(distinct_names)) %>% data.frame()
+colnames(balanced_data) <- c('author_name', 'since_first')
+
+balanced_data$author_name <- distinct_names %>% 
+  lapply(function(x) rep(x, 41)) %>% unlist()
+balanced_data$since_first <- c(0:40) %>% rep(length(distinct_names))
+
+## add on misisng values and a cumulative count of citatins
+Author_cumulative_citations.data <- balanced_data %>% 
+  left_join(Author_citation_count.data) %>%
+  group_by(author_name) %>%
+  replace_na(list(total_citations = 0)) %>%
+  mutate(publication_date = c(1:n()) - 1 + first(publication_date),
+         cum_citations = cumsum(total_citations)) %>%
+  filter(publication_date < 2020) 
+
+# SHow mean citations every year since first publication
 Author_cumulative_citations.data %>%
   group_by(since_first) %>%
-  summarise(cum_citations = mean(cum_citations)) %>%
+  summarise(mean_citations = mean(total_citations),
+            count = n()) %>%
+  mutate(cum_citations = cumsum(mean_citations)) %>%
   ggplot(aes(x = since_first, y = cum_citations)) +
-  geom_point()
-## MAKE ZERO ENTRIES FOR WHEN NO ENTRIES UP TO 40
-
-
+  geom_point() +
+  scale_x_continuous(name = 'Year Since First Publication', breaks = seq(0, 40, by = 5)) +
+  scale_y_continuous(name = 'Cumulative Mean Citations',
+                     breaks = seq(0, 800, by = 200), limits = c(0,800))
 ```
-
-
 
 
 ^ Test the correlation for an article in top 10 making a career.
 
 ^ Compare to people who make 6-10 : weakly comparable, perhaps, so note the thoughts.
+```{r, results='asis'}
 
+```
 
 
 ### Link to the NBER
