@@ -65,84 +65,15 @@ progresses.
 
 ### Inequality in Publication Citations
 
-Draw a Gini coefficient for citations among articles.
-
-``` r
-# Gini coefficient for article citations.
-Articles.data %>% 
-  filter(!is.na(citation_count)) %>%
-  pull(citation_count) %>% reldist::gini()
-```
-
-    ## [1] 0.3995052
-
 Histogram of citations for different periods
-
-``` r
-# Gini coefficient for article citations.
-Articles.data %>% 
-  filter(!is.na(citation_count)) %>%
-  ggplot(aes(x = citation_count)) + 
-  geom_histogram(binwidth = 1)
-```
-
-<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
-
-``` r
-# Per year summarise 
-Citation_count.data <- Articles.data %>% 
-  filter(!is.na(citation_count) & !is.na(publication_date)) %>%
-  group_by(publication_date) %>%
-  summarise(total_citations = sum(citation_count, na.rm = T),
-            mean_citations = round(mean(citation_count, na.rm = T)),
-            total_articles = n(),
-            gini_coefficient = reldist::gini(citation_count)) 
-
-# Gini coefficient for article citations.
-Citation_count.data %>%
-  filter(total_articles > 100) %>%
-  ggplot(aes(x = publication_date, y = gini_coefficient)) +
-  geom_line() +
-  scale_x_continuous(name = 'Year Published', breaks = seq(1975, 2020, by = 5)) +
-  scale_y_continuous(name = 'Citations Gini Index (among articles)',
-                     breaks = seq(0, 0.5, by = 0.1), limits = c(0,0.5))
-```
-
-<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-4-2.png" style="display: block; margin: auto;" />
+<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
 
 ^ Draw a coefficient for the earlier period vs later period : larger
 field, more economists, but is it more top loaded now than before?
 Perhaps less so now?
 
 Draw a Gini coefficient for citations among authors per year.
-
-Note: if going with the Gini index, then perhaps this should be
-collapsing a cumulative count of citations per year among authors – or
-at least consider that idea as collecting ‘wealth’ of citations.
-
-``` r
-# Gini coefficient for authors.
-Economists_articles.links %>% 
-  left_join(select(Economists.data, url, name, 
-                   institution, affiliation, degree,) %>% 
-              rename(author_name = name, author_url = url), by = 'author_url') %>%
-  left_join(rename(Articles.data, article_url = url), by = 'article_url') %>%
-  select(author_name, institution, affiliation, degree, 
-         title, publication_date, journal_title, citation_count) %>%
-  filter(!is.na(citation_count)) %>%
-  group_by(author_name, publication_date) %>%
-  summarise(total_citations = sum(citation_count, na.rm = T)) %>%
-  group_by(publication_date) %>%
-  summarise(gini_coefficient = reldist::gini(total_citations)) %>%
-  filter(publication_date > 1975) %>%
-  ggplot(aes(x = publication_date, y = gini_coefficient)) +
-  geom_line() +
-  scale_x_continuous(name = 'Year Published', breaks = seq(1975, 2020, by = 5)) +
-  scale_y_continuous(name = 'Citations Gini Index (among authors)',
-                     breaks = seq(0, 0.5, by = 0.1), limits = c(0,0.5))
-```
-
-<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
+<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
 
 Think about whether sharing of publications/work over the internet leads
 to more or less inequality -\> perhaps a better question for the
@@ -150,12 +81,18 @@ upcoming network analyses.
 
 ### The Top 5
 
-Economists aim for the top 5. READ OVER: Gibson, J, D L Anderson and J
-Tressler (2017), “Citations or journal quality: Which is rewarded more
-in the academic labor market?” Economic Inquiry 55(4): 1945–1965.
+Economists aim for the top 5. READ OVER:
+
+Gibson, J, D L Anderson and J Tressler (2017), “Citations or journal
+quality: Which is rewarded more in the academic labor market?” Economic
+Inquiry 55(4): 1945–1965.
+
 Hamermesh, D S (2018), “Citations in economics: Measurement, uses, and
-impacts,” Journal of Economic Literature 56(1): 115–56.
+impacts,” Journal of Economic Literature 56(1):
+115–56.
+
 <https://voxeu.org/article/publishing-and-promotion-economics-tyranny-top-five>
+
 <https://www.nber.org/papers/w25093>
 
 Top Five journals in economics: the American Economic Review,
@@ -176,13 +113,27 @@ language.
 
 SHow how many articles in the top 10. The accepted top 5 is not the top
 5 by total or mean citation count, documented previously in (Anauati et
-al. 2018 NBER WP 25101).
+al. 2018 NBER WP
+25101).
+
+| journal\_title                         | mean\_citations | total\_citations | total\_articles |
+| :------------------------------------- | --------------: | ---------------: | --------------: |
+| American Economic Review               |             102 |           301142 |            2954 |
+| Journal of Political Economy           |             112 |           142477 |            1271 |
+| The Quarterly Journal of Economics     |             137 |           129378 |             945 |
+| Econometrica                           |             103 |           129028 |            1247 |
+| The Review of Economics and Statistics |              84 |            97737 |            1169 |
+| Journal of Finance                     |             112 |            97687 |             870 |
+| Economic Journal                       |              83 |            93447 |            1132 |
+| Journal of Financial Economics         |             107 |            92602 |             866 |
+| Journal of Econometrics                |              84 |            89413 |            1068 |
+| Journal of Public Economics            |              73 |            88089 |            1207 |
 
 Draw a line graph for author cumulative citations, years after first
 publication. NOTE: attributing citations to year of publication and not
 year in which a reader cites the previous work in a new publication
 (which I will consider later in network effects).
-<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
 
 Draw a graph for author cumulative citations, years after first
 publication in a top 5. Add a line for year after making a top 6-10
@@ -194,86 +145,10 @@ consider later in network effects).
 
 #### Re-do as an event study :
 
-Draw equation for this pseudo-*event*.
+Draw equation for this
+pseudo-*event*.
 
-``` r
-# Conventional top journals
-Top5_journals <- c('American Economic Review',
-                   'Journal of Political Economy',
-                   'The Quarterly Journal of Economics',
-                   'Econometrica',
-                   'Review of Economic Studies')
-
-# Comparable next 6.
-TopOther_journals <- Journals_articles.data %>% head(10) %>% 
-  pull(journal_title) %>% setdiff(Top5_journals)
-
-# Find date of a top 5 and Top other journal for each author
-Author_cumulative_citations.data <- Economists_articles.links %>% 
-  left_join(select(Economists.data, url, name, 
-                   institution, affiliation, degree,) %>% 
-              rename(author_name = name, author_url = url), by = 'author_url') %>%
-  left_join(rename(Articles.data, article_url = url), by = 'article_url') %>%
-  select(author_name, institution, affiliation, degree, 
-         title, publication_date, journal_title, citation_count) %>%
-  mutate(top5 = as.numeric(journal_title %in% Top5_journals),
-         topother = as.numeric(journal_title %in% TopOther_journals)) %>%
-  group_by(author_name, publication_date) %>%
-  summarise(top5_count = sum(top5),
-            topother_count = sum(topother)) %>%
-  filter(top5_count + topother_count > 0) %>%
-  right_join(Author_cumulative_citations.data) %>%
-  replace_na(list(top5_count = 0, topother_count = 0))
-  
-
-
-# Top5_since
-Top5_since.data <- Author_cumulative_citations.data %>%
-  mutate(top5 = as.numeric(top5_count > 0)) %>%
-  arrange(author_name, publication_date) %>%
-  group_by(author_name) %>% filter(max(top5) > 0) %>%
-  mutate(since_first_top5 = publication_date - min(((top5!=1)+1) * publication_date)) %>%
-  select(author_name, publication_date, top5, since_first_top5, total_citations) %>%
-  arrange(author_name, since_first_top5)
-
-# Top other since
-Topother_since.data <- Author_cumulative_citations.data %>%
-  mutate(topother = as.numeric(topother_count > 0)) %>%
-  group_by(author_name) %>% filter(max(topother) > 0) %>%
-  mutate(since_first_topother = publication_date - min(((topother!=1)+1) * publication_date)) %>%
-  select(author_name, publication_date, topother, since_first_topother, total_citations, cum_citations)
-
-# Draw event study style graph, for the top5
-coefficient_range <- c(min(Top5_since.data$since_first_top5):
-                       max(Top5_since.data$since_first_top5))
-
-Top5.eventstudy <- Top5_since.data %>%
-  filter(total_citations > 0) %>%
-  lm(log(total_citations) ~ as.factor(since_first_top5), data = .) %>%
-  broom::tidy() %>% slice(-1) %>% 
-  mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
-  filter(abs(coefficient) < 21) %>%
-  ggplot(aes(x = coefficient, y = estimate)) + geom_point() +
-  ggtitle('Log Citations by year to author first\ntop5 publication')
-
-# Draw event study style graph, for the top other
-coefficient_range <- c(min(Topother_since.data$since_first_topother):
-                       max(Topother_since.data$since_first_topother))
-
-Topother.eventstudy <- Topother_since.data %>%
-  filter(total_citations > 0) %>%
-  lm(log(total_citations) ~ as.factor(since_first_topother), data = .) %>%
-  broom::tidy() %>% slice(-1) %>% 
-  mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
-  filter(abs(coefficient) < 21) %>%
-  ggplot(aes(x = coefficient, y = estimate)) + geom_point() +
-  ggtitle('Log Citations by year to author first\ntop other publication')
-
-# Show both event graphs
-gridExtra::grid.arrange(Top5.eventstudy, Topother.eventstudy, nrow = 1)
-```
-
-<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
+<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
 
 ### Conclusion:
 

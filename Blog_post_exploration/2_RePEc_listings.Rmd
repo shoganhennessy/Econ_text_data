@@ -41,7 +41,7 @@ It is however, a repository only within the economics sphere: citations are only
 ### Citations
 
 For a sanity check, take a look at the most prolific authors in the field by citation count.<sup id="a1">[2](#f2)</sup>
-```{r, echo=F}
+```{r, echo=F, results='asis'}
 # The most prolific authors, within these data
 ## WHo have the most citations, in these data
 Economists_citations.data <- Economists_articles.links %>% 
@@ -69,40 +69,13 @@ Call it a point of interest to rank economists by better measures as this projec
 
 ### Inequality in Publication Citations
 
-Draw a Gini coefficient for citations among articles.
-```{r, echo=T}
-# Gini coefficient for article citations.
-Articles.data %>% 
-  filter(!is.na(citation_count)) %>%
-  pull(citation_count) %>% reldist::gini()
-```
-
-
 Histogram of citations for different periods
-```{r, echo=T}
+```{r, echo=F}
 # Gini coefficient for article citations.
 Articles.data %>% 
   filter(!is.na(citation_count)) %>%
   ggplot(aes(x = citation_count)) + 
   geom_histogram(binwidth = 1)
-
-# Per year summarise 
-Citation_count.data <- Articles.data %>% 
-  filter(!is.na(citation_count) & !is.na(publication_date)) %>%
-  group_by(publication_date) %>%
-  summarise(total_citations = sum(citation_count, na.rm = T),
-            mean_citations = round(mean(citation_count, na.rm = T)),
-            total_articles = n(),
-            gini_coefficient = reldist::gini(citation_count)) 
-
-# Gini coefficient for article citations.
-Citation_count.data %>%
-  filter(total_articles	> 100) %>%
-  ggplot(aes(x = publication_date, y = gini_coefficient)) +
-  geom_line() +
-  scale_x_continuous(name = 'Year Published', breaks = seq(1975, 2020, by = 5)) +
-  scale_y_continuous(name = 'Citations Gini Index (among articles)',
-                     breaks = seq(0, 0.5, by = 0.1), limits = c(0,0.5))
 ```
 
 ^ Draw a coefficient for the earlier period vs later period : larger field, more economists, but is it more top loaded now than before?  Perhaps less so now?
@@ -110,10 +83,7 @@ Citation_count.data %>%
 
 
 Draw a Gini coefficient for citations among authors per year.
-
-Note: if going with the Gini index, then perhaps this should be collapsing a cumulative count of citations
-per year among authors -- or at least consider that idea as collecting 'wealth' of citations.
-```{r, echo=T}
+```{r, echo=F}
 # Gini coefficient for authors.
 Economists_articles.links %>% 
   left_join(select(Economists.data, url, name, 
@@ -132,7 +102,7 @@ Economists_articles.links %>%
   geom_line() +
   scale_x_continuous(name = 'Year Published', breaks = seq(1975, 2020, by = 5)) +
   scale_y_continuous(name = 'Citations Gini Index (among authors)',
-                     breaks = seq(0, 0.5, by = 0.1), limits = c(0,0.5))
+                     breaks = seq(0.3, 0.55, by = 0.05), limits = c(0.3,0.55))
   
 ```
 
@@ -142,9 +112,13 @@ Think about whether sharing of publications/work over the internet leads to more
 ### The Top 5
 
 Economists aim for the top 5.  READ OVER:
+
 Gibson, J, D L Anderson and J Tressler (2017), "Citations or journal quality: Which is rewarded more in the academic labor market?" Economic Inquiry 55(4): 1945–1965.
+
 Hamermesh, D S (2018), “Citations in economics: Measurement, uses, and impacts,” Journal of Economic Literature 56(1): 115–56.
+
 https://voxeu.org/article/publishing-and-promotion-economics-tyranny-top-five
+
 https://www.nber.org/papers/w25093 
 
 Top Five journals in economics: the American Economic Review, Econometrica,the Journal of Political Economy,the Quarterly Journal of Economics, and the Review of Economic Studies.
@@ -160,7 +134,7 @@ Top Five journals in economics: the American Economic Review, Econometrica,the J
 
 SHow how many articles in the top 10.
 The accepted top 5 is not the top 5 by total or mean citation count, documented previously in (Anauati et al. 2018 NBER WP 25101).
-```{r, results='asis'}
+```{r, echo = F, results='asis'}
 Journals_articles.data <- Articles.data %>% 
   filter(!is.na(citation_count) & !is.na(publication_date)) %>%
   group_by(journal_title) %>%
@@ -168,11 +142,13 @@ Journals_articles.data <- Articles.data %>%
             total_citations = sum(citation_count, na.rm = T),
             total_articles = n()) %>%
   arrange(-total_citations)
+
+Journals_articles.data %>% head(10) %>% knitr::kable(format = 'markdown')
 ```
 
 Draw a line graph for author cumulative citations, years after first publication.
 NOTE: attributing citations to year of publication and not year in which a reader cites the previous work in a new publication (which I will consider later in network effects).
-```{r, fig.height = 3, fig.width = 7}
+```{r, echo = F, fig.height = 3, fig.width = 7}
 # create a citation count per economist per year and year since first publication
 Author_citation_count.data <- Economists_articles.links %>% 
   left_join(select(Economists.data, url, name, 
@@ -216,7 +192,7 @@ Author_cumulative_citations.data %>%
   ggplot(aes(x = since_first, y = mean_citations)) +
   geom_point() +
   scale_x_continuous(name = 'Year Since First Publication', breaks = seq(0, 40, by = 5)) +
-  scale_y_continuous(name = 'Mean Citations')
+  scale_y_continuous(name = 'Mean Citations', limits = c(0,80))
 ```
 
 Draw a graph for author cumulative citations, years after first publication in a top 5.
@@ -231,8 +207,7 @@ NOTE: attributing citations to year of publication and not year in which a reade
 
 Draw equation for this pseudo-*event*.
 
-
-```{r, echo = T, fig.height = 4.5, fig.width = 9.5}
+```{r, echo = F, fig.height = 4.5, fig.width = 9.5}
 # Conventional top journals
 Top5_journals <- c('American Economic Review',
                    'Journal of Political Economy',
@@ -288,9 +263,14 @@ Top5.eventstudy <- Top5_since.data %>%
   lm(log(total_citations) ~ as.factor(since_first_top5), data = .) %>%
   broom::tidy() %>% slice(-1) %>% 
   mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
-  filter(abs(coefficient) < 21) %>%
+  filter(abs(coefficient) < 21)  %>%
+  mutate(before = ifelse(coefficient < 0 , estimate, NA),
+         after  = ifelse(0 <= coefficient, estimate, NA)) %>%
   ggplot(aes(x = coefficient, y = estimate)) + geom_point() +
-  ggtitle('Log Citations by year to author first\ntop5 publication')
+  ggtitle('Log Citations by year to author first\ntop5 publication') +
+  ylim(0, 1) + geom_smooth(span = 1, se = F) +
+  geom_smooth(aes(x = coefficient, y = before), method = 'lm', se = F, colour = 'red') +
+  geom_smooth(aes(x = coefficient, y = after ), method = 'lm', se = F, colour = 'red')
 
 # Draw event study style graph, for the top other
 coefficient_range <- c(min(Topother_since.data$since_first_topother):
@@ -302,8 +282,13 @@ Topother.eventstudy <- Topother_since.data %>%
   broom::tidy() %>% slice(-1) %>% 
   mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
   filter(abs(coefficient) < 21) %>%
+  mutate(before = ifelse(coefficient < 0 , estimate, NA),
+         after  = ifelse(0 <= coefficient, estimate, NA)) %>%
   ggplot(aes(x = coefficient, y = estimate)) + geom_point() +
-  ggtitle('Log Citations by year to author first\ntop other publication')
+  ggtitle('Log Citations by year to author first\ntop other publication') +
+  ylim(0, 1) + geom_smooth(span = 1, se = F) +
+  geom_smooth(aes(x = coefficient, y = before), method = 'lm', se = F, colour = 'red') +
+  geom_smooth(aes(x = coefficient, y = after ), method = 'lm', se = F, colour = 'red')
 
 # Show both event graphs
 gridExtra::grid.arrange(Top5.eventstudy, Topother.eventstudy, nrow = 1)
