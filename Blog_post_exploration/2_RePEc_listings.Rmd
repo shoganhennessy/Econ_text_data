@@ -168,19 +168,11 @@ Journals_articles.data <- Articles.data %>%
             total_citations = sum(citation_count, na.rm = T),
             total_articles = n()) %>%
   arrange(-total_citations)
-
-Journals_articles.data %>% head(10) %>% 
-  knitr::kable(format = 'markdown')
-
-Journals.data %>% head(10) %>% 
-  select(-c('abstract_views', 'downloads', 'publisher', 'items_listed')) %>% 
-  knitr::kable(format = 'markdown')
 ```
-
 
 Draw a line graph for author cumulative citations, years after first publication.
 NOTE: attributing citations to year of publication and not year in which a reader cites the previous work in a new publication (which I will consider later in network effects).
-```{r, results='asis'}
+```{r, fig.height = 3, fig.width = 7}
 # create a citation count per economist per year and year since first publication
 Author_citation_count.data <- Economists_articles.links %>% 
   left_join(select(Economists.data, url, name, 
@@ -221,12 +213,10 @@ Author_cumulative_citations.data %>%
   group_by(since_first) %>%
   summarise(mean_citations = mean(total_citations),
             count = n()) %>%
-  mutate(cum_citations = cumsum(mean_citations)) %>%
-  ggplot(aes(x = since_first, y = cum_citations)) +
+  ggplot(aes(x = since_first, y = mean_citations)) +
   geom_point() +
   scale_x_continuous(name = 'Year Since First Publication', breaks = seq(0, 40, by = 5)) +
-  scale_y_continuous(name = 'Cumulative Mean Citations',
-                     breaks = seq(0, 800, by = 200), limits = c(0,800))
+  scale_y_continuous(name = 'Mean Citations')
 ```
 
 Draw a graph for author cumulative citations, years after first publication in a top 5.
@@ -239,10 +229,10 @@ NOTE: attributing citations to year of publication and not year in which a reade
 #### Re-do as an event study :
 
 
+Draw equation for this pseudo-*event*.
 
 
-
-```{r, results='asis'}
+```{r, echo = T, fig.height = 4.5, fig.width = 9.5}
 # Conventional top journals
 Top5_journals <- c('American Economic Review',
                    'Journal of Political Economy',
@@ -268,23 +258,19 @@ Author_cumulative_citations.data <- Economists_articles.links %>%
   summarise(top5_count = sum(top5),
             topother_count = sum(topother)) %>%
   filter(top5_count + topother_count > 0) %>%
-  right_join(Author_cumulative_citations.data)
+  right_join(Author_cumulative_citations.data) %>%
+  replace_na(list(top5_count = 0, topother_count = 0))
+  
 
 
 # Top5_since
 Top5_since.data <- Author_cumulative_citations.data %>%
   mutate(top5 = as.numeric(top5_count > 0)) %>%
+  arrange(author_name, publication_date) %>%
   group_by(author_name) %>% filter(max(top5) > 0) %>%
   mutate(since_first_top5 = publication_date - min(((top5!=1)+1) * publication_date)) %>%
   select(author_name, publication_date, top5, since_first_top5, total_citations) %>%
-  group_by(since_first_top5) %>%
-  summarise(mean_citations = mean(total_citations),
-            count = n()) %>%
-  mutate(cum_citations = cumsum(mean_citations)) 
-
-Top5_since.data %>%
-  ggplot(aes(x=since_first_top5, y = cum_citations)) + 
-  geom_point()
+  arrange(author_name, since_first_top5)
 
 # Top other since
 Topother_since.data <- Author_cumulative_citations.data %>%
@@ -292,16 +278,35 @@ Topother_since.data <- Author_cumulative_citations.data %>%
   group_by(author_name) %>% filter(max(topother) > 0) %>%
   mutate(since_first_topother = publication_date - min(((topother!=1)+1) * publication_date)) %>%
   select(author_name, publication_date, topother, since_first_topother, total_citations, cum_citations)
-  
 
-           
-ifelse(1 %in% c(1,2), 3, 2)
+# Draw event study style graph, for the top5
+coefficient_range <- c(min(Top5_since.data$since_first_top5):
+                       max(Top5_since.data$since_first_top5))
 
+Top5.eventstudy <- Top5_since.data %>%
+  filter(total_citations > 0) %>%
+  lm(log(total_citations) ~ as.factor(since_first_top5), data = .) %>%
+  broom::tidy() %>% slice(-1) %>% 
+  mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
+  filter(abs(coefficient) < 21) %>%
+  ggplot(aes(x = coefficient, y = estimate)) + geom_point() +
+  ggtitle('Log Citations by year to author first\ntop5 publication')
 
+# Draw event study style graph, for the top other
+coefficient_range <- c(min(Topother_since.data$since_first_topother):
+                       max(Topother_since.data$since_first_topother))
 
+Topother.eventstudy <- Topother_since.data %>%
+  filter(total_citations > 0) %>%
+  lm(log(total_citations) ~ as.factor(since_first_topother), data = .) %>%
+  broom::tidy() %>% slice(-1) %>% 
+  mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
+  filter(abs(coefficient) < 21) %>%
+  ggplot(aes(x = coefficient, y = estimate)) + geom_point() +
+  ggtitle('Log Citations by year to author first\ntop other publication')
 
-
-
+# Show both event graphs
+gridExtra::grid.arrange(Top5.eventstudy, Topother.eventstudy, nrow = 1)
 ```
 
 

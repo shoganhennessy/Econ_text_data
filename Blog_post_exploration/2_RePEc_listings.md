@@ -176,34 +176,7 @@ language.
 
 SHow how many articles in the top 10. The accepted top 5 is not the top
 5 by total or mean citation count, documented previously in (Anauati et
-al. 2018 NBER WP
-25101).
-
-| journal\_title                         | mean\_citations | total\_citations | total\_articles |
-| :------------------------------------- | --------------: | ---------------: | --------------: |
-| American Economic Review               |             102 |           301142 |            2954 |
-| Journal of Political Economy           |             112 |           142477 |            1271 |
-| The Quarterly Journal of Economics     |             137 |           129378 |             945 |
-| Econometrica                           |             103 |           129028 |            1247 |
-| The Review of Economics and Statistics |              84 |            97737 |            1169 |
-| Journal of Finance                     |             112 |            97687 |             870 |
-| Economic Journal                       |              83 |            93447 |            1132 |
-| Journal of Financial Economics         |             107 |            92602 |             866 |
-| Journal of Econometrics                |              84 |            89413 |            1068 |
-| Journal of Public Economics            |              73 |            88089 |            1207 |
-
-| rank | journal\_title                     | score | simple\_IF | recursive\_IF | discounted\_IF | recursive\_discounted\_IF | h\_index | Euclid |
-| ---: | :--------------------------------- | ----: | ---------: | ------------: | -------------: | ------------------------: | -------: | -----: |
-|    1 | The Quarterly Journal of Economics |  2.18 |          1 |             1 |              2 |                         1 |        3 |      4 |
-|    2 | American Economic Review           |  2.99 |         10 |            14 |             12 |                        11 |        1 |      3 |
-|    3 | Journal of Political Economy       |  3.04 |          3 |             2 |              6 |                         2 |        4 |      2 |
-|    4 | Econometrica                       |  3.53 |          4 |             3 |              3 |                         3 |        2 |      1 |
-|    5 | Journal of Economic Literature     |  5.92 |          2 |             5 |              1 |                         5 |       11 |     10 |
-|    6 | Journal of Financial Economics     |  6.20 |          6 |             8 |              8 |                        14 |        6 |      7 |
-|    7 | Review of Economic Studies         |  7.85 |          7 |             4 |              7 |                         7 |        7 |      6 |
-|    8 | Journal of Finance                 |  9.65 |          9 |             7 |             14 |                        13 |        5 |      9 |
-|    9 | Journal of Economic Growth         | 11.56 |          5 |             6 |              4 |                         8 |       45 |     33 |
-|   10 | Journal of Monetary Economics      | 12.13 |         12 |            10 |             16 |                        20 |        8 |      8 |
+al. 2018 NBER WP 25101).
 
 Draw a line graph for author cumulative citations, years after first
 publication. NOTE: attributing citations to year of publication and not
@@ -217,13 +190,90 @@ publication in a top 5. Add a line for year after making a top 6-10
 
 NOTE: attributing citations to year of publication and not year in which
 a reader cites the previous work in a new publication (which I will
-consider later in network
-effects).
+consider later in network effects).
 
 #### Re-do as an event study :
 
-<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />\[1\]
-3
+Draw equation for this pseudo-*event*.
+
+``` r
+# Conventional top journals
+Top5_journals <- c('American Economic Review',
+                   'Journal of Political Economy',
+                   'The Quarterly Journal of Economics',
+                   'Econometrica',
+                   'Review of Economic Studies')
+
+# Comparable next 6.
+TopOther_journals <- Journals_articles.data %>% head(10) %>% 
+  pull(journal_title) %>% setdiff(Top5_journals)
+
+# Find date of a top 5 and Top other journal for each author
+Author_cumulative_citations.data <- Economists_articles.links %>% 
+  left_join(select(Economists.data, url, name, 
+                   institution, affiliation, degree,) %>% 
+              rename(author_name = name, author_url = url), by = 'author_url') %>%
+  left_join(rename(Articles.data, article_url = url), by = 'article_url') %>%
+  select(author_name, institution, affiliation, degree, 
+         title, publication_date, journal_title, citation_count) %>%
+  mutate(top5 = as.numeric(journal_title %in% Top5_journals),
+         topother = as.numeric(journal_title %in% TopOther_journals)) %>%
+  group_by(author_name, publication_date) %>%
+  summarise(top5_count = sum(top5),
+            topother_count = sum(topother)) %>%
+  filter(top5_count + topother_count > 0) %>%
+  right_join(Author_cumulative_citations.data) %>%
+  replace_na(list(top5_count = 0, topother_count = 0))
+  
+
+
+# Top5_since
+Top5_since.data <- Author_cumulative_citations.data %>%
+  mutate(top5 = as.numeric(top5_count > 0)) %>%
+  arrange(author_name, publication_date) %>%
+  group_by(author_name) %>% filter(max(top5) > 0) %>%
+  mutate(since_first_top5 = publication_date - min(((top5!=1)+1) * publication_date)) %>%
+  select(author_name, publication_date, top5, since_first_top5, total_citations) %>%
+  arrange(author_name, since_first_top5)
+
+# Top other since
+Topother_since.data <- Author_cumulative_citations.data %>%
+  mutate(topother = as.numeric(topother_count > 0)) %>%
+  group_by(author_name) %>% filter(max(topother) > 0) %>%
+  mutate(since_first_topother = publication_date - min(((topother!=1)+1) * publication_date)) %>%
+  select(author_name, publication_date, topother, since_first_topother, total_citations, cum_citations)
+
+# Draw event study style graph, for the top5
+coefficient_range <- c(min(Top5_since.data$since_first_top5):
+                       max(Top5_since.data$since_first_top5))
+
+Top5.eventstudy <- Top5_since.data %>%
+  filter(total_citations > 0) %>%
+  lm(log(total_citations) ~ as.factor(since_first_top5), data = .) %>%
+  broom::tidy() %>% slice(-1) %>% 
+  mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
+  filter(abs(coefficient) < 21) %>%
+  ggplot(aes(x = coefficient, y = estimate)) + geom_point() +
+  ggtitle('Log Citations by year to author first\ntop5 publication')
+
+# Draw event study style graph, for the top other
+coefficient_range <- c(min(Topother_since.data$since_first_topother):
+                       max(Topother_since.data$since_first_topother))
+
+Topother.eventstudy <- Topother_since.data %>%
+  filter(total_citations > 0) %>%
+  lm(log(total_citations) ~ as.factor(since_first_topother), data = .) %>%
+  broom::tidy() %>% slice(-1) %>% 
+  mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
+  filter(abs(coefficient) < 21) %>%
+  ggplot(aes(x = coefficient, y = estimate)) + geom_point() +
+  ggtitle('Log Citations by year to author first\ntop other publication')
+
+# Show both event graphs
+gridExtra::grid.arrange(Top5.eventstudy, Topother.eventstudy, nrow = 1)
+```
+
+<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
 
 ### Conclusion:
 
