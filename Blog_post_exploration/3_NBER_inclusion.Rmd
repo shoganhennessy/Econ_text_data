@@ -20,12 +20,6 @@ library(tidytext)
 library(scales)
 theme_set(theme_bw())
 
-# Load the raw working papers data
-Papers.data <- fread('../Data/NBER_data/Papers_data/Working_papers_data_new.csv')
-Papers.data <- Papers.data %>% filter(title != 'Paper Not Found', !is.na(date), date != '') # Filter empty entries 
-# Load the data on published articles
-# Load the data on Economists
-Economists.data <- fread('../Data/RePEc_data/Economists_data/Economists_repec_data.csv')
 ```
 
 
@@ -48,4 +42,14 @@ Comment on the same here:
 https://p-hunermund.com/2017/02/22/judea-pearl-on-angrist-and-pischke/
 
 
-Echo chamber idea 
+### Link to the NBER
+
+Draw maps of where they're from
+and test a correlation: distance to publication home institution and economist base.
+^ Start of testing locality or inclusion. 
+
+
+
+Further opportunity link to NBER working paper and measure change from WP to published article
+
+
