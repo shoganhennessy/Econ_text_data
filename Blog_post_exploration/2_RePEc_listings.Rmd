@@ -8,7 +8,6 @@ output: github_document
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = F, fig.align = 'center')
 library(tidyverse)
 library(data.table)
-library(tidytext)
 ```
 
 ## WORK IN PROGRESS -- to be finished soon.
@@ -66,26 +65,24 @@ There are some familiar faces among the names, which is to be expected! The proc
 Yet [Sarsons (2017)](https://www.aeaweb.org/articles?id=10.1257/aer.p20171126) shows how innapropriate this accounting is by exhibiting the unequal citation rate of return in among economists by gender -- which actually inspired me to work with economics publishing data in the first place!
 Call it a point of interest to rank economists by better measures as this project progresses.
 
-
-### Inequality in Publication Citations
-
-Histogram of citations for different periods
-```{r, echo=F}
-# Gini coefficient for article citations.
-Articles.data %>% 
-  filter(!is.na(citation_count)) %>%
-  ggplot(aes(x = citation_count)) + 
-  geom_histogram(binwidth = 1)
+Citations are, of course, not evenly distributed across researchers in the field;
+the above top ten are at the very top of the field.  But what does the wider distribution look like?
+```{r, echo=F, fig.height = 4, fig.width = 7}
+# Histogram of authors' citations
+Economists_citations.data %>%
+  ggplot(aes(x = total_citations)) + theme_bw() +
+  geom_histogram(aes(y = ..count..), colour='black', fill='#FF6666', alpha=0.2) +
+  scale_x_log10(name = 'Total Citations (log scale)',
+   breaks = scales::trans_breaks('log10', function(x) 10^x),
+   labels = scales::trans_format('log10', scales::math_format(10^.x))) +
+  scale_y_continuous(name = 'Author count')
 ```
-
-^ Draw a coefficient for the earlier period vs later period : larger field, more economists, but is it more top loaded now than before?  Perhaps less so now?
-
 
 
 Draw a Gini coefficient for citations among authors per year.
-```{r, echo=F}
-# Gini coefficient for authors.
-Economists_articles.links %>% 
+```{r, echo=F, fig.height = 3.5, fig.width = 7}
+# Dataframe of author citations by year
+Author_citations.data <- Economists_articles.links %>% 
   left_join(select(Economists.data, url, name, 
                    institution, affiliation, degree,) %>% 
               rename(author_name = name, author_url = url), by = 'author_url') %>%
@@ -94,16 +91,19 @@ Economists_articles.links %>%
          title, publication_date, journal_title, citation_count) %>%
   filter(!is.na(citation_count)) %>%
   group_by(author_name, publication_date) %>%
-  summarise(total_citations = sum(citation_count, na.rm = T)) %>%
+  summarise(citation_count = sum(citation_count, na.rm = T)) 
+
+
+# Gini coefficient for authors' citations, by year
+Author_citations.data %>%
   group_by(publication_date) %>%
-  summarise(gini_coefficient = reldist::gini(total_citations)) %>%
+  summarise(gini_coefficient = reldist::gini(citation_count)) %>%
   filter(publication_date > 1975) %>%
   ggplot(aes(x = publication_date, y = gini_coefficient)) +
-  geom_line() +
+  geom_line(colour = 'orange') + theme_bw() +
   scale_x_continuous(name = 'Year Published', breaks = seq(1975, 2020, by = 5)) +
   scale_y_continuous(name = 'Citations Gini Index (among authors)',
-                     breaks = seq(0.3, 0.55, by = 0.05), limits = c(0.3,0.55))
-  
+                     breaks = seq(0.3, 0.55, by = 0.05), limits = c(0.3,0.55))  
 ```
 
 Think about whether sharing of publications/work over the internet leads to more or less inequality -> perhaps a better question for the upcoming network analyses.
@@ -236,8 +236,6 @@ Author_cumulative_citations.data <- Economists_articles.links %>%
   right_join(Author_cumulative_citations.data) %>%
   replace_na(list(top5_count = 0, topother_count = 0))
   
-
-
 # Top5_since
 Top5_since.data <- Author_cumulative_citations.data %>%
   mutate(top5 = as.numeric(top5_count > 0)) %>%
@@ -312,4 +310,5 @@ Describe data set and opportunity to measure economics publication *outcomes*.
 ***
 ## References
 1. Angrist, Joshua, et al. Inside job or deep impact? Using extramural citations to assess economic scholarship. No. w23698. National Bureau of Economic Research, 2017.
-2. Serrano, Roberto. Top5itis. No. 2018-2. Working Paper, 2018.
+2. Sarsons, Heather. Recognition for group work: Gender differences in academia. American Economic Review 107.5 (2017): 141-45.
+3. Serrano, Roberto. Top5itis. No. 2018-2. Working Paper, 2018.
