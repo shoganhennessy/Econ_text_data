@@ -63,14 +63,10 @@ me to work with economics publishing data in the first place\! Call it a
 point of interest to rank economists by better measures as this project
 progresses.
 
-### Inequality in Publication Citations
-
-Histogram of citations for different periods
+Citations are, of course, not evenly distributed across researchers in
+the field; the above top ten are at the very top of the field. But what
+does the wider distribution look like?
 <img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
-
-^ Draw a coefficient for the earlier period vs later period : larger
-field, more economists, but is it more top loaded now than before?
-Perhaps less so now?
 
 Draw a Gini coefficient for citations among authors per year.
 <img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
@@ -175,4 +171,6 @@ citations within only this large coverage of the field.[↩](#a1)
 1.  Angrist, Joshua, et al. Inside job or deep impact? Using extramural
     citations to assess economic scholarship. No. w23698. National
     Bureau of Economic Research, 2017.
-2.  Serrano, Roberto. Top5itis. No. 2018-2. Working Paper, 2018.
+2.  Sarsons, Heather. Recognition for group work: Gender differences in
+    academia. American Economic Review 107.5 (2017): 141-45.
+3.  Serrano, Roberto. Top5itis. No. 2018-2. Working Paper, 2018.
