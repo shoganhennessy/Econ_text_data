@@ -8,6 +8,19 @@ output: github_document
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = F, fig.align = 'center')
 library(tidyverse)
 library(data.table)
+latexImg = function(latex, markdown=T){
+
+    link = paste0('http://latex.codecogs.com/gif.latex?',
+                  gsub('\\=','%3D',URLencode(latex)))
+
+    # they need to be upper case
+    link = gsub("(%..)","\\U\\1",link,perl=TRUE)
+    if (!markdown){
+        return(link)
+    }
+    return(paste0('![](',link,')'))
+}
+
 ```
 
 ## WORK IN PROGRESS -- to be finished soon.
@@ -71,7 +84,7 @@ the above top ten are at the very top of the field.  But what does the wider dis
 # Histogram of authors' citations
 Economists_citations.data %>%
   ggplot(aes(x = total_citations)) + theme_bw() +
-  geom_histogram(aes(y = ..count..), colour='black', fill='#FF6666', alpha=0.2) +
+  geom_histogram(aes(y = ..count..), bins=50, colour='black', fill='#FF6666', alpha=0.2) +
   scale_x_log10(name = 'Total Citations (log scale)',
    breaks = scales::trans_breaks('log10', function(x) 10^x),
    labels = scales::trans_format('log10', scales::math_format(10^.x))) +
@@ -101,9 +114,9 @@ Author_citations.data %>%
   filter(publication_date > 1975) %>%
   ggplot(aes(x = publication_date, y = gini_coefficient)) +
   geom_line(colour = 'orange') + theme_bw() +
-  scale_x_continuous(name = 'Year Published', breaks = seq(1975, 2020, by = 5)) +
+  scale_x_continuous(name = 'Among Papers in Published in Year', breaks = seq(1975, 2020, by = 5)) +
   scale_y_continuous(name = 'Citations Gini Index (among authors)',
-                     breaks = seq(0.3, 0.55, by = 0.05), limits = c(0.3,0.55))  
+                     breaks = seq(0.3, 0.55, by = 0.05), limits = c(0.3,0.55))
 ```
 
 Think about whether sharing of publications/work over the internet leads to more or less inequality -> perhaps a better question for the upcoming network analyses.
@@ -143,12 +156,17 @@ Journals_articles.data <- Articles.data %>%
             total_articles = n()) %>%
   arrange(-total_citations)
 
-Journals_articles.data %>% head(10) %>% knitr::kable(format = 'markdown')
+Journals_articles.data %>% head(10) %>% 
+  knitr::kable(format = 'markdown',
+    col.names = c('Journal name', 'Mean citations per article', 'Total citations', 'Count articles'))
 ```
 
 Draw a line graph for author cumulative citations, years after first publication.
 NOTE: attributing citations to year of publication and not year in which a reader cites the previous work in a new publication (which I will consider later in network effects).
-```{r, echo = F, fig.height = 3, fig.width = 7}
+
+Drop off from first publication, a result of many authors with only one or very few publications.
+See the difference in the line that only considers author years which contain at least one publication.
+```{r, echo = F, fig.height = 4, fig.width = 9}
 # create a citation count per economist per year and year since first publication
 Author_citation_count.data <- Economists_articles.links %>% 
   left_join(select(Economists.data, url, name, 
@@ -159,9 +177,9 @@ Author_citation_count.data <- Economists_articles.links %>%
          title, publication_date, journal_title, citation_count) %>%
   filter(!is.na(citation_count)) %>%
   group_by(author_name, publication_date) %>%
-  summarise(total_citations = sum(citation_count, na.rm = T)) %>%
-  arrange(author_name, publication_date) %>%
-  group_by(author_name) %>%
+  summarise(total_citations = sum(citation_count, na.rm = T),
+            articles_count = n()) %>%
+  arrange(author_name, publication_date) %>% group_by(author_name) %>%
   mutate(since_first = publication_date - first(publication_date))
 
 # Add empty values for years since up to 40 if not listed in data (i.e. didn't publish in that year)
@@ -179,33 +197,44 @@ balanced_data$since_first <- c(0:40) %>% rep(length(distinct_names))
 Author_cumulative_citations.data <- balanced_data %>% 
   left_join(Author_citation_count.data) %>%
   group_by(author_name) %>%
-  replace_na(list(total_citations = 0)) %>%
+  replace_na(list(total_citations = 0, articles_count = 0)) %>%
   mutate(publication_date = c(1:n()) - 1 + first(publication_date),
          cum_citations = cumsum(total_citations)) %>%
-  filter(publication_date < 2020) 
+  filter(publication_date < 2020)
 
 # SHow mean citations every year since first publication
+# two lines: one considering only years in which author publishes at least once,
+#            one considering all years
 Author_cumulative_citations.data %>%
-  group_by(since_first) %>%
-  summarise(mean_citations = mean(total_citations),
-            count = n()) %>%
-  ggplot(aes(x = since_first, y = mean_citations)) +
-  geom_point() +
+  filter(articles_count > 0) %>% mutate(restricted = 1) %>%
+  rbind(Author_cumulative_citations.data) %>% mutate(restricted = !is.na(restricted)) %>%
+  group_by(since_first, restricted) %>%
+  summarise(mean_citations = mean(total_citations)) %>%
+  ggplot(aes(x = since_first, y = mean_citations, colour = restricted)) +
+  geom_point() + geom_smooth(span = 0.25, se = F) +
   scale_x_continuous(name = 'Year Since First Publication', breaks = seq(0, 40, by = 5)) +
-  scale_y_continuous(name = 'Mean Citations', limits = c(0,80))
+  scale_y_continuous(name = 'Mean Citations', limits = c(0,120)) + 
+  theme_bw() + theme(legend.position = 'right') +
+  scale_colour_manual(values = c('chartreuse4', 'darkviolet'),
+                        name = 'Restriction',
+                        breaks = c(F, T),
+                        labels = c('All years', 
+                                   '\nAt least one\npublication\nin that year'))
 ```
+
+
+#### Event:
 
 Draw a graph for author cumulative citations, years after first publication in a top 5.
 Add a line for year after making a top 6-10 (weakly comparable).
 
 NOTE: attributing citations to year of publication and not year in which a reader cites the previous work in a new publication (which I will consider later in network effects).
 
+The pseudo-*event*: publication in a top journal.
+```{r, echo = F} 
+latexImg('Y_{it}')
+```
 
-
-#### Re-do as an event study :
-
-
-Draw equation for this pseudo-*event*.
 
 ```{r, echo = F, fig.height = 4.5, fig.width = 9.5}
 # Conventional top journals
@@ -264,11 +293,15 @@ Top5.eventstudy <- Top5_since.data %>%
   filter(abs(coefficient) < 21)  %>%
   mutate(before = ifelse(coefficient < 0 , estimate, NA),
          after  = ifelse(0 <= coefficient, estimate, NA)) %>%
-  ggplot(aes(x = coefficient, y = estimate)) + geom_point() +
-  ggtitle('Log Citations by year to author first\ntop5 publication') +
-  ylim(0, 1) + geom_smooth(span = 1, se = F) +
-  geom_smooth(aes(x = coefficient, y = before), method = 'lm', se = F, colour = 'red') +
-  geom_smooth(aes(x = coefficient, y = after ), method = 'lm', se = F, colour = 'red')
+  ggplot(aes(x = coefficient)) + 
+  geom_point(aes(y = estimate)) + 
+  geom_smooth(aes(y = estimate), se = F, colour = 'blue', span = 0.5, alpha = 0.2) +
+  geom_smooth(aes(y = before), method = 'lm', se = F, colour = 'red') +
+  geom_smooth(aes(y = after ), method = 'lm', se = F, colour = 'red') +
+  scale_x_continuous(name = 'Year to Publication', breaks = seq(-20, 20, by = 5)) +
+  scale_y_continuous(name = 'Coefficient Estimate', limits = c(0.2,0.8), breaks = seq(0.2,0.8, by = 0.1)) +
+  theme_bw() + ggtitle('Log Citations by year to author first\ntop 5 publication') +
+  theme(plot.title = element_text(hjust = 0.5))
 
 # Draw event study style graph, for the top other
 coefficient_range <- c(min(Topother_since.data$since_first_topother):
@@ -282,11 +315,15 @@ Topother.eventstudy <- Topother_since.data %>%
   filter(abs(coefficient) < 21) %>%
   mutate(before = ifelse(coefficient < 0 , estimate, NA),
          after  = ifelse(0 <= coefficient, estimate, NA)) %>%
-  ggplot(aes(x = coefficient, y = estimate)) + geom_point() +
-  ggtitle('Log Citations by year to author first\ntop other publication') +
-  ylim(0, 1) + geom_smooth(span = 1, se = F) +
-  geom_smooth(aes(x = coefficient, y = before), method = 'lm', se = F, colour = 'red') +
-  geom_smooth(aes(x = coefficient, y = after ), method = 'lm', se = F, colour = 'red')
+  ggplot(aes(x = coefficient)) + 
+  geom_point(aes(y = estimate)) + 
+  geom_smooth(aes(y = estimate), se = F, colour = 'blue', span = 0.5, alpha = 0.2) +
+  geom_smooth(aes(y = before), method = 'lm', se = F, colour = 'red') +
+  geom_smooth(aes(y = after ), method = 'lm', se = F, colour = 'red') +
+  scale_x_continuous(name = 'Year to Publication', breaks = seq(-20, 20, by = 5)) +
+  scale_y_continuous(name = '', limits = c(0.2,0.8), breaks = seq(0.2,0.8, by = 0.1)) + 
+  theme_bw() + ggtitle('Log Citations by year to author first\ntop other publication') +
+  theme(plot.title = element_text(hjust = 0.5))
 
 # Show both event graphs
 gridExtra::grid.arrange(Top5.eventstudy, Topother.eventstudy, nrow = 1)
@@ -296,8 +333,6 @@ gridExtra::grid.arrange(Top5.eventstudy, Topother.eventstudy, nrow = 1)
 ### Conclusion: 
 
 Describe data set and opportunity to measure economics publication *outcomes*.
-
-
 
 
 **Next up:** Looking at inclusion in the *NBER family*.

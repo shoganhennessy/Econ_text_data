@@ -1,7 +1,7 @@
 The Ideas.RePEc Listings of Articles in Economics
 ================
 Senan Hogan-Hennessy,
-04 Feb 2020
+05 Feb 2020
 
 ## WORK IN PROGRESS – to be finished soon.
 
@@ -112,24 +112,30 @@ SHow how many articles in the top 10. The accepted top 5 is not the top
 al. 2018 NBER WP
 25101).
 
-| journal\_title                         | mean\_citations | total\_citations | total\_articles |
-| :------------------------------------- | --------------: | ---------------: | --------------: |
-| American Economic Review               |             102 |           301142 |            2954 |
-| Journal of Political Economy           |             112 |           142477 |            1271 |
-| The Quarterly Journal of Economics     |             137 |           129378 |             945 |
-| Econometrica                           |             103 |           129028 |            1247 |
-| The Review of Economics and Statistics |              84 |            97737 |            1169 |
-| Journal of Finance                     |             112 |            97687 |             870 |
-| Economic Journal                       |              83 |            93447 |            1132 |
-| Journal of Financial Economics         |             107 |            92602 |             866 |
-| Journal of Econometrics                |              84 |            89413 |            1068 |
-| Journal of Public Economics            |              73 |            88089 |            1207 |
+| Journal name                           | Mean citations per article | Total citations | Count articles |
+| :------------------------------------- | -------------------------: | --------------: | -------------: |
+| American Economic Review               |                        102 |          301142 |           2954 |
+| Journal of Political Economy           |                        112 |          142477 |           1271 |
+| The Quarterly Journal of Economics     |                        137 |          129378 |            945 |
+| Econometrica                           |                        103 |          129028 |           1247 |
+| The Review of Economics and Statistics |                         84 |           97737 |           1169 |
+| Journal of Finance                     |                        112 |           97687 |            870 |
+| Economic Journal                       |                         83 |           93447 |           1132 |
+| Journal of Financial Economics         |                        107 |           92602 |            866 |
+| Journal of Econometrics                |                         84 |           89413 |           1068 |
+| Journal of Public Economics            |                         73 |           88089 |           1207 |
 
 Draw a line graph for author cumulative citations, years after first
 publication. NOTE: attributing citations to year of publication and not
 year in which a reader cites the previous work in a new publication
 (which I will consider later in network effects).
+
+Drop off from first publication, a result of many authors with only one
+or very few publications. See the difference in the line that only
+considers author years which contain at least one publication.
 <img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
+
+#### Event:
 
 Draw a graph for author cumulative citations, years after first
 publication in a top 5. Add a line for year after making a top 6-10
@@ -139,12 +145,12 @@ NOTE: attributing citations to year of publication and not year in which
 a reader cites the previous work in a new publication (which I will
 consider later in network effects).
 
-#### Re-do as an event study :
+The pseudo-*event*: publication in a top
+journal.
 
-Draw equation for this
-pseudo-*event*.
+    ## [1] "![](http://latex.codecogs.com/gif.latex?Y_%7Bit%7D)"
 
-<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
 
 ### Conclusion:
 
