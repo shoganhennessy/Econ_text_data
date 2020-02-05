@@ -145,12 +145,10 @@ NOTE: attributing citations to year of publication and not year in which
 a reader cites the previous work in a new publication (which I will
 consider later in network effects).
 
-The pseudo-*event*: publication in a top
-journal.
+The pseudo-*event*: publication in a top journal. \[Y_{it}\]
+<img src="CodeCogsEqn.svg" />
 
-    ## [1] "![](http://latex.codecogs.com/gif.latex?Y_%7Bit%7D)"
-
-<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
+<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
 
 ### Conclusion:
 

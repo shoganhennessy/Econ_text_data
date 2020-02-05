@@ -8,19 +8,6 @@ output: github_document
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = F, fig.align = 'center')
 library(tidyverse)
 library(data.table)
-latexImg = function(latex, markdown=T){
-
-    link = paste0('http://latex.codecogs.com/gif.latex?',
-                  gsub('\\=','%3D',URLencode(latex)))
-
-    # they need to be upper case
-    link = gsub("(%..)","\\U\\1",link,perl=TRUE)
-    if (!markdown){
-        return(link)
-    }
-    return(paste0('![](',link,')'))
-}
-
 ```
 
 ## WORK IN PROGRESS -- to be finished soon.
@@ -231,10 +218,13 @@ Add a line for year after making a top 6-10 (weakly comparable).
 NOTE: attributing citations to year of publication and not year in which a reader cites the previous work in a new publication (which I will consider later in network effects).
 
 The pseudo-*event*: publication in a top journal.
-```{r, echo = F} 
-latexImg('Y_{it}')
-```
+<img src="2_RePEc_listings_files/CodeCogsEqn.svg" />
 
+
+Restate equation for the event by hand: author and/or year fixed effects.
+
+Equation written in https://www.codecogs.com/latex/eqneditor.php
+see page 4 of https://scholar.harvard.edu/files/borusyak/files/event_studies_may8_website.pdf for event study configurations.
 
 ```{r, echo = F, fig.height = 4.5, fig.width = 9.5}
 # Conventional top journals
@@ -338,12 +328,13 @@ Describe data set and opportunity to measure economics publication *outcomes*.
 **Next up:** Looking at inclusion in the *NBER family*.
 
 ***
+### Footnotes
 <b id="f1">1</b> [Angrist et al. (2017)](https://www.nber.org/papers/w23698) link Econlit and Web of Science for similar coverage, for example.[↩](#a1)
 
 <b id="f2">2</b> Again, note that this citation count is not the same as that in the universe of academic publications or Google Scholar, it is a count of the citations within the RePEc listings so a measure of citations within only this large coverage of the field.[↩](#a1)
 
 ***
-## References
+### References
 1. Angrist, Joshua, et al. Inside job or deep impact? Using extramural citations to assess economic scholarship. No. w23698. National Bureau of Economic Research, 2017.
 2. Sarsons, Heather. Recognition for group work: Gender differences in academia. American Economic Review 107.5 (2017): 141-45.
 3. Serrano, Roberto. Top5itis. No. 2018-2. Working Paper, 2018.
