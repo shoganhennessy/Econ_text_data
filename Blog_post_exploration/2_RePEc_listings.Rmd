@@ -8,6 +8,7 @@ output: github_document
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = F, fig.align = 'center')
 library(tidyverse)
 library(data.table)
+library(plm)
 ```
 
 ## WORK IN PROGRESS -- to be finished soon.
@@ -203,10 +204,10 @@ Author_cumulative_citations.data %>%
   scale_y_continuous(name = 'Mean Citations', limits = c(0,120)) + 
   theme_bw() + theme(legend.position = 'right') +
   scale_colour_manual(values = c('chartreuse4', 'darkviolet'),
-                        name = 'Restriction',
-                        breaks = c(F, T),
-                        labels = c('All years', 
-                                   '\nAt least one\npublication\nin that year'))
+                      name = 'Restriction',
+                      breaks = c(F, T),
+                      labels = c('All years', 
+                                 '\nAt least one\npublication\nin that year'))
 ```
 
 
@@ -218,15 +219,9 @@ Add a line for year after making a top 6-10 (weakly comparable).
 NOTE: attributing citations to year of publication and not year in which a reader cites the previous work in a new publication (which I will consider later in network effects).
 
 The pseudo-*event*: publication in a top journal.
-<img src="2_RePEc_listings_files/CodeCogsEqn.svg" />
 
-
-Restate equation for the event by hand: author and/or year fixed effects.
-
-Equation written in https://www.codecogs.com/latex/eqneditor.php
-see page 4 of https://scholar.harvard.edu/files/borusyak/files/event_studies_may8_website.pdf for event study configurations.
-
-```{r, echo = F, fig.height = 4.5, fig.width = 9.5}
+<img src="2_RePEc_listings_files/CodeCogsEqn.svg" />s
+```{r, echo = F, fig.height = 4.5, fig.width = 10}
 # Conventional top journals
 Top5_journals <- c('American Economic Review',
                    'Journal of Political Economy',
@@ -271,51 +266,72 @@ Topother_since.data <- Author_cumulative_citations.data %>%
   mutate(since_first_topother = publication_date - min(((topother!=1)+1) * publication_date)) %>%
   select(author_name, publication_date, topother, since_first_topother, total_citations, cum_citations)
 
-# Draw event study style graph, for the top5
-coefficient_range <- c(min(Top5_since.data$since_first_top5):
-                       max(Top5_since.data$since_first_top5))
 
+##############################
+## Draw event study style graphs
+
+# Event for a top 5 publication
 Top5.eventstudy <- Top5_since.data %>%
-  filter(total_citations > 0) %>%
-  lm(log(total_citations) ~ as.factor(since_first_top5), data = .) %>%
-  broom::tidy() %>% slice(-1) %>% 
+  filter(total_citations > 0 & abs(since_first_top5) < 21) %>%
+  ungroup() %>% pdata.frame() %>%
+  plm(log(total_citations) ~ as.factor(since_first_top5), data = .,
+      index = c('author_name', 'publication_date'), method = 'within', effect = 'twoways') %>%
+  broom::tidy(conf.int = T, conf.level = 0.95) %>%
+  filter(str_detect(term, 'since_first_top5')) %>%
   mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
-  filter(abs(coefficient) < 21)  %>%
-  mutate(before = ifelse(coefficient < 0 , estimate, NA),
-         after  = ifelse(0 <= coefficient, estimate, NA)) %>%
-  ggplot(aes(x = coefficient)) + 
-  geom_point(aes(y = estimate)) + 
-  geom_smooth(aes(y = estimate), se = F, colour = 'blue', span = 0.5, alpha = 0.2) +
-  geom_smooth(aes(y = before), method = 'lm', se = F, colour = 'red') +
-  geom_smooth(aes(y = after ), method = 'lm', se = F, colour = 'red') +
+  mutate(estimate_before  = ifelse(coefficient < 0 , estimate, NA),
+         estimate_after   = ifelse(0 <= coefficient, estimate, NA),
+         conf.low_before  = ifelse(coefficient < 0,  conf.low, NA),
+         conf.low_after   = ifelse(0 < coefficient, conf.low, NA),
+         conf.high_before = ifelse(coefficient < 0,  conf.high, NA),
+         conf.high_after  = ifelse(0 < coefficient, conf.high, NA)) %>%
+  ggplot(aes(x = coefficient)) +
+  geom_point(aes(y = estimate)) +
+  stat_smooth(aes(y = estimate), geom='line', colour='blue', span=0.5, alpha=0.4, se=F) +
+  geom_line(aes(y = conf.low_before), linetype = 'dashed') +
+  geom_line(aes(y = conf.low_after), linetype = 'dashed') +
+  geom_line(aes(y = conf.high_before), linetype = 'dashed') +
+  geom_line(aes(y = conf.high_after), linetype = 'dashed') +
+  geom_smooth(aes(y = estimate_before), method = 'lm', se = F, colour = 'red') +
+  geom_smooth(aes(y = estimate_after), method = 'lm', se = F, colour = 'red') +
   scale_x_continuous(name = 'Year to Publication', breaks = seq(-20, 20, by = 5)) +
-  scale_y_continuous(name = 'Coefficient Estimate', limits = c(0.2,0.8), breaks = seq(0.2,0.8, by = 0.1)) +
+  scale_y_continuous(name = 'Coefficient estimate',
+                     limits = c(-0.5,1), breaks = seq(-0.5,1,by=0.25)) + 
   theme_bw() + ggtitle('Log Citations by year to author first\ntop 5 publication') +
   theme(plot.title = element_text(hjust = 0.5))
 
 # Draw event study style graph, for the top other
-coefficient_range <- c(min(Topother_since.data$since_first_topother):
-                       max(Topother_since.data$since_first_topother))
-
 Topother.eventstudy <- Topother_since.data %>%
-  filter(total_citations > 0) %>%
-  lm(log(total_citations) ~ as.factor(since_first_topother), data = .) %>%
-  broom::tidy() %>% slice(-1) %>% 
+  filter(total_citations > 0 & abs(since_first_topother) < 21) %>%
+  ungroup() %>% pdata.frame() %>%
+  plm(log(total_citations) ~ as.factor(since_first_topother), data = .,
+      index = c('author_name', 'publication_date'), method = 'within', effect = 'twoways') %>%
+  broom::tidy(conf.int = T, conf.level = 0.95) %>%
+  filter(str_detect(term, 'since_first_topother')) %>%
   mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
-  filter(abs(coefficient) < 21) %>%
-  mutate(before = ifelse(coefficient < 0 , estimate, NA),
-         after  = ifelse(0 <= coefficient, estimate, NA)) %>%
-  ggplot(aes(x = coefficient)) + 
-  geom_point(aes(y = estimate)) + 
-  geom_smooth(aes(y = estimate), se = F, colour = 'blue', span = 0.5, alpha = 0.2) +
-  geom_smooth(aes(y = before), method = 'lm', se = F, colour = 'red') +
-  geom_smooth(aes(y = after ), method = 'lm', se = F, colour = 'red') +
+  mutate(estimate_before  = ifelse(coefficient < 0 , estimate, NA),
+         estimate_after   = ifelse(0 <= coefficient, estimate, NA),
+         conf.low_before  = ifelse(coefficient < 0,  conf.low, NA),
+         conf.low_after   = ifelse(0 < coefficient, conf.low, NA),
+         conf.high_before = ifelse(coefficient < 0,  conf.high, NA),
+         conf.high_after  = ifelse(0 < coefficient, conf.high, NA)) %>%
+  ggplot(aes(x = coefficient)) +
+  geom_point(aes(y = estimate)) +
+  stat_smooth(aes(y = estimate), geom='line', colour='blue', span=0.5, alpha=0.4, se=F) +
+  geom_line(aes(y = conf.low_before), linetype = 'dashed') +
+  geom_line(aes(y = conf.low_after), linetype = 'dashed') +
+  geom_line(aes(y = conf.high_before), linetype = 'dashed') +
+  geom_line(aes(y = conf.high_after), linetype = 'dashed') +
+  geom_smooth(aes(y = estimate_before), method = 'lm', se = F, colour = 'red') +
+  geom_smooth(aes(y = estimate_after), method = 'lm', se = F, colour = 'red') +
   scale_x_continuous(name = 'Year to Publication', breaks = seq(-20, 20, by = 5)) +
-  scale_y_continuous(name = '', limits = c(0.2,0.8), breaks = seq(0.2,0.8, by = 0.1)) + 
+  scale_y_continuous(name = '', limits = c(-0.5,1), breaks = seq(-0.5,1,by=0.25)) + 
   theme_bw() + ggtitle('Log Citations by year to author first\ntop other publication') +
   theme(plot.title = element_text(hjust = 0.5))
 
-# Show both event graphs
+
+######################
+## Plot both events
 gridExtra::grid.arrange(Top5.eventstudy, Topother.eventstudy, nrow = 1)
 ```
 

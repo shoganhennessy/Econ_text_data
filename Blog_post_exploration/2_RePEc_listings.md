@@ -1,7 +1,7 @@
 The Ideas.RePEc Listings of Articles in Economics
 ================
 Senan Hogan-Hennessy,
-05 Feb 2020
+06 Feb 2020
 
 ## WORK IN PROGRESS – to be finished soon.
 
@@ -145,8 +145,8 @@ NOTE: attributing citations to year of publication and not year in which
 a reader cites the previous work in a new publication (which I will
 consider later in network effects).
 
-The pseudo-*event*: publication in a top journal. \[Y_{it}\]
-<img src="CodeCogsEqn.svg" />
+The pseudo-*event*: publication in a top journal.
+<img src="2_RePEc_listings_files/CodeCogsEqn.svg" />
 
 <img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
 
@@ -159,6 +159,8 @@ Describe data set and opportunity to measure economics publication
 
 -----
 
+### Footnotes
+
 <b id="f1">1</b> [Angrist et al.
 (2017)](https://www.nber.org/papers/w23698) link Econlit and Web of
 Science for similar coverage, for example.[↩](#a1)
@@ -170,7 +172,7 @@ citations within only this large coverage of the field.[↩](#a1)
 
 -----
 
-## References
+### References
 
 1.  Angrist, Joshua, et al. Inside job or deep impact? Using extramural
     citations to assess economic scholarship. No. w23698. National

@@ -67,9 +67,56 @@ Economists.data %>% count(degree) %>%
   arrange(-count)
 
 
-#### INVESTIGATE: years since phd that the article is published, by journal
+## Event study testing
+Top5_since.data %>% sample_frac(0.05) %>%
+  filter(total_citations > 0) %>%
+  lm(eventstudy_top5.formula, data = .) %>%
+  broom::tidy(conf.int = T, conf.level = 0.95) %>%
+  filter(str_detect(term, 'since_first_top5'))  %>%
+  mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
+  filter(abs(coefficient) < 21)  %>%
+  mutate(before = ifelse(coefficient < 0 , estimate, NA),
+         after  = ifelse(0 <= coefficient, estimate, NA)) %>%
+  ggplot(aes(x = coefficient)) +
+  geom_point(aes(y = estimate)) +
+  geom_smooth(aes(y = estimate), se = F, colour = 'blue', span = 0.5, alpha = 0.2) +
+  geom_line(aes(y = conf.low), linetype = 'dashed') + 
+  geom_line(aes(y = conf.high), linetype = 'dashed') + 
+  geom_smooth(aes(y = before), method = 'lm', se = F, colour = 'red') +
+  geom_smooth(aes(y = after ), method = 'lm', se = F, colour = 'red') +
+  scale_x_continuous(name = 'Year to Publication', breaks = seq(-20, 20, by = 5)) +
+  scale_y_continuous(name = 'Coefficient Estimate', limits = c(0.2,0.8), breaks = seq(0.2,0.8, by = 0.1)) +
+  theme_bw() + ggtitle('Log Citations by year to author first\ntop 5 publication') +
+  theme(plot.title = element_text(hjust = 0.5))
 
 
-## Bygrams of words https://uc-r.github.io/word_relationships
+library(plm)
+Top5_since.data %>%
+  filter(total_citations > 0 & abs(since_first_top5) < 21) %>%
+  ungroup() %>% pdata.frame() %>%
+  plm(log(total_citations) ~ as.factor(since_first_top5), data = .,
+      index = c('author_name', 'publication_date'), method = 'within', effect = 'twoways') %>%
+  broom::tidy(conf.int = T, conf.level = 0.95) %>%
+  filter(str_detect(term, 'since_first_top5'))  %>%
+  mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
+  mutate(estimate_before  = ifelse(coefficient < 0 , estimate, NA),
+         estimate_after   = ifelse(0 <= coefficient, estimate, NA),
+         conf.low_before  = ifelse(coefficient < 0,  conf.low, NA),
+         conf.low_after   = ifelse(0 < coefficient, conf.low, NA),
+         conf.high_before = ifelse(coefficient < 0,  conf.high, NA),
+         conf.high_after  = ifelse(0 < coefficient, conf.high, NA)) %>%
+  ggplot(aes(x = coefficient)) +
+  geom_point(aes(y = estimate)) +
+  geom_smooth(aes(y = estimate), se = F, span = 0.5, alpha = 0.1) +
+  geom_line(aes(y = conf.low_before), linetype = 'dashed') +
+  geom_line(aes(y = conf.low_after), linetype = 'dashed') +
+  geom_line(aes(y = conf.high_before), linetype = 'dashed') +
+  geom_line(aes(y = conf.high_after), linetype = 'dashed') +
+  geom_smooth(aes(y = estimate_before), method = 'lm', se = F, colour = 'red') +
+  geom_smooth(aes(y = estimate_after), method = 'lm', se = F, colour = 'red') +
+  scale_x_continuous(name = 'Year to Publication', breaks = seq(-20, 20, by = 5)) +
+  scale_y_continuous(name = '', limits = c(-0.05,1), breaks = seq(0,1, by = 0.1)) + 
+  theme_bw() + ggtitle('Log Citations by year to author first\ntop 5 publication') +
+  theme(plot.title = element_text(hjust = 0.5))
 
 
