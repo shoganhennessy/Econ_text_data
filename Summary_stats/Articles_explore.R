@@ -91,10 +91,20 @@ Top5_since.data %>% sample_frac(0.05) %>%
 
 
 library(plm)
+Top5_since.data %>% 
+  ungroup() %>% 
+  filter(total_citations > 0 & abs(since_first_top5) < 21) %>% 
+  pdata.frame(index = c('author_name', 'publication_date')) %>% 
+  plm(log(total_citations) ~ 0 + as.factor(since_first_top5),
+      data = ., model = 'random', effect = 'twoways') %>%
+  broom::tidy(conf.int = T, conf.level = 0.95) %>%
+  filter(str_detect(term, 'since_first_top5'))
+
+
 Top5_since.data %>%
   filter(total_citations > 0 & abs(since_first_top5) < 21) %>%
   ungroup() %>% pdata.frame() %>%
-  plm(log(total_citations) ~ as.factor(since_first_top5), data = .,
+  plm(log(total_citations) ~ 0 + as.factor(since_first_top5), data = .,
       index = c('author_name', 'publication_date'), method = 'within', effect = 'twoways') %>%
   broom::tidy(conf.int = T, conf.level = 0.95) %>%
   filter(str_detect(term, 'since_first_top5'))  %>%
@@ -119,4 +129,18 @@ Top5_since.data %>%
   theme_bw() + ggtitle('Log Citations by year to author first\ntop 5 publication') +
   theme(plot.title = element_text(hjust = 0.5))
 
+
+library(speedglm)
+library(RcppEigen)
+Topother_since.data %>% sample_frac(0.1) %>% ungroup() %>%
+  filter(total_citations > 0 & abs(since_first_topother) < 21) %>%
+  speedglm::speedlm(log(total_citations) ~ 0 + as.factor(since_first_topother) +
+       as.factor(author_name) + as.factor(publication_date), data = .) %>% 
+  broom::tidy(conf.int = T, conf.level = 0.95) %>%
+  filter(str_detect(term, 'since_first_topother'))
+  
+  
+# Seems to work, but can't coerce to broom.
+
+# https://stats.stackexchange.com/questions/358629/how-can-i-make-regressions-with-big-data-faster-in-r 
 

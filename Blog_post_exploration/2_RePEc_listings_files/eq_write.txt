@@ -1,0 +1,3 @@
+
+https://www.codecogs.com/latex/eqneditor.php
+Y_{it} = \alpha_i + \beta_t + \sum_{k=-15}^{15}\gamma_k \mathbf{1}(K_{it}=k) + \varepsilon_{it}

@@ -145,7 +145,9 @@ NOTE: attributing citations to year of publication and not year in which
 a reader cites the previous work in a new publication (which I will
 consider later in network effects).
 
-The pseudo-*event*: publication in a top journal.
+The pseudo-*event*: publication in a top
+journal.
+
 <img src="2_RePEc_listings_files/CodeCogsEqn.svg" />
 
 <img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
