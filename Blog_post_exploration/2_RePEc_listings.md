@@ -1,7 +1,7 @@
 The Ideas.RePEc Listings of Articles in Economics
 ================
 Senan Hogan-Hennessy,
-06 Feb 2020
+07 Feb 2020
 
 ## WORK IN PROGRESS – to be finished soon.
 
@@ -75,6 +75,16 @@ Think about whether sharing of publications/work over the internet leads
 to more or less inequality -\> perhaps a better question for the
 upcoming network analyses.
 
+Draw a line graph for author cumulative citations, years after first
+publication. NOTE: attributing citations to year of publication and not
+year in which a reader cites the previous work in a new publication
+(which I will consider later in network effects).
+
+Drop off from first publication, a result of many authors with only one
+or very few publications. See the difference in the line that only
+considers author years which contain at least one publication.
+<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
+
 ### The Top 5
 
 Economists aim for the top 5. READ OVER:
@@ -102,11 +112,6 @@ Economics, and the Review of Economic Studies.
 > 
 > – [Top5itis, R Serrano (2018)](http://hdl.handle.net/10419/202594)
 
-\-\> measure citations from making a top 5, and follow on. ^Note that
-the graph or statistics on that LOOK like some causal identification of
-the effect, which is not the case yet, so be careful to not use causal
-language.
-
 SHow how many articles in the top 10. The accepted top 5 is not the top
 5 by total or mean citation count, documented previously in (Anauati et
 al. 2018 NBER WP
@@ -125,16 +130,6 @@ al. 2018 NBER WP
 | Journal of Econometrics                |                         84 |           89413 |           1068 |
 | Journal of Public Economics            |                         73 |           88089 |           1207 |
 
-Draw a line graph for author cumulative citations, years after first
-publication. NOTE: attributing citations to year of publication and not
-year in which a reader cites the previous work in a new publication
-(which I will consider later in network effects).
-
-Drop off from first publication, a result of many authors with only one
-or very few publications. See the difference in the line that only
-considers author years which contain at least one publication.
-<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
-
 #### Event:
 
 Draw a graph for author cumulative citations, years after first
@@ -145,10 +140,19 @@ NOTE: attributing citations to year of publication and not year in which
 a reader cites the previous work in a new publication (which I will
 consider later in network effects).
 
-The pseudo-*event*: publication in a top
-journal.
+The pseudo-*event*: publication in a top journal.
+
+<p align="center">
 
 <img src="2_RePEc_listings_files/CodeCogsEqn.svg" />
+
+</p>
+
+\-\> measure citations from making a top 5, and follow on. ^Note that
+the graph or statistics that LOOK like some causal identification are
+not the case yet in this simple event design, so be careful to not use
+causal
+language.
 
 <img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
 

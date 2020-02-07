@@ -102,52 +102,13 @@ Author_citations.data %>%
   filter(publication_date > 1975) %>%
   ggplot(aes(x = publication_date, y = gini_coefficient)) +
   geom_line(colour = 'orange') + theme_bw() +
-  scale_x_continuous(name = 'Among Papers in Published in Year', breaks = seq(1975, 2020, by = 5)) +
+  scale_x_continuous(name = 'Among papers published in year', breaks = seq(1975, 2020, by = 5)) +
   scale_y_continuous(name = 'Citations Gini Index (among authors)',
                      breaks = seq(0.3, 0.55, by = 0.05), limits = c(0.3,0.55))
 ```
 
 Think about whether sharing of publications/work over the internet leads to more or less inequality -> perhaps a better question for the upcoming network analyses.
 
-
-### The Top 5
-
-Economists aim for the top 5.  READ OVER:
-
-Gibson, J, D L Anderson and J Tressler (2017), "Citations or journal quality: Which is rewarded more in the academic labor market?" Economic Inquiry 55(4): 1945–1965.
-
-Hamermesh, D S (2018), “Citations in economics: Measurement, uses, and impacts,” Journal of Economic Literature 56(1): 115–56.
-
-https://voxeu.org/article/publishing-and-promotion-economics-tyranny-top-five
-
-https://www.nber.org/papers/w25093 
-
-Top Five journals in economics: the American Economic Review, Econometrica,the Journal of Political Economy,the Quarterly Journal of Economics, and the Review of Economic Studies.
-
-> Indeed, serious theoretical and empirical
-> work should be conducted to understand this disease better and suggest possible treatments. The problem
-> will probably require challenging techniques in applied mechanism design.
-> 
-> -- [Top5itis, R Serrano (2018)](http://hdl.handle.net/10419/202594)
-
--> measure citations from making a top 5, and follow on.
-^Note that the graph or statistics on that LOOK like some causal identification of the effect, which is not the case yet, so be careful to not use causal language.
-
-SHow how many articles in the top 10.
-The accepted top 5 is not the top 5 by total or mean citation count, documented previously in (Anauati et al. 2018 NBER WP 25101).
-```{r, echo = F, results='asis'}
-Journals_articles.data <- Articles.data %>% 
-  filter(!is.na(citation_count) & !is.na(publication_date)) %>%
-  group_by(journal_title) %>%
-  summarise(mean_citations = round(mean(citation_count, na.rm = T)),
-            total_citations = sum(citation_count, na.rm = T),
-            total_articles = n()) %>%
-  arrange(-total_citations)
-
-Journals_articles.data %>% head(10) %>% 
-  knitr::kable(format = 'markdown',
-    col.names = c('Journal name', 'Mean citations per article', 'Total citations', 'Count articles'))
-```
 
 Draw a line graph for author cumulative citations, years after first publication.
 NOTE: attributing citations to year of publication and not year in which a reader cites the previous work in a new publication (which I will consider later in network effects).
@@ -204,10 +165,45 @@ Author_cumulative_citations.data %>%
   scale_y_continuous(name = 'Mean Citations', limits = c(0,120)) + 
   theme_bw() + theme(legend.position = 'right') +
   scale_colour_manual(values = c('chartreuse4', 'darkviolet'),
-                      name = 'Restriction',
-                      breaks = c(F, T),
-                      labels = c('All years', 
-                                 '\nAt least one\npublication\nin that year'))
+                      breaks = c(T, F), name = 'Restriction',
+                      labels = c('At least one\npublication\nin that year\n', 'All years'))
+```
+
+
+### The Top 5
+
+Economists aim for the top 5.  READ OVER:
+
+Gibson, J, D L Anderson and J Tressler (2017), "Citations or journal quality: Which is rewarded more in the academic labor market?" Economic Inquiry 55(4): 1945–1965.
+
+Hamermesh, D S (2018), “Citations in economics: Measurement, uses, and impacts,” Journal of Economic Literature 56(1): 115–56.
+
+https://voxeu.org/article/publishing-and-promotion-economics-tyranny-top-five
+
+https://www.nber.org/papers/w25093 
+
+Top Five journals in economics: the American Economic Review, Econometrica,the Journal of Political Economy,the Quarterly Journal of Economics, and the Review of Economic Studies.
+
+> Indeed, serious theoretical and empirical
+> work should be conducted to understand this disease better and suggest possible treatments. The problem
+> will probably require challenging techniques in applied mechanism design.
+> 
+> -- [Top5itis, R Serrano (2018)](http://hdl.handle.net/10419/202594)
+
+SHow how many articles in the top 10.
+The accepted top 5 is not the top 5 by total or mean citation count, documented previously in (Anauati et al. 2018 NBER WP 25101).
+```{r, echo = F, results='asis'}
+Journals_articles.data <- Articles.data %>% 
+  filter(!is.na(citation_count) & !is.na(publication_date)) %>%
+  group_by(journal_title) %>%
+  summarise(mean_citations = round(mean(citation_count, na.rm = T)),
+            total_citations = sum(citation_count, na.rm = T),
+            total_articles = n()) %>%
+  arrange(-total_citations)
+
+Journals_articles.data %>% head(10) %>% 
+  knitr::kable(format = 'markdown',
+    col.names = c('Journal name', 'Mean citations per article', 'Total citations', 'Count articles'))
 ```
 
 
@@ -219,8 +215,12 @@ Add a line for year after making a top 6-10 (weakly comparable).
 NOTE: attributing citations to year of publication and not year in which a reader cites the previous work in a new publication (which I will consider later in network effects).
 
 The pseudo-*event*: publication in a top journal.
+<p align="center">
+  <img src="2_RePEc_listings_files/CodeCogsEqn.svg" />
+</p>
 
-<img src="2_RePEc_listings_files/CodeCogsEqn.svg" />
+-> measure citations from making a top 5, and follow on.
+^Note that the graph or statistics that LOOK like some causal identification are not the case yet in this simple event design, so be careful to not use causal language.
 
 ```{r, echo = F, fig.height = 5, fig.width = 10}
 # Conventional top journals
