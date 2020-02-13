@@ -279,7 +279,9 @@ Top5.eventstudy <- Top5_since.data %>%
   filter(total_citations > 0 & abs(since_first_top5) < 16) %>% 
   pdata.frame(index = c('author_name', 'publication_date')) %>% 
   plm(log(total_citations) ~ 0 + as.factor(since_first_top5),
-      data = ., model = 'random', effect = 'twoways') %>%
+      data = ., model = 'random', effect = 'twoways')
+
+Top5_event.graph <- Top5.eventstudy %>%
   broom::tidy(conf.int = T, conf.level = 0.95) %>%
   filter(str_detect(term, 'since_first_top5')) %>%
   mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
@@ -300,15 +302,18 @@ Top5.eventstudy <- Top5_since.data %>%
   geom_smooth(aes(y = estimate_after), method = 'lm', se = F, colour = 'red') +
   scale_x_continuous(name = 'Years after publication', breaks = seq(-20, 20, by = 5)) +
   scale_y_continuous(name = 'Coefficient estimate', limits = c(3.75,4.5), breaks = seq(3.75,4.5,by=0.125)) + 
-  theme_bw() + ggtitle('Log Citations by year to author first\ntop 5 publication') +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme_bw() + theme(plot.title = element_text(hjust = 0.5)) +
+  labs(title   = 'Log Citations by year to author first\ntop 5 publication',
+       caption = Top5.eventstudy %>% summary() %>% capture.output() %>% nth(8))
 
 # Draw event study style graph, for the top other
 Topother.eventstudy <- Topother_since.data %>% 
   filter(total_citations > 0 & abs(since_first_topother) < 16) %>% 
   pdata.frame(index = c('author_name', 'publication_date')) %>% 
   plm(log(total_citations) ~ 0 + as.factor(since_first_topother),
-      data = ., model = 'random', effect = 'twoways') %>%
+      data = ., model = 'random', effect = 'twoways')
+
+Topother_event.graph <- Topother.eventstudy %>%
   broom::tidy(conf.int = T, conf.level = 0.95) %>%
   filter(str_detect(term, 'since_first_topother')) %>%
   mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
@@ -329,13 +334,14 @@ Topother.eventstudy <- Topother_since.data %>%
   geom_smooth(aes(y = estimate_after), method = 'lm', se = F, colour = 'red') +
   scale_x_continuous(name = 'Years after publication', breaks = seq(-20, 20, by = 5)) +
   scale_y_continuous(name = '', limits = c(3.75,4.5), breaks = seq(3.75,4.5,by=0.125)) + 
-  theme_bw() + ggtitle('Log Citations by year to author first\ntop other publication') +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme_bw() + theme(plot.title = element_text(hjust = 0.5)) +
+  labs(title   = 'Log Citations by year to author first\ntop other publication',
+       caption = Topother.eventstudy %>% summary() %>% capture.output() %>% nth(8))
 
 
 ######################
 ## Plot both events
-gridExtra::grid.arrange(Top5.eventstudy, Topother.eventstudy, nrow = 1)
+gridExtra::grid.arrange(Top5_event.graph, Topother_event.graph, nrow = 1)
 ```
 
 
