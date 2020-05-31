@@ -48,7 +48,7 @@ Articles.data %>%
 
 
 
-### 
+###
 Journals_tomerge.data <- Journals.data %>%
   mutate(journal_id_publisher = paste(journal_title, publisher, sep = ', ')) %>%
   select(rank, journal_id_publisher)

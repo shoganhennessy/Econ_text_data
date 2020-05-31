@@ -36,11 +36,19 @@ for its affiliates to register working papers, and the series includes pre-publi
 of some very famous research papers and some heavily cited working papers themselves.
 
 > ``We owe a tremendous amount to the NBER working Paper series.
-> It has filled a huge gap in in our ability to dissemniate knowledge before publication [...], 
+> It has filled a huge gap in in our ability to disseminate knowledge before publication [...], 
 > sharing knowledge as it is produced.''
 > 
 > -- Claudia Goldin, 2014 at a conference on the NBER history.
-<!-- Presentation on the series : https://www.nber.org/WPat20K/summary.html# --> 
+<!-- Presentation on the series : https://www.nber.org/WPat20K/summary.html# -->
+
+This is the first of a series of blog posts motivating my analysis and exploration
+of a huge set of data on economics publications, sho I hope you enjoy the posts.
+The source code is available in [this repo](https://github.com/shoganhennessy/Econ_text_data/),
+so feel free to look over and reproduce from there (which is filled mostly with code in *R* and *Python*).
+Please contact me if you would like to use my underlying data for another project --
+all of the used data are publicly accessible across the internet yet
+my collection of them all constitute sensitive information.
 
 
 ### The dataset
@@ -49,7 +57,6 @@ I have retrieved the listing of all NBER working papers, a collection of
 `r nrow(Papers.data)` papers  (as of `r max(Papers.data$date) %>% as.Date() %>% format("%d %b %Y")`),
 starting with a small number of technical reports in 1973
 to hundreds of modern research papers every year in the 2000s.
-
 ```{r, echo=F, fig.height = 3.5, fig.width = 6, fig.align = 'center'}
 # SHow count per year
 Papers.data %>%
@@ -74,7 +81,6 @@ something like 'NBER working paper on economics publishing' and read cutting edg
 
 The papers are sorted in to subjects areas, the [NBER research area programmes](https://www.nber.org/programs/) (the graph below only shows top 10 areas).
 Note, however, that papers can be cross registered to multiple areas, and are more likely to be so for recent years.
-
 ```{r, echo=F, fig.height = 4, fig.width = 8, fig.align = 'center'}
 # SHow count per year, for each area
 Papers_subjects.data <- Papers.data %>% transmute(
@@ -122,14 +128,8 @@ Papers_subjects.data <- Papers.data %>% transmute(
             public = sum(public),
             poli_econ = sum(poli_econ),
             productivity = sum(productivity)) %>%
-  reshape(timevar = 'nber_area',
-          times = c('aging', 'assets', 'corporate_finance', 'children', 'american_history', 'development', 'education',
-                      'energy', 'growth', 'care', 'health', 'finance_macro', 'indust_org', 'trade_invest', 'law', 'labour', 
-                      'monetary', 'public', 'poli_econ', 'productivity'),
-          varying = c('aging', 'assets', 'corporate_finance', 'children', 'american_history', 'development', 'education',
-                      'energy', 'growth', 'care', 'health', 'finance_macro', 'indust_org', 'trade_invest', 'law', 'labour', 
-                      'monetary', 'public', 'poli_econ', 'productivity'),
-          v.names = 'count', direction = 'long', new.row.names = 1:1000) %>% group_by(year)
+	gather('nber_area', 'count', aging:productivity) %>%
+	group_by(year)
 
 # Choose most popular areas :
 popular_areas <- Papers_subjects.data %>% 
@@ -158,7 +158,6 @@ Most of the papers go on to be published, but the rate of publishing is certainl
 In the early days, around 60\% of the working papers are published in peer reviewed journals, going on to peak at 94\% in 1987 before falling to common day.  What drives this rise and fall?
 It is clear that papers since 2015 are still in the pipeline: the NBER series was, afterall, started
 partially to disseminate current knowledge in light of publication lags.
-
 ```{r, echo=F, fig.height = 3, fig.width = 7, fig.align = 'center'}
 # Show rate of publishing by year
 Papers.data %>%
@@ -202,14 +201,14 @@ abstracts_words <- Papers_abtracts.data %>%
   select(nber_index,published, abstract) %>%
   unnest_tokens(word, abstract, token = 'regex', pattern = reg) %>%
   filter(!word %in% c(stop_words$word, 'working', 'paper'), str_detect(word, '[a-z]')) %>%
-  group_by(published, word) #  %>% summarise(count = n()) %>% arrange(-count)
+  group_by(published, word)
 
 abstracts_words_count <- abstracts_words %>%
   group_by(published, word) %>% summarise(count = n()) %>% arrange(-count)
 published_words <- abstracts_words_count %>% filter(published == T) %>% head(10) %>%
   pull(word) %>% paste(sep = ', ', collapse = ', ') 
 unpublished_words <- abstracts_words_count %>% filter(published == F) %>% head(10) %>%
-  pull(word) %>% paste(sep = ', ', collapse = ', ') 
+  pull(word) %>% paste(sep = ', ', collapse = ', ')
 ```
 
 Most common for published articles: `r published_words`.
@@ -266,7 +265,7 @@ let's show this <i>empirically</i>.
 
 Sentiment analysis is commonly applied to text data as an easy coding operation
 to measure sentiment -- commonly to measure happiness, or perhaps [1am angry tweets](http://varianceexplained.org/r/trump-tweets/) -- and the same process can textually measure 
-allignment with causal or theortical papers.
+alignment with causal or theoretical papers.
 First I'll form a list of a hundred words most likely to appear in abstracts that use the word
 'causal' -- denoting these as causal papers.
 Also list the top hundred words in papers that use the words 
@@ -274,7 +273,7 @@ Also list the top hundred words in papers that use the words
 
 ```{r, echo=F, fig.height = 3, fig.width = 6.5, fig.align = 'center'}
 # Calculate odds ratio
-Papers.data %>% 
+Papers.data %>%
   transmute(published = (published != ''),
             date     = as.Date(date),
             abstract = abstract,
@@ -288,10 +287,7 @@ Papers.data %>%
   transmute(year = year,
             causal = causal / count,
             theoretical = theoretical / count) %>%
-  reshape(timevar = 'paper_type',
-          times = c('causal', 'theoretical'),
-          varying = c('causal', 'theoretical'),
-          v.names = 'count', direction = 'long', new.row.names = 1:1000) %>%
+  gather('paper_type', 'count', causal:theoretical) %>%
   mutate(label = if_else(year == max(year), paper_type, NA_character_)) %>%
   ggplot(aes(x = year, y = count, 
              group = paper_type, colour = paper_type)) + 
@@ -310,7 +306,7 @@ A listing of words most likely (relatively) to appear in a causal or theoretical
 can play the role of a sentiment dictionary (call it a a pseudo sentiment lexicon) with a 
 log ratio of inclusion in the type of paper, where a value of 100 is the most likely to be a word
 in that type of paper.  It easily reframes the topic of measuring causal inference in the working papers
-as simple sentiment classifcation problem.
+as simple sentiment classification problem.
 
 ```{r, echo=F}
 # Which words coincide with data or empirical?
@@ -405,7 +401,6 @@ sentiment_differences %>%
   geom_errorbarh(aes(xmin = conf.low, xmax = conf.high)) +
   scale_x_continuous(labels = percent_format()) +
   labs(x = 'Inclusion in a Published Paper relative to Unpublished, increase (%)', y = 'pseudo-Sentiment')
-
 ```
 
 The list of causal or theoretical words are then counted among published and unpublished (pre-2016)
@@ -413,7 +408,7 @@ papers, and a Poisson count test to estimate whether they are more likely to be 
 unpublished papers.  Both estimates are negative, as in both types are words are less likely to be 
 in a published paper than a standard word, with overlap in the plausible estimate regions.
 
-To see in granual detail, the words at the extreme of these sentiments within published
+To see in granular detail, the words at the extreme of these sentiments within published
 and unpublished papers.
 
 ```{r, echo=F, fig.height = 5.5, fig.width = 9, fig.align = 'center'}
@@ -428,16 +423,13 @@ relative_abstract_words %>%
   facet_wrap(~ sentiment, scales = 'free', nrow = 1) +
   geom_bar(stat = 'identity') +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(x = '', y = 'Android / iPhone log ratio"') +
-  scale_fill_manual(name = "", labels = c("Android", "iPhone"),
-                    values = c("red", "lightblue")) +
   ylab('Published - Unpublished relative log ratio') + xlab('') +
   scale_fill_manual(name = '', labels = c('Published','Unpublished'),
                     values = c('red', 'darkblue')) +
   theme(legend.position = c(0.9, 0.85))
 ```
 
-Take a look at the words used here.  I can't for one draw a specific difference in themes,
+Take a look at the words used here.  I can't, for one, draw a specific difference in themes,
 so perhaps the NBER papers that do get published vs unpublished really are not so different!
 
 
@@ -453,7 +445,7 @@ Follow for updates over the next few months as I
 collect more data sources, get a better idea of what I'm dealing with and form a 
 more direct research question.
 
-*Note:* text analysis methods and code in R are inspired by an [older post on political tweets](
+*Note:* text analysis methods and code in *R* are inspired by an [older post on political tweets](
 http://varianceexplained.org/r/trump-tweets), which I also thoroughly recommend.
 
 **Next up:** A dive in to a more complete source of economics research papers.

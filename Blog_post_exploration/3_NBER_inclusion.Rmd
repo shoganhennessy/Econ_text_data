@@ -33,6 +33,11 @@ Draw some graphs of how NBER members fill the economics publishing sphere,
 and establish the issue of benefits from NBER membership.
 ^ Will require reforming the time series listing of fellow appointments -- easy work yet.
 
+
+Think about whether sharing of publications/work over the internet leads to more or less inequality -> 
+perhaps a better question for the upcoming network analyses.
+
+
 Look over the paper here:
 "Undergraduate Econometrics Instruction: Through Our Classes, Darkly"
 Joshua D. Angrist, Joern-Steffen Pischke

@@ -14,20 +14,28 @@ pre-published versions of some very famous research papers and some
 heavily cited working papers themselves.
 
 > \`\`We owe a tremendous amount to the NBER working Paper series. It
-> has filled a huge gap in in our ability to dissemniate knowledge
+> has filled a huge gap in in our ability to disseminate knowledge
 > before publication \[…\], sharing knowledge as it is produced.’’
 > 
 > – Claudia Goldin, 2014 at a conference on the NBER history.
 > <!-- Presentation on the series : https://www.nber.org/WPat20K/summary.html# -->
+
+This is the first of a series of blog posts motivating my analysis and
+exploration of a huge set of data on economics publications, sho I hope
+you enjoy the posts. The source code is available in [this
+repo](https://github.com/shoganhennessy/Econ_text_data/), so feel free
+to look over and reproduce from there (which is filled mostly with code
+in *R* and *Python*). Please contact me if you would like to use my
+underlying data for another project – all of the used data are publicly
+accessible across the internet yet my collection of them all constitute
+sensitive information.
 
 ### The dataset
 
 I have retrieved the listing of all NBER working papers, a collection of
 26393 papers (as of 25 Oct 2019), starting with a small number of
 technical reports in 1973 to hundreds of modern research papers every
-year in the
-2000s.
-
+year in the 2000s.
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-1-1.png" style="display: block; margin: auto;" />
 
 The series has constantly been growing as a source of presentable
@@ -44,9 +52,7 @@ read cutting edge research before it is even published.
 The papers are sorted in to subjects areas, the [NBER research area
 programmes](https://www.nber.org/programs/) (the graph below only shows
 top 10 areas). Note, however, that papers can be cross registered to
-multiple areas, and are more likely to be so for recent
-years.
-
+multiple areas, and are more likely to be so for recent years.
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
 
 Most of the papers go on to be published, but the rate of publishing is
@@ -55,9 +61,7 @@ papers are published in peer reviewed journals, going on to peak at 94%
 in 1987 before falling to common day. What drives this rise and fall? It
 is clear that papers since 2015 are still in the pipeline: the NBER
 series was, afterall, started partially to disseminate current knowledge
-in light of publication
-lags.
-
+in light of publication lags.
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
 
 Yet the publication rate has not been constant even before 2015. What
@@ -85,8 +89,7 @@ The ten most common words are almost identical across publication
 outcome, so this hardly counts as a textual difference. However, a raw
 word count measure is a crude measure that can be affected by
 confounding factors. Instead consider a log odds ratio to show which
-words are relatively more likely to be in (eventually) published
-papers.
+words are relatively more likely to be in (eventually) published papers.
 
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
 
@@ -121,11 +124,11 @@ when the NBER series began in 1973: let’s show this <i>empirically</i>.
 Sentiment analysis is commonly applied to text data as an easy coding
 operation to measure sentiment – commonly to measure happiness, or
 perhaps [1am angry tweets](http://varianceexplained.org/r/trump-tweets/)
-– and the same process can textually measure allignment with causal or
-theortical papers. First I’ll form a list of a hundred words most likely
-to appear in abstracts that use the word ‘causal’ – denoting these as
-causal papers. Also list the top hundred words in papers that use the
-words ‘theory’ and ‘equilibrium’ – denoting these theoretical
+– and the same process can textually measure alignment with causal or
+theoretical papers. First I’ll form a list of a hundred words most
+likely to appear in abstracts that use the word ‘causal’ – denoting
+these as causal papers. Also list the top hundred words in papers that
+use the words ‘theory’ and ‘equilibrium’ – denoting these theoretical
 papers.
 
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
@@ -135,7 +138,7 @@ theoretical paper can play the role of a sentiment dictionary (call it a
 a pseudo sentiment lexicon) with a log ratio of inclusion in the type of
 paper, where a value of 100 is the most likely to be a word in that type
 of paper. It easily reframes the topic of measuring causal inference in
-the working papers as simple sentiment classifcation problem.
+the working papers as simple sentiment classification problem.
 
 Here are the top 10 for causal papers with scores:
 
@@ -146,8 +149,7 @@ And for theoretical papers:
 
 equilibrium : 100, equilibrium : 83, equilibria : 74, equilibria : 73,
 theory : 71, theory : 67, disequilibrium : 66, guarantees : 60, sunspot
-: 59, tpp :
-56.
+: 59, tpp : 56.
 
 <!-- Dictionary-based sentiment -->
 
@@ -166,13 +168,12 @@ Both estimates are negative, as in both types are words are less likely
 to be in a published paper than a standard word, with overlap in the
 plausible estimate regions.
 
-To see in granual detail, the words at the extreme of these sentiments
-within published and unpublished
-papers.
+To see in granular detail, the words at the extreme of these sentiments
+within published and unpublished papers.
 
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
 
-Take a look at the words used here. I can’t for one draw a specific
+Take a look at the words used here. I can’t, for one, draw a specific
 difference in themes, so perhaps the NBER papers that do get published
 vs unpublished really are not so different\!
 
@@ -188,7 +189,7 @@ updates over the next few months as I collect more data sources, get a
 better idea of what I’m dealing with and form a more direct research
 question.
 
-*Note:* text analysis methods and code in R are inspired by an [older
+*Note:* text analysis methods and code in *R* are inspired by an [older
 post on political tweets](http://varianceexplained.org/r/trump-tweets),
 which I also thoroughly recommend.
 

@@ -4,5 +4,7 @@
 .RData
 .Ruserdata
 .ipynb_checkpoints
+.vscode/
 Data/
 Data_backup/
+Paper/
