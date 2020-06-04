@@ -1,7 +1,5 @@
-The Ideas.RePEc Listings of Articles in Economics
-================
 Senan Hogan-Hennessy,
-31 May 2020
+04 Jun 2020
 
 This is the second of a series of blog posts motivating my analysis and
 exploration of a huge set of data on economics publications, sho I hope
@@ -10,15 +8,17 @@ repo](https://github.com/shoganhennessy/Econ_text_data/), so feel free
 to look over and reproduce from there (which is filled mostly with code
 in *R* and *Python*). Please contact me if you would like to use my
 underlying data for another project – all of the used data are publicly
-accessible across the internet yet my collection of them all constitute
-sensitive information.
+accessible across the internet yet my collection of them all may
+constitute sensitive data.
 
-# RePEc
+-----
+
+# The Ideas.RePEc Listings of Articles in Economics
 
 The NBER series is a great source of research in our profession, but it
 isn’t the full picture of research in the field. It is, after all, a
-listing of working papers which are by definition not yet publications –
-though most do go on to be published, as I noted in the [last
+listing of working papers which are not yet publications – though most
+do go on to be published, as I noted in the [last
 post.](https://github.com/shoganhennessy/Econ_text_data/blob/master/Blog_post_exploration/1_NBER_working_papers.md)
 
 Fortunately, [Research Papers in Economics (RePEc)’s
@@ -36,20 +36,19 @@ papers – considering only those in English as of 9 January 2020.
 
 421,348 is a huge number of articles to consider, and comparable in size
 to articles that use the near complete set of
-publcations.<sup id="a1">[1](#f1)</sup> RePEc has certain advantages: it
-is more open and it has a clear link to authors – and importantly some
-of their characteristics – to working and published papers, all within
-the field of economics. It is however, a repository only within the
-economics sphere: citations are only counted among other papers in the
-database, and not among the universe of publications.
+publications.<sup id="a1">[1](#f1)</sup> RePEc has certain advantages:
+it is more open and it has a clear link to authors – and importantly
+some of their characteristics – to working and published papers, all
+within the field of economics. It is however, a repository only within
+the economics sphere: citations are only counted among other papers in
+the database, and not among the universe of publications.
 
 This post looks at two key measures of publication quality in economics:
 citations and the top 5 journals. The distribution of citations is
 looked at by visualisations with discussion of how to interpret the
 statistics, before the top 5 economics journals are investigated for
-their  
-influential place in the field of economics as well as their place in
-these data.
+their influential place in the field of economics as well as their place
+in these data.
 
 ### Citations
 
@@ -74,22 +73,24 @@ The process of assigning is, however, not perfect: citations are
 assigned from each article to each author equally when there are
 multiple authors. Yet [Sarsons
 (2017)](https://www.aeaweb.org/articles?id=10.1257/aer.p20171126) shows
-how innapropriate this accounting is by exhibiting the unequal citation
+how inappropriate this accounting is by exhibiting the unequal citation
 rate of return in among economists by gender – which actually inspired
 me to work with economics publishing data in the first place\! Call it a
-point of interest to rank economists by better measures as this project
-progresses.
+point of interest to rank economists by better measures in the future,
+as this project progresses.
 
 The above top ten are at the very top of the field and citations are, of
 course, not evenly distributed across researchers in the field. So what
 does the wider distribution look like?
 <img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
+
 Citations are positively skewed among authors, so much so that the
-disribution above can only be visualised well with a log scale in
+distribution above can only be visualised well with a log scale in
 citations: the top of the distribution has orders of magnitude more
 citations than the rest. One might call this distribution *unequal*, but
 is the distribution *unequal* for all the years of these data?
 <img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
+
 The Gini coefficient measures income inequality in economics, where 0 is
 perfect equality and 1 perfect inequality. The coefficient is stable
 among citations for authors per year between 0.5 and 0.45, which
@@ -98,13 +99,12 @@ it to the US income distribution, which has a similar value. Yet it is
 not fully clear what this entails; citation counts are not income so
 that the comparison does not hold direct meaning. A Gini coefficient,
 while interesting, is a crude measure of inequality among publications.
-
 <img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
 The above shows means of yearly and cumulative citations across every
 author following their first publication. Be aware that the measure
 considers citations of papers, so that citations are attributed to the
 year of publication and not the year of citation being
-made.<sup id="a3">3</sup>
+made.<sup id="a3">[3](#f1)</sup>
 
 My data set of papers is formatted at the individual paper level (each
 row is a paper), so that summary statistics on this only consider years
@@ -112,7 +112,6 @@ in which papers appear, a measure of citations conditional on active
 publication in that year (giving the purple lines). Another measure
 includes years when authors do not publish, where citations in that year
 are zero, an unrestricted measure of citations (giving the green lines).
-
 If there is at least one publication in that year, citations in papers
 after the first are relatively constant for the following years around
 100 to 120. Without this restriction mean citations fall from around 20
@@ -129,6 +128,7 @@ where publishing in one of these journals heavily influences a tenure
 decision and thus makes (or breaks) an academic economics career.
 
 <img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
+
 The top 5 journals are comprised of the American Economic Review,
 Econometrica, the Journal of Political Economy, the Quarterly Journal of
 Economics, and the Review of Economic Studies. These data contain 15,059
@@ -139,8 +139,8 @@ attrition from the year 2018 and on.
 We see the top 10 ranked by mean citations, which naturally has the top
 5 at the top (who would have thought?). Notably the top 5 are not the
 first five when ranked by citations per article though they do rank at
-rank very highly in that regard.  
-This is documented previously by [Anauati et
+rank very highly in that regard. This is documented previously by
+[Anauati et
 al. (2018)](https://onlinelibrary.wiley.com/doi/abs/10.1111/ecin.12867).
 
 | Journal name                           | Mean citations per article | Total citations | Count articles |
@@ -158,7 +158,10 @@ al. (2018)](https://onlinelibrary.wiley.com/doi/abs/10.1111/ecin.12867).
 
 Economics’ focus on the top 5 has been been dubbed *Top5itis*, a disease
 inflicting our field leading to tunnel vision for those with power in
-our field.
+our field. While humorous in description, the problem is nonetheless
+real, and these data give a perfect opportunity to observe and study the
+phenomenon. The design below is a start in using these data for this
+purpose, hopefully leading to work on how to address the problem.
 
 > Indeed, serious theoretical and empirical work should be conducted to
 > understand this disease better and suggest possible treatments. The
@@ -166,11 +169,6 @@ our field.
 > mechanism design.
 > 
 > – [Top5itis, R Serrano (2018)](http://hdl.handle.net/10419/202594)
-
-While humorous in description, the problem is nonetheless real, and
-these data give a perfect opportunity to observe and study the
-phenomenon. The design below is a start in using these data for this
-purpose, hopefully leading to work on how to address the problem.
 
 ### Top 5 Publication as an event
 
@@ -188,24 +186,26 @@ here will be log citations for author *i* in year *t*.
 
 </p>
 
-The design can similarly be applied to the next 5 prestigious journal
-(of the top 10 ranking), to give a realistic comparison for the top 5.
-<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
-In terms of log citations, authors get a real and persistant to their
-citations in years following their first publication in a top 5 journal.
-The bump seems to exist for the first publication in one of the next
-most respected journals, and is at least smaller than that for the top
-5.
+The design can similarly be applied to the next 5 prestigious journals
+(of the top 10 ranking), to give a similar event to compare.
 
-I will not overstate this relatively simple linear model on display
-here: it shows not much more than the fact authors once published in the
-top 5 receive more citations over the next 15 years. There’s no causal
-identification, the measure of citations is till from year
+<img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+
+In terms of log citations, authors have a real and persistant bump to
+their citations in years following their first publication in a top 5
+journal. The bump also exists for the first publication in one of the
+next most respected journals (the comparison figure on the right), and
+is at least smaller than that for the top 5.
+
+Be aware that this is a relatively simple linear model: it shows not
+much more than the fact authors once published in the top 5 receive more
+citations over the next 15 years. There’s no causal identification (or
+inference), the measure of citations is still from year
 published,<sup id="a4">[3](#f3)</sup> and sample selction is likely
 rampant in this design. For example, the model considers both authors
 who get to the top 5 in their second active year of writing with people
 who finally make it after 16 active years, despite these authors are not
-likely comparable.
+likely comparable (even with fixed effects included).
 
 Lastly, the citation count measure used throughout these sections is an
 easy measure of research success for this and other projects thanks to
@@ -221,10 +221,9 @@ salt.
 
 This post described the IDEAS.RePEc data, and the opportunity it
 represents to to measure economics publication and their outcomes.
-Hopefully use of these data and further \`\`applied mechanism design’’
+Hopefully use of these data and further ‘’applied mechanism design’’
 ([Serrano 2018](http://hdl.handle.net/10419/202594)) will help us
-understand the world of the top 5 and economics publications in general
-better.
+understand the world of economics publications better.
 
 **Next up:** Looking at inclusion in the *NBER family*.
 
@@ -248,18 +247,21 @@ citations within only this large coverage of the field.[↩](#a2)
 
 ### References
 
-1.  Anauati, M. V., Galiani, S., & Gálvez, R. H. (2018). Differences in
-    citation patterns across journal tiers: The case of economics.
-    Economic Inquiry.
-2.  Angrist, J., Azoulay, P., Ellison, G., Hill, R., & Lu, S. F. (2017).
-    Inside job or deep impact? Using extramural citations to assess
-    economic scholarship (No. w23698). National Bureau of Economic
-    Research.
-3.  Bhattacharya, J., & Packalen, M. (2020). Stagnation and Scientific
-    Incentives (No. w26752). National Bureau of Economic Research.
-4.  Heckman J, & S Moktan. (2020) Publishing and Promotion in Economics:
-    The Tyranny of the Top Five. Journal of Economic Literatue
-    (forthcoming).
-5.  Sarsons, H. (2017). Recognition for group work: Gender differences
-    in academia. American Economic Review, 107(5), 141-45.
-6.  Serrano, R. (2018). Top5itis (No. 2018-2). Working Paper.
+Anauati, M. V., Galiani, S., & Gálvez, R. H. (2018). Differences in
+citation patterns across journal tiers: The case of economics. Economic
+Inquiry.
+
+Angrist, J., Azoulay, P., Ellison, G., Hill, R., & Lu, S. F. (2017).
+Inside job or deep impact? Using extramural citations to assess economic
+scholarship (No. w23698). National Bureau of Economic Research.
+
+Bhattacharya, J., & Packalen, M. (2020). Stagnation and Scientific
+Incentives (No. w26752). National Bureau of Economic Research.
+
+Heckman J, & S Moktan. (2020) Publishing and Promotion in Economics: The
+Tyranny of the Top Five. Journal of Economic Literatue (forthcoming).
+
+Sarsons, H. (2017). Recognition for group work: Gender differences in
+academia. American Economic Review, 107(5), 141-45.
+
+Serrano, R. (2018). Top5itis (No. 2018-2). Working Paper.

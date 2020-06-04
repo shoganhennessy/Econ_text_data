@@ -1,7 +1,7 @@
 Working Papers in Economics: the NBER Series
 ================
 Senan Hogan-Hennessy,
-2 January 2020
+04 Jun 2020
 
 Publishing is a main goal of academic economists, but rarely is it as
 simple as write the paper then publish. Projects can take years and
@@ -39,7 +39,7 @@ year in the 2000s.
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-1-1.png" style="display: block; margin: auto;" />
 
 The series has constantly been growing as a source of presentable
-research in-progress. It is unclear whether the gowth in size of this
+research in-progress. It is unclear whether the growth in size of this
 listing is because of the rise in release of working papers in general,
 or because of an individual rise in the use of the NBER series. It is
 clear, however, that the internet has been a major part of disseminating
