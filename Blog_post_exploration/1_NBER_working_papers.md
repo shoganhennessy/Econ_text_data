@@ -33,7 +33,7 @@ sensitive information.
 ### The dataset
 
 I have retrieved the listing of all NBER working papers, a collection of
-26393 papers (as of 25 Oct 2019), starting with a small number of
+27393 papers (as of 18 Jun 2020), starting with a small number of
 technical reports in 1973 to hundreds of modern research papers every
 year in the 2000s.
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-1-1.png" style="display: block; margin: auto;" />
