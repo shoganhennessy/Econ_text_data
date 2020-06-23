@@ -1,10 +1,11 @@
 ---
 title: 'Working Papers in Economics: the NBER Series'
-author: 'Senan Hogan-Hennessy, '
-date: "`r format(Sys.time(), '%d %b %Y')`"
+author: 'Senan Hogan-Hennessy
+date: "04 Jun 2020"
 output: github_document
 ---
 ```{r setup, include=F}
+#date: "`r format(Sys.time(), '%d %b %Y')`"
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache = T)
 library(tidyverse)
 library(data.table)
@@ -286,11 +287,10 @@ Papers.data %>%
             theoretical = theoretical / count) %>%
   gather('paper_type', 'count', causal:theoretical) %>%
   mutate(label = if_else(year == max(year), paper_type, NA_character_)) %>%
-  ggplot(aes(x = year, y = count, 
-             group = paper_type, colour = paper_type)) + 
+  ggplot(aes(x = year, y = count, group = paper_type, colour = paper_type)) + 
   geom_smooth(span = 0.2, se = F) + 
   scale_x_continuous(name = 'Year', breaks = seq(1975, 2020, by = 5)) +
-  scale_y_continuous(name = 'Proportion of Papers (%)', limits = c(1975,2025)) + 
+  scale_y_continuous(name = 'Proportion of Papers (%)', limits = c(0,0.3)) + 
   theme_classic() + theme(legend.position = c(0.175, 0.60)) +
   scale_color_brewer(palette = 'Paired', guide = F) +
   geom_label_repel(aes(label = label), 
@@ -373,7 +373,7 @@ published_word_count <- abstracts_words %>%
   group_by(published) %>%
   mutate(total_words = n()) %>%
   ungroup() %>%
-  distinct(id, published, total_words)
+  distinct(nber_index, published, total_words)
 
 abstracts_words_sentiment <- abstracts_words %>%
   inner_join(pseudo_dictionary, by = 'word') %>%
@@ -416,6 +416,7 @@ relative_abstract_words %>%
          word = reorder(word, -logratio)) %>%
   group_by(sentiment) %>%
   top_n(20, abs(logratio)) %>%
+  arrange(desc(logratio)) %>%
   ungroup() %>%
   ggplot(aes(word, logratio, fill = logratio < 0)) +
   facet_wrap(~ sentiment, scales = 'free', nrow = 1) +

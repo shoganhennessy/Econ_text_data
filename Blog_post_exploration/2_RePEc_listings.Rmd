@@ -15,7 +15,6 @@ my collection of them all may constitute sensitive data.
 ***
 
 ```{r setup, include=F}
-# R -e "rmarkdown::render('2_RePEc_listings.Rmd', output_file='2_RePEc_listings.md')"
 knitr::opts_chunk$set(echo = F, message = F, warning = F, cache = T, fig.align = 'center')
 library(tidyverse)
 library(data.table)
