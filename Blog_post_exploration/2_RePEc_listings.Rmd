@@ -4,6 +4,10 @@ author: "Senan Hogan-Hennessy, "
 date: "`r format(Sys.time(), '%d %b %Y')`"
 output: github_document
 ---
+<style>
+body {text-align: justify}
+</style>
+
 This is the second of a series of blog posts motivating my analysis and exploration
 of a huge set of data on economics publications, sho I hope you enjoy the posts.
 The source code is available in [this repo](https://github.com/shoganhennessy/Econ_text_data/),
@@ -14,6 +18,7 @@ my collection of them all may constitute sensitive data.
 
 ***
 
+<p align="center">
 ```{r setup, include=F}
 knitr::opts_chunk$set(echo = F, message = F, warning = F, cache = T, fig.align = 'center')
 library(tidyverse)
@@ -29,6 +34,8 @@ Economists_articles.links <- fread('../Data/RePEc_data/Economists_data/Economist
 # Load info on journal rankings
 Journals.data <- fread('../Data/RePEc_data/Journals_data/Journal_info_repec.csv')
 ```
+</p>
+
 # The Ideas.RePEc Listings of Articles in Economics
 The NBER series is a great source of research in our profession, but it isn't the full picture of research in the field.
 It is, after all, a listing of working papers which are not yet publications -- though most do go on to be published,
@@ -56,6 +63,7 @@ influential place in the field of economics as well as their place in these data
 ### Citations
 
 For a sanity check, take a look at the most prolific authors in the field by citation count.<sup id="a2">[2](#f2)</sup>
+<p align="center">
 ```{r, echo=F, results='asis'}
 # The most prolific authors, within these data
 ## WHo have the most citations, in these data
@@ -77,6 +85,8 @@ Economists_citations.data <- Economists_articles.links %>%
 Economists_citations.data %>% head(10) %>%
   knitr::kable(format = 'markdown')
 ```
+</p>
+
 There are some familiar faces among the names, which is to be expected! The process of assigning is, however, not perfect:
 citations are assigned from each article to each author equally when there are multiple authors.
 Yet [Sarsons (2017)](https://www.aeaweb.org/articles?id=10.1257/aer.p20171126) shows how inappropriate this accounting is
@@ -87,6 +97,8 @@ Call it a point of interest to rank economists by better measures in the future,
 The above top ten are at the very top of the field and
 citations are, of course, not evenly distributed across researchers in the field.
 So what does the wider distribution look like?
+
+<p align="center">
 ```{r, echo=F, fig.height = 4, fig.width = 7}
 # Measure skew
 citations.skew <- Economists_citations.data %>%
@@ -104,11 +116,14 @@ Economists_citations.data %>%
   scale_y_continuous(name = 'Author count') + 
   labs(caption = paste0('Skew: ', citations.skew))
 ```
+</p>
 
 Citations are positively skewed among authors, so much so that
 the distribution above can only be visualised well with a log scale in citations:
 the top of the distribution has orders of magnitude more citations than the rest.
 One might call this distribution *unequal*, but is the distribution *unequal* for all the years of these data?
+
+<p align="center">
 ```{r, echo=F, fig.height = 3.5, fig.width = 7}
 # Dataframe of author citations by year
 Author_citations.data <- Economists_articles.links %>%
@@ -133,6 +148,7 @@ Author_citations.data %>%
   scale_y_continuous(name = 'Citations Gini Index (among authors)',
                      breaks = seq(0.2, 0.6, by = 0.1), limits = c(0.2,0.6))
 ```
+</p>
 
 The Gini coefficient measures income inequality in economics, where
 0 is perfect equality and 1 perfect inequality.
@@ -142,6 +158,8 @@ compare it to the US income distribution, which has a similar value.
 Yet it is not fully clear what this entails;
 citation counts are not income so that the comparison does not hold direct meaning.
 A Gini coefficient, while interesting, is a crude measure of inequality among publications.
+
+<p align="center">
 ```{r, echo = F, fig.height = 5, fig.width = 10}
 # create a citation count per economist per year and year since first publication
 Author_citation_count.data <- Economists_articles.links %>% 
@@ -224,6 +242,8 @@ cum_citations_year.graph <- Yearly_cumulative_citations.data %>%
 # Plot both mean and cumulative
 gridExtra::grid.arrange(mean_citations_year.graph, cum_citations_year.graph, nrow = 1)
 ```
+</p>
+
 The above shows means of yearly and cumulative citations across every author following their first publication.
 Be aware that the measure considers citations of papers, so that citations
 are attributed to the year of publication and not the year of citation being made.<sup id="a3">[3](#f1)</sup> 
@@ -250,6 +270,7 @@ https://www.aeaweb.org/articles?id=10.1257/jel.20191574&&from=f)),
 where publishing in one of these journals heavily influences a tenure decision and thus 
 makes (or breaks) an academic economics career.
 
+<p align="center">
 ```{r, echo=F, fig.height = 4, fig.width = 7}
 # top 5 journals
 Top5_journals <- c('American Economic Review',
@@ -273,6 +294,7 @@ Top5.count <- Articles.data %>%
   filter(!is.na(publication_date))  %>%
   filter(journal_title %in% Top5_journals) %>% nrow()
 ```
+</p>
 
 The top 5 journals are comprised of the American Economic Review, Econometrica, the Journal of Political Economy,
 the Quarterly Journal of Economics, and the Review of Economic Studies.
@@ -283,6 +305,7 @@ We see the top 10 ranked by mean citations, which naturally has the top 5 at the
 Notably the top 5 are not the first five when ranked by citations per article though they do rank at rank very highly in that regard.
 This is documented previously by [Anauati et al. (2018)](https://onlinelibrary.wiley.com/doi/abs/10.1111/ecin.12867).
 
+<p align="center">
 ```{r, echo = F, results='asis'}
 Journals_articles.data <- Articles.data %>% 
   filter(!is.na(citation_count) & !is.na(publication_date)) %>%
@@ -296,6 +319,7 @@ Journals_articles.data %>% head(10) %>%
   knitr::kable(format = 'markdown',
     col.names = c('Journal name', 'Mean citations per article', 'Total citations', 'Count articles'))
 ```
+</p>
 
 Economics' focus on the top 5 has been been dubbed *Top5itis*, a disease inflicting our field
 leading to tunnel vision for those with power in our field.
@@ -325,6 +349,7 @@ log citations for author *i* in year *t*.
 The design can similarly be applied to the next 5 prestigious journals (of the top 10 ranking),
 to give a similar event to compare.
 
+<p align="center">
 ```{r, echo = F, fig.height = 5, fig.width = 10}
 # Define the omparable next 5 journals
 TopOther_journals <- Journals_articles.data %>% head(10) %>% 
@@ -449,6 +474,7 @@ Topother_event.graph <- Topother.eventstudy %>%
 ## Plot both events
 gridExtra::grid.arrange(Top5_event.graph, Topother_event.graph, nrow = 1)
 ```
+</p>
 
 In terms of log citations, authors have a real and persistant bump 
 to their citations in years following their first publication in a top 5 journal.

@@ -1,5 +1,9 @@
 Senan Hogan-Hennessy,
-04 Jun 2020
+02 Jul 2020
+
+<style>
+body {text-align: justify}
+</style>
 
 This is the second of a series of blog posts motivating my analysis and
 exploration of a huge set of data on economics publications, sho I hope
@@ -12,6 +16,10 @@ accessible across the internet yet my collection of them all may
 constitute sensitive data.
 
 -----
+
+<p align="center">
+
+</p>
 
 # The Ideas.RePEc Listings of Articles in Economics
 
@@ -55,6 +63,8 @@ in these data.
 For a sanity check, take a look at the most prolific authors in the
 field by citation count.<sup id="a2">[2](#f2)</sup>
 
+<p align="center">
+
 | author\_name                   | total\_citations | mean\_citations | total\_articles |
 | :----------------------------- | ---------------: | --------------: | --------------: |
 | Andrei Shleifer                |            13816 |             150 |              92 |
@@ -67,6 +77,8 @@ field by citation count.<sup id="a2">[2](#f2)</sup>
 | John Y. Campbell               |             8423 |             153 |              55 |
 | David E. Card                  |             8159 |             138 |              59 |
 | Asli Demirguc-Kunt             |             8150 |             143 |              57 |
+
+</p>
 
 There are some familiar faces among the names, which is to be expected\!
 The process of assigning is, however, not perfect: citations are
@@ -82,14 +94,24 @@ as this project progresses.
 The above top ten are at the very top of the field and citations are, of
 course, not evenly distributed across researchers in the field. So what
 does the wider distribution look like?
+
+<p align="center">
+
 <img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
+
+</p>
 
 Citations are positively skewed among authors, so much so that the
 distribution above can only be visualised well with a log scale in
 citations: the top of the distribution has orders of magnitude more
 citations than the rest. One might call this distribution *unequal*, but
 is the distribution *unequal* for all the years of these data?
+
+<p align="center">
+
 <img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
+
+</p>
 
 The Gini coefficient measures income inequality in economics, where 0 is
 perfect equality and 1 perfect inequality. The coefficient is stable
@@ -99,7 +121,13 @@ it to the US income distribution, which has a similar value. Yet it is
 not fully clear what this entails; citation counts are not income so
 that the comparison does not hold direct meaning. A Gini coefficient,
 while interesting, is a crude measure of inequality among publications.
+
+<p align="center">
+
 <img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
+
+</p>
+
 The above shows means of yearly and cumulative citations across every
 author following their first publication. Be aware that the measure
 considers citations of papers, so that citations are attributed to the
@@ -127,7 +155,11 @@ forthcoming](https://www.aeaweb.org/articles?id=10.1257/jel.20191574&&from=f)),
 where publishing in one of these journals heavily influences a tenure
 decision and thus makes (or breaks) an academic economics career.
 
+<p align="center">
+
 <img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
+
+</p>
 
 The top 5 journals are comprised of the American Economic Review,
 Econometrica, the Journal of Political Economy, the Quarterly Journal of
@@ -143,6 +175,8 @@ rank very highly in that regard. This is documented previously by
 [Anauati et
 al. (2018)](https://onlinelibrary.wiley.com/doi/abs/10.1111/ecin.12867).
 
+<p align="center">
+
 | Journal name                           | Mean citations per article | Total citations | Count articles |
 | :------------------------------------- | -------------------------: | --------------: | -------------: |
 | American Economic Review               |                        102 |          301142 |           2954 |
@@ -155,6 +189,8 @@ al. (2018)](https://onlinelibrary.wiley.com/doi/abs/10.1111/ecin.12867).
 | Journal of Financial Economics         |                        107 |           92602 |            866 |
 | Journal of Econometrics                |                         84 |           89413 |           1068 |
 | Journal of Public Economics            |                         73 |           88089 |           1207 |
+
+</p>
 
 Economics’ focus on the top 5 has been been dubbed *Top5itis*, a disease
 inflicting our field leading to tunnel vision for those with power in
@@ -189,7 +225,11 @@ here will be log citations for author *i* in year *t*.
 The design can similarly be applied to the next 5 prestigious journals
 (of the top 10 ranking), to give a similar event to compare.
 
+<p align="center">
+
 <img src="2_RePEc_listings_files/figure-gfm/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+
+</p>
 
 In terms of log citations, authors have a real and persistant bump to
 their citations in years following their first publication in a top 5
