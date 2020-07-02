@@ -1,32 +1,37 @@
 ---
-title: "NBER Inclusion, What is it Good For?"
-author: "Senan Hogan-Hennesssy"
+title: ""
+author: "Senan Hogan-Hennessy, "
 date: "`r format(Sys.time(), '%d %b %Y')`"
-output: html_document
+output: github_document
 ---
-<style>
-body {
-text-align: justify}
-</style>
+This is the second of a series of blog posts motivating my analysis and exploration
+of a huge set of data on economics publications, sho I hope you enjoy the posts.
+The source code is available in [this repo](https://github.com/shoganhennessy/Econ_text_data/),
+so feel free to look over and reproduce from there (which is filled mostly with code in *R* and *Python*).
+Please contact me if you would like to use my underlying data for another project --
+all of the used data are publicly accessible across the internet yet
+my collection of them all may constitute sensitive data.
+
+***
+
 ```{r setup, include=F}
-knitr::opts_chunk$set(echo = F, message = F, warning = F, cache = F, fig.align = 'center')
-library(tidyverse)
+knitr::opts_chunk$set(echo = F, message = F, warning = F, cache = T, fig.align = 'center')
 library(data.table)
-library(stringi)
-library(ggplot2)
-library(RColorBrewer)
-library(ggrepel)
-library(tidytext)
-library(scales)
-theme_set(theme_bw())
-
+library(tidyverse)
+#### Datafiles
+# Authors in the NBER
+NBER_authors.data <- fread('../Data/NBER_data/Authors_data/Authors_data.csv')
+# Information on their appointment in the NBER
+NBER_appointment.data <- fread('../Data/NBER_data/Appointment_data/Appointment_data.csv')
+# Authors in RePEc
+RePEc_authors.data <- fread('../Data/RePEc_data/Economists_data/Economists_repec_data.csv')
 ```
+# NBER Inclusion, What is it Good For?
 
-
-I tried to post a comment on NBER (National Bureau of Economic Research), 
-but was rejected for not being an approved “NBER family member”. 
-If any of our readers is a ”NBER family member” feel free to post the 
-above. — Judea pearl on Angrist paper
+> I tried to post a comment on NBER (National Bureau of Economic Research), but was rejected for not being an approved “NBER family member”.
+> If any of our readers is a ”NBER family member” feel free to post the above.
+> -- Judea pearl on Angrist (2017) http://ideas.repec.org/a/aea/jecper/v31y2017i2p125-44.html
+<!-- blog post at http://causality.cs.ucla.edu/blog/index.php/2017/02/ -->
 
 Topic for blog post 3 is discussion of inclusion in nber — see quote above.
 Draw some graphs of how NBER members fill the economics publishing sphere,

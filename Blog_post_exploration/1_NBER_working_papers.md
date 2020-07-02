@@ -33,10 +33,15 @@ sensitive information.
 ### The dataset
 
 I have retrieved the listing of all NBER working papers, a collection of
-27393 papers (as of 18 Jun 2020), starting with a small number of
+27431 papers (as of 25 Jun 2020), starting with a small number of
 technical reports in 1973 to hundreds of modern research papers every
 year in the 2000s.
+
+<p align="center">
+
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-1-1.png" style="display: block; margin: auto;" />
+
+</p>
 
 The series has constantly been growing as a source of presentable
 research in-progress. It is unclear whether the growth in size of this
@@ -53,6 +58,7 @@ The papers are sorted in to subjects areas, the [NBER research area
 programmes](https://www.nber.org/programs/) (the graph below only shows
 top 10 areas). Note, however, that papers can be cross registered to
 multiple areas, and are more likely to be so for recent years.
+
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
 
 Most of the papers go on to be published, but the rate of publishing is
@@ -62,6 +68,7 @@ in 1987 before falling to common day. What drives this rise and fall? It
 is clear that papers since 2015 are still in the pipeline: the NBER
 series was, afterall, started partially to disseminate current knowledge
 in light of publication lags.
+
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
 
 Yet the publication rate has not been constant even before 2015. What
