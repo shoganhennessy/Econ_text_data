@@ -5,7 +5,8 @@ date: '04 Jun 2020'
 output: github_document
 ---
 <style>
-body {text-align: justify}
+body {text-align:
+justify}
 </style>
 ```{r setup, include=F}
 #date: "`r format(Sys.time(), '%d %b %Y')`"

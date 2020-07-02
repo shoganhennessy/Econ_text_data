@@ -4,7 +4,8 @@ Senan Hogan-Hennessy,
 04 Jun 2020
 
 <style>
-body {text-align: justify}
+body {text-align:
+justify}
 </style>
 
 Publishing is a main goal of academic economists, but rarely is it as

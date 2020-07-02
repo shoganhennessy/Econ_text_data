@@ -2,7 +2,8 @@ Senan Hogan-Hennessy,
 02 Jul 2020
 
 <style>
-body {text-align: justify}
+body {text-align:
+justify}
 </style>
 
 This is the second of a series of blog posts motivating my analysis and

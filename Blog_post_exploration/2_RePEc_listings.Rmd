@@ -5,7 +5,8 @@ date: "`r format(Sys.time(), '%d %b %Y')`"
 output: github_document
 ---
 <style>
-body {text-align: justify}
+body {text-align:
+justify}
 </style>
 
 This is the second of a series of blog posts motivating my analysis and exploration
