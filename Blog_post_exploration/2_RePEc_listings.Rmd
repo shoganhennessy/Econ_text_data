@@ -4,10 +4,6 @@ author: "Senan Hogan-Hennessy, "
 date: "`r format(Sys.time(), '%d %b %Y')`"
 output: github_document
 ---
-<style>
-body {text-align:
-justify}
-</style>
 
 This is the second of a series of blog posts motivating my analysis and exploration
 of a huge set of data on economics publications, sho I hope you enjoy the posts.
@@ -19,7 +15,6 @@ my collection of them all may constitute sensitive data.
 
 ***
 
-<p align="center">
 ```{r setup, include=F}
 knitr::opts_chunk$set(echo = F, message = F, warning = F, cache = T, fig.align = 'center')
 library(tidyverse)
@@ -35,7 +30,6 @@ Economists_articles.links <- fread('../Data/RePEc_data/Economists_data/Economist
 # Load info on journal rankings
 Journals.data <- fread('../Data/RePEc_data/Journals_data/Journal_info_repec.csv')
 ```
-</p>
 
 # The Ideas.RePEc Listings of Articles in Economics
 The NBER series is a great source of research in our profession, but it isn't the full picture of research in the field.

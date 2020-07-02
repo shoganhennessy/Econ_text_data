@@ -3,7 +3,7 @@ Working Papers in Economics: the NBER Series
 Senan Hogan-Hennessy,
 04 Jun 2020
 
-<p style="text-align: justify;">
+<div data-align="justify">
 
 Publishing is a main goal of academic economists, but rarely is it as
 simple as write the paper then publish. Projects can take years and
@@ -230,7 +230,7 @@ updates over the next few months as I collect more data sources, get a
 better idea of what I’m dealing with and form a more direct research
 question.
 
-</p>
+</div>
 
 *Note:* text analysis methods and code in *R* are inspired by an [older
 post on political tweets](http://varianceexplained.org/r/trump-tweets),

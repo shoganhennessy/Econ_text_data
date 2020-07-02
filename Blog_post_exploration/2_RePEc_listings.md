@@ -1,11 +1,6 @@
 Senan Hogan-Hennessy,
 02 Jul 2020
 
-<style>
-body {text-align:
-justify}
-</style>
-
 This is the second of a series of blog posts motivating my analysis and
 exploration of a huge set of data on economics publications, sho I hope
 you enjoy the posts. The source code is available in [this
@@ -17,10 +12,6 @@ accessible across the internet yet my collection of them all may
 constitute sensitive data.
 
 -----
-
-<p align="center">
-
-</p>
 
 # The Ideas.RePEc Listings of Articles in Economics
 

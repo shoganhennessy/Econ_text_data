@@ -4,10 +4,6 @@ author: 'Senan Hogan-Hennessy, '
 date: '04 Jun 2020'
 output: github_document
 ---
-<style>
-body {text-align:
-justify}
-</style>
 ```{r setup, include=F}
 #date: "`r format(Sys.time(), '%d %b %Y')`"
 knitr::opts_chunk$set(echo = F, message = F, warning = F, cache = T)
