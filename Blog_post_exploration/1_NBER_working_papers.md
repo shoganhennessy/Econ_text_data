@@ -3,6 +3,10 @@ Working Papers in Economics: the NBER Series
 Senan Hogan-Hennessy,
 04 Jun 2020
 
+<style>
+body {text-align: justify}
+</style>
+
 Publishing is a main goal of academic economists, but rarely is it as
 simple as write the paper then publish. Projects can take years and
 often transform over work, data analysis and dissemination of results.
@@ -59,7 +63,11 @@ programmes](https://www.nber.org/programs/) (the graph below only shows
 top 10 areas). Note, however, that papers can be cross registered to
 multiple areas, and are more likely to be so for recent years.
 
+<p align="center">
+
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
+
+</p>
 
 Most of the papers go on to be published, but the rate of publishing is
 certainly not constant. In the early days, around 60% of the working
@@ -69,7 +77,11 @@ is clear that papers since 2015 are still in the pipeline: the NBER
 series was, afterall, started partially to disseminate current knowledge
 in light of publication lags.
 
+<p align="center">
+
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
+
+</p>
 
 Yet the publication rate has not been constant even before 2015. What
 explains the changes in publication rate among these working papers?
@@ -86,6 +98,10 @@ text with some tools in R – take a look
 if you want to follow the code. First take a look at the most common
 words used for each classification.
 
+<p align="center">
+
+</p>
+
 Most common for published articles: model, data, market, effects, rate,
 policy, tax, capital, countries, rates.
 
@@ -98,7 +114,11 @@ word count measure is a crude measure that can be affected by
 confounding factors. Instead consider a log odds ratio to show which
 words are relatively more likely to be in (eventually) published papers.
 
+<p align="center">
+
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
+
+</p>
 
   - Bubble is most likely to be among published papers, temperature
     among those not published. Bubble can most commonly be associated
@@ -138,7 +158,11 @@ these as causal papers. Also list the top hundred words in papers that
 use the words ‘theory’ and ‘equilibrium’ – denoting these theoretical
 papers.
 
+<p align="center">
+
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
+
+</p>
 
 A listing of words most likely (relatively) to appear in a causal or
 theoretical paper can play the role of a sentiment dictionary (call it a
@@ -146,6 +170,10 @@ a pseudo sentiment lexicon) with a log ratio of inclusion in the type of
 paper, where a value of 100 is the most likely to be a word in that type
 of paper. It easily reframes the topic of measuring causal inference in
 the working papers as simple sentiment classification problem.
+
+<p align="center">
+
+</p>
 
 Here are the top 10 for causal papers with scores:
 
@@ -166,7 +194,11 @@ Take a step back and make sure the words make sense – one would hope
 that ‘causality’ is a causal word, and that ‘theory’ is a theoretical
 word\!
 
+<p align="center">
+
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
+
+</p>
 
 The list of causal or theoretical words are then counted among published
 and unpublished (pre-2016) papers, and a Poisson count test to estimate
@@ -178,7 +210,11 @@ plausible estimate regions.
 To see in granular detail, the words at the extreme of these sentiments
 within published and unpublished papers.
 
+<p align="center">
+
 <img src="1_NBER_working_papers_files/figure-gfm/unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
+
+</p>
 
 Take a look at the words used here. I can’t, for one, draw a specific
 difference in themes, so perhaps the NBER papers that do get published

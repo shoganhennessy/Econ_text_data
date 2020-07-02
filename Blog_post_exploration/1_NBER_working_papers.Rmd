@@ -4,6 +4,9 @@ author: 'Senan Hogan-Hennessy, '
 date: '04 Jun 2020'
 output: github_document
 ---
+<style>
+body {text-align: justify}
+</style>
 ```{r setup, include=F}
 #date: "`r format(Sys.time(), '%d %b %Y')`"
 knitr::opts_chunk$set(echo = F, message = F, warning = F, cache = T)
@@ -81,6 +84,7 @@ something like 'NBER working paper on economics publishing' and read cutting edg
 The papers are sorted in to subjects areas, the [NBER research area programmes](https://www.nber.org/programs/) (the graph below only shows top 10 areas).
 Note, however, that papers can be cross registered to multiple areas, and are more likely to be so for recent years.
 
+<p align="center">
 ```{r, echo=F, fig.height = 4, fig.width = 8, fig.align = 'center'}
 # SHow count per year, for each area
 Papers_subjects.data <- Papers.data %>% transmute(
@@ -154,12 +158,14 @@ Papers_subjects.data %>%
   #scale_color_discrete(guide = F) + 
   #scale_x_continuous(limits = c(1975,2025))
 ```
+</p>
 
 Most of the papers go on to be published, but the rate of publishing is certainly not constant.
 In the early days, around 60\% of the working papers are published in peer reviewed journals, going on to peak at 94\% in 1987 before falling to common day.  What drives this rise and fall?
 It is clear that papers since 2015 are still in the pipeline: the NBER series was, afterall, started
 partially to disseminate current knowledge in light of publication lags.
 
+<p align="center">
 ```{r, echo=F, fig.height = 3, fig.width = 7, fig.align = 'center'}
 # Show rate of publishing by year
 Papers.data %>%
@@ -175,6 +181,7 @@ Papers.data %>%
                      breaks = seq(0, 1, by = 0.1), limits = c(0,1))
 # Note sharp drop off 2015, work still yet to be published?
 ```
+</p>
 
 Yet the publication rate has not been constant even before 2015.  What explains the changes in publication rate among these working papers?
 
@@ -188,6 +195,7 @@ We have access to the abstract of every paper, however, so I was inspired by the
 with some tools in R -- take a look [here](https://github.com/shoganhennessy/Econ_text_data/blob/master/Blog_post_exploration/Working_papers_intro.Rmd) if you want to follow the code.
 First take a look at the most common words used for each classification.
 
+<p align="center">
 ```{r, echo=F}
 # Demark published papers and only take those with abstracts
 # Before 2016 because of publishing lag
@@ -212,6 +220,7 @@ published_words <- abstracts_words_count %>% filter(published == T) %>% head(10)
 unpublished_words <- abstracts_words_count %>% filter(published == F) %>% head(10) %>%
   pull(word) %>% paste(sep = ', ', collapse = ', ')
 ```
+</p>
 
 Most common for published articles: `r published_words`.
 
@@ -222,6 +231,7 @@ so this hardly counts as a textual difference.  However, a raw word count measur
 by confounding factors.
 Instead consider a log odds ratio to show which words are relatively more likely to be in (eventually) published papers.
 
+<p align="center">
 ```{r, echo=F, fig.height = 5, fig.width = 8, fig.align = 'center'}
 # Calculate odds ratio
 relative_abstract_words <- abstracts_words_count %>%
@@ -243,6 +253,7 @@ relative_abstract_words %>%
   ylab('Published - Unpublished relative log ratio') + xlab('') +
   scale_fill_manual(name = '', values = c('red', 'darkblue'))
 ```
+</p>
 
 * Bubble is most likely to be among published papers, temperature among those not published. 
 Bubble can most commonly be associated with asset bubbles, an extremely popular topic in economics since 2008 where the
@@ -273,6 +284,7 @@ First I'll form a list of a hundred words most likely to appear in abstracts tha
 Also list the top hundred words in papers that use the words 
 'theory' and 'equilibrium' -- denoting these theoretical papers.
 
+<p align="center">
 ```{r, echo=F, fig.height = 3, fig.width = 6.5, fig.align = 'center'}
 # Calculate odds ratio
 Papers.data %>%
@@ -301,6 +313,7 @@ Papers.data %>%
     nudge_x = 1, direction = 'y', hjust = -2, segment.alpha = 0, na.rm = T) +
   scale_color_discrete(guide = F)
 ```
+</p>
  
 A listing of words most likely (relatively) to appear in a causal or theoretical paper
 can play the role of a sentiment dictionary (call it a a pseudo sentiment lexicon) with a 
@@ -308,6 +321,7 @@ log ratio of inclusion in the type of paper, where a value of 100 is the most li
 in that type of paper.  It easily reframes the topic of measuring causal inference in the working papers
 as simple sentiment classification problem.
 
+<p align="center">
 ```{r, echo=F}
 # Which words coincide with data or empirical?
 empirical_theoretical_words <- Papers_abtracts.data %>%
@@ -348,6 +362,7 @@ top_theoretical_words <- theoretical_words %>%
   transmute(word = paste0(word, ' : ', as.character(round(logratio)))) %>% pull(word) %>% 
               paste(sep = ', ', collapse = ', ')
 ```
+</p>
 
 Here are the top 10 for causal papers with scores:
 
@@ -362,6 +377,7 @@ And for theoretical papers:
 Take a step back and make sure the words make sense -- one would hope that 'causality' is a causal
 word, and that 'theory' is a theoretical word!
 
+<p align="center">
 ```{r, echo=F, fig.height = 2.5, fig.width = 5.5, fig.align = 'center'}
 # Sentiment analysis with my own dictionary here
 # Reference Dictionary-based sentiment here
@@ -402,6 +418,7 @@ sentiment_differences %>%
   scale_x_continuous(labels = percent_format()) +
   labs(x = 'Inclusion in a Published Paper relative to Unpublished, increase (%)', y = 'pseudo-Sentiment')
 ```
+</p>
 
 The list of causal or theoretical words are then counted among published and unpublished (pre-2016)
 papers, and a Poisson count test to estimate whether they are more likely to be in published or 
@@ -411,6 +428,7 @@ in a published paper than a standard word, with overlap in the plausible estimat
 To see in granular detail, the words at the extreme of these sentiments within published
 and unpublished papers.
 
+<p align="center">
 ```{r, echo=F, fig.height = 5.5, fig.width = 9, fig.align = 'center'}
 relative_abstract_words %>%
   inner_join(pseudo_dictionary, by = 'word') %>%
@@ -429,6 +447,7 @@ relative_abstract_words %>%
                     values = c('red', 'darkblue')) +
   theme(legend.position = c(0.9, 0.85))
 ```
+</p>
 
 Take a look at the words used here.  I can't, for one, draw a specific difference in themes,
 so perhaps the NBER papers that do get published vs unpublished really are not so different!
