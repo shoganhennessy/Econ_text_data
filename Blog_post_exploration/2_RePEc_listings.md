@@ -296,4 +296,5 @@ Tyranny of the Top Five. Journal of Economic Literatue (forthcoming).
 Sarsons, H. (2017). Recognition for group work: Gender differences in
 academia. American Economic Review, 107(5), 141-45.
 
-Serrano, R. (2018). Top5itis (No. 2018-2). Working Paper.
+Serrano, R. (2018). Top5itis (Brown University No. 2018-2). Working
+Paper.

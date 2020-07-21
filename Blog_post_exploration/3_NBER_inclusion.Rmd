@@ -65,7 +65,7 @@ appointment.eventstudy <- appointment_repec.data %>%
     filter(appt_rank_nber == "RA") %>%
     pdata.frame(index = c("name_repec", "ref_year")) %>%
     plm(log(ref_count) ~ 1 + as.factor(appt_since_nber), data = .,
-        effect = 'twoways', model = 'random')
+        effect = "twoways", model = "within")
 # Save note of observation number
 anotation_note <- appointment.eventstudy %>% summary() %>% capture.output() %>% nth(7)
 # And cluster the SE, keeping relevant coefficients

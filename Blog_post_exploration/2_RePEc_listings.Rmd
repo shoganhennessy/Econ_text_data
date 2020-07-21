@@ -58,6 +58,7 @@ influential place in the field of economics as well as their place in these data
 ### Citations
 
 For a sanity check, take a look at the most prolific authors in the field by citation count.<sup id="a2">[2](#f2)</sup>
+
 <p align="center">
 ```{r, echo=F, results='asis'}
 # The most prolific authors, within these data
@@ -400,8 +401,8 @@ Topother_since.data <- Author_cumulative_citations.data %>%
 Top5.eventstudy <- Top5_since.data %>%
   pdata.frame(index = c('author_name', 'publication_date')) %>%
   plm(log(total_citations) ~ 1 + since_first_top5, data = .,
-      effect = 'twoways', model = 'random')
-anotation_note <- Top5.eventstudy %>% summary() %>% capture.output() %>% nth(8)
+      effect = 'twoways', model = 'within')
+anotation_note <- Top5.eventstudy %>% summary() %>% capture.output() %>% nth(7)
 # And cluster the SE, keeping relevant coefficients
 Top5.eventstudy <- Top5.eventstudy %>%
   lmtest::coeftest(vcov = vcovDC(Top5.eventstudy, type = 'sss')) %>%
@@ -430,7 +431,7 @@ Top5_event.graph <- Top5.eventstudy %>%
   geom_smooth(aes(y = estimate_after), method = 'lm', se = F, colour = 'red') +
   scale_x_continuous(name = 'Years after publication', breaks = seq(-20, 20, by = 5)) +
   scale_y_continuous(name = 'Coefficient estimate',
-                     limits = c(-0.3, 0.3), breaks = seq(-0.3, 0.3, by = 0.1), labels = scales::comma) +
+                     limits = c(-0.4, 0.4), breaks = seq(-0.4, 0.4, by = 0.1), labels = scales::comma) +
   theme_bw() + theme(plot.title = element_text(hjust = 0.5)) +
   labs(title   = 'Log Citations by year to author first\ntop 5 publication',
        caption = anotation_note)
@@ -440,8 +441,8 @@ Top5_event.graph <- Top5.eventstudy %>%
 Topother.eventstudy <- Topother_since.data %>%
   pdata.frame(index = c('author_name', 'publication_date')) %>%
   plm(log(total_citations) ~ 1 + since_first_topother, data = .,
-      effect = 'twoways', model = 'random')
-anotation_note <- Topother.eventstudy %>% summary() %>% capture.output() %>% nth(8)
+      effect = 'twoways', model = 'within')
+anotation_note <- Topother.eventstudy %>% summary() %>% capture.output() %>% nth(7)
 # And cluster the SE, keeping relevant coefficients
 Topother.eventstudy <- Topother.eventstudy %>%
   lmtest::coeftest(vcov = vcovDC(Topother.eventstudy, type = 'sss')) %>%
@@ -468,7 +469,8 @@ Topother_event.graph <- Topother.eventstudy %>%
   geom_smooth(aes(y = estimate_before), method = 'lm', se = F, colour = 'red') +
   geom_smooth(aes(y = estimate_after), method = 'lm', se = F, colour = 'red') +
   scale_x_continuous(name = 'Years after publication', breaks = seq(-20, 20, by = 5)) +
-  scale_y_continuous(name = '', limits = c(-0.3, 0.3), breaks = seq(-0.3, 0.3, by = 0.1), labels = scales::comma) +
+  scale_y_continuous(name = '', limits = c(-0.4, 0.4),
+                     breaks = seq(-0.4, 0.4, by = 0.1), labels = scales::comma) +
   theme_bw() + theme(plot.title = element_text(hjust = 0.5)) +
   labs(title   = 'Log Citations by year to author first\ntop other publication',
        caption = anotation_note)
@@ -536,4 +538,4 @@ Heckman J, & S Moktan. (2020) Publishing and Promotion in Economics: The Tyranny
 
 Sarsons, H. (2017). Recognition for group work: Gender differences in academia. American Economic Review, 107(5), 141-45.
 
-Serrano, R. (2018). Top5itis (No. 2018-2). Working Paper.
+Serrano, R. (2018). Top5itis (Brown University No. 2018-2). Working Paper.
