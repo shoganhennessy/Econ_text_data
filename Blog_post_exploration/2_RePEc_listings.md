@@ -231,8 +231,10 @@ is at least smaller than that for the top 5.
 
 Be aware that this is a relatively simple linear model: it shows not
 much more than the fact authors once published in the top 5 receive more
-citations over the next 15 years. There’s no causal identification (or
-inference), the measure of citations is still from year
+citations over the next 15 years.  
+While there are fixed effects controls for unobserved differences among
+individuals, there is no direct causal identification (or inference);
+the measure of citations is still from year
 published,<sup id="a4">[3](#f3)</sup> and sample selction is likely
 rampant in this design. For example, the model considers both authors
 who get to the top 5 in their second active year of writing with people
