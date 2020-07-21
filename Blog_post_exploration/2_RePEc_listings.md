@@ -1,5 +1,5 @@
 Senan Hogan-Hennessy,
-02 Jul 2020
+21 Jul 2020
 
 This is the second of a series of blog posts motivating my analysis and
 exploration of a huge set of data on economics publications, sho I hope

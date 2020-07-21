@@ -128,7 +128,7 @@ Author_citations.data <- Economists_articles.links %>%
 			by = 'author_url') %>%
   left_join(rename(Articles.data, article_url = url), by = 'article_url') %>%
   group_by(author_name, publication_date) %>%
-  summarise(citation_count = sum(citation_count)) 
+  summarise(citation_count = sum(citation_count))
 
 # Gini coefficient for authors' citations, by year
 Author_citations.data %>%
@@ -371,11 +371,14 @@ Author_cumulative_citations.data <- Economists_articles.links %>%
 Top5_since.data <- Author_cumulative_citations.data %>%
   mutate(top5 = as.numeric(top5_count > 0)) %>%
   arrange(author_name, publication_date) %>%
-  group_by(author_name) %>% filter(max(top5) > 0) %>%
+  group_by(author_name) %>%
+  filter(max(top5) > 0) %>%
   mutate(since_first_top5 = publication_date - min(((top5!=1)+1) * publication_date)) %>%
-  select(author_name, publication_date, top5,
-         since_first_top5, total_citations) %>%
-  arrange(author_name, since_first_top5) %>% ungroup()
+  select(author_name, publication_date, top5, since_first_top5, total_citations) %>%
+  arrange(author_name, since_first_top5) %>%
+  ungroup() %>%
+  filter(abs(since_first_top5) < 16 & total_citations > 0) %>%
+  mutate(since_first_top5 = factor(since_first_top5, levels = c(0, -40:-1, 1:40)))
 
 # Top other since
 Topother_since.data <- Author_cumulative_citations.data %>%
@@ -384,7 +387,10 @@ Topother_since.data <- Author_cumulative_citations.data %>%
   mutate(since_first_topother = publication_date - min(((topother!=1)+1) * publication_date)) %>%
   select(author_name, publication_date, topother,
          since_first_topother, total_citations) %>%
-  arrange(author_name, since_first_topother) %>% ungroup()
+  arrange(author_name, since_first_topother) %>%
+  ungroup() %>%
+  filter(abs(since_first_topother) < 16 & total_citations > 0) %>%
+  mutate(since_first_topother = factor(since_first_topother, levels = c(0, -50:-1, 1:40)))
 
 
 ##############################
@@ -392,18 +398,19 @@ Topother_since.data <- Author_cumulative_citations.data %>%
 #### 1.
 # Event for a top 5 publication
 Top5.eventstudy <- Top5_since.data %>%
-  filter(abs(since_first_top5) < 16 & total_citations > 0) %>%
   pdata.frame(index = c('author_name', 'publication_date')) %>%
-  plm(log(total_citations) ~ 0 + as.factor(since_first_top5), data = .,
+  plm(log(total_citations) ~ 1 + since_first_top5, data = .,
       effect = 'twoways', model = 'random')
 anotation_note <- Top5.eventstudy %>% summary() %>% capture.output() %>% nth(8)
 # And cluster the SE, keeping relevant coefficients
 Top5.eventstudy <- Top5.eventstudy %>%
-  lmtest::coeftest(vcov=vcovDC(Top5.eventstudy, type = 'sss')) %>%
-  broom::tidy() %>% filter(str_detect(term, 'since_first_top5')) %>%
-  mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
-  mutate(conf.low = estimate - 1.96*std.error,
-         conf.high= estimate + 1.96*std.error)
+  lmtest::coeftest(vcov = vcovDC(Top5.eventstudy, type = 'sss')) %>%
+  broom::tidy() %>%
+  filter(str_detect(term, 'since_first_top5')) %>%
+  mutate(coefficient = term %>% str_replace("since_first_top5", "") %>% as.integer()) %>%
+  mutate(conf.low  = estimate - 1.96*std.error,
+         conf.high = estimate + 1.96*std.error)
+
 # Graph the event
 Top5_event.graph <- Top5.eventstudy %>%
   mutate(estimate_before  = ifelse(coefficient < 0 , estimate, NA),
@@ -422,7 +429,8 @@ Top5_event.graph <- Top5.eventstudy %>%
   geom_smooth(aes(y = estimate_before), method = 'lm', se = F, colour = 'red') +
   geom_smooth(aes(y = estimate_after), method = 'lm', se = F, colour = 'red') +
   scale_x_continuous(name = 'Years after publication', breaks = seq(-20, 20, by = 5)) +
-  scale_y_continuous(name = 'Coefficient estimate', limits = c(3.75,4.5), breaks = seq(3.75,4.5,by=0.125)) + 
+  scale_y_continuous(name = 'Coefficient estimate',
+                     limits = c(-0.625, 0.125), breaks = seq(-0.625, 0.125, by = 0.125)) +
   theme_bw() + theme(plot.title = element_text(hjust = 0.5)) +
   labs(title   = 'Log Citations by year to author first\ntop 5 publication',
        caption = anotation_note)
@@ -430,18 +438,18 @@ Top5_event.graph <- Top5.eventstudy %>%
 #### 2.
 # Draw event study style graph, for the top other
 Topother.eventstudy <- Topother_since.data %>%
-  filter(abs(since_first_topother) < 16 & total_citations > 0) %>%
   pdata.frame(index = c('author_name', 'publication_date')) %>%
-  plm(log(total_citations) ~ 0 + as.factor(since_first_topother), data = .,
+  plm(log(total_citations) ~ 1 + since_first_topother, data = .,
       effect = 'twoways', model = 'random')
 anotation_note <- Topother.eventstudy %>% summary() %>% capture.output() %>% nth(8)
 # And cluster the SE, keeping relevant coefficients
 Topother.eventstudy <- Topother.eventstudy %>%
-  lmtest::coeftest(vcov=vcovDC(Topother.eventstudy, type = 'sss')) %>%
-  broom::tidy() %>% filter(str_detect(term, 'since_first_topother')) %>%
-  mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
-  mutate(conf.low = estimate - 1.96*std.error,
-         conf.high= estimate + 1.96*std.error)
+  lmtest::coeftest(vcov = vcovDC(Topother.eventstudy, type = 'sss')) %>%
+  broom::tidy() %>%
+  filter(str_detect(term, 'since_first_topother')) %>%
+  mutate(coefficient = term %>% str_replace("since_first_topother", "") %>% as.integer(),
+         conf.low  = estimate - 1.96*std.error,
+         conf.high = estimate + 1.96*std.error)
 # Graph the event
 Topother_event.graph <- Topother.eventstudy %>%
   mutate(estimate_before  = ifelse(coefficient < 0 , estimate, NA),
@@ -460,7 +468,7 @@ Topother_event.graph <- Topother.eventstudy %>%
   geom_smooth(aes(y = estimate_before), method = 'lm', se = F, colour = 'red') +
   geom_smooth(aes(y = estimate_after), method = 'lm', se = F, colour = 'red') +
   scale_x_continuous(name = 'Years after publication', breaks = seq(-20, 20, by = 5)) +
-  scale_y_continuous(name = '', limits = c(3.75,4.5), breaks = seq(3.75,4.5,by=0.125)) + 
+  scale_y_continuous(name = '', limits = c(-0.625, 0.125), breaks = seq(-0.625, 0.125, by = 0.125)) +
   theme_bw() + theme(plot.title = element_text(hjust = 0.5)) +
   labs(title   = 'Log Citations by year to author first\ntop other publication',
        caption = anotation_note)

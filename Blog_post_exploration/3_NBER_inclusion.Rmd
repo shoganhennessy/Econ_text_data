@@ -15,17 +15,18 @@ my collection of them all may constitute sensitive data.
 ***
 
 ```{r setup, include=F}
-knitr::opts_chunk$set(echo = F, message = F, warning = F, cache = T, fig.align = 'center')
+knitr::opts_chunk$set(echo = F, message = F, warning = F, cache = T,
+                      fig.align = "center")
 library(data.table)
 library(tidyverse)
-#### Datafiles
-# Authors in the NBER
-NBER_authors.data <- fread('../Data/NBER_data/Authors_data/Authors_data.csv')
-# Information on their appointment in the NBER
-NBER_appointment.data <- fread('../Data/NBER_data/Appointment_data/Appointment_data.csv')
-# Authors in RePEc
-RePEc_authors.data <- fread('../Data/RePEc_data/Economists_data/Economists_repec_data.csv')
+library(plm)
+library(lintr)
+#### Datafile
+# Authors and their citations (in year cited)
+appointment_repec.data <-
+    fread("../Data/RePEc_data/Economists_data/Appointment_ref_repec.csv")
 ```
+
 # NBER Inclusion, What is it Good For?
 
 > I tried to post a comment on NBER (National Bureau of Economic Research), but was rejected for not being an approved “NBER family member”.
@@ -52,14 +53,59 @@ Comment on the same here:
 https://p-hunermund.com/2017/02/22/judea-pearl-on-angrist-and-pischke/
 
 
+```{r, echo = F, fig.height = 5, fig.width = 10}
+# find year of appointment and years ref since
+appointment_repec.data <- appointment_repec.data %>%
+    mutate(appt_year_nber = appt_date_nber %>%
+               as.Date(format = "%Y-%m-%d") %>% format("%Y")) %>%
+    mutate(appt_since_nber = factor(as.integer(ref_year) - as.integer(appt_year_nber),
+                                    levels = c(0, -20:-1, 1:20)))
+# Event lm 
+appointment.eventstudy <- appointment_repec.data %>%
+    filter(appt_rank_nber == "RA") %>%
+    pdata.frame(index = c("name_repec", "ref_year")) %>%
+    plm(log(ref_count) ~ 1 + as.factor(appt_since_nber), data = .,
+        effect = 'twoways', model = 'random')
+# Save note of observation number
+anotation_note <- appointment.eventstudy %>% summary() %>% capture.output() %>% nth(7)
+# And cluster the SE, keeping relevant coefficients
+appointment.eventstudy <- appointment.eventstudy %>%
+    lmtest::coeftest(vcov = vcovDC(appointment.eventstudy, type = 'sss')) %>%
+    broom::tidy() %>%
+    filter(str_detect(term, 'appt_since_nber')) %>%
+    mutate(coefficient = as.numeric(str_extract(term, '[^)]+$'))) %>%
+    mutate(conf.low  = estimate - 1.96*std.error,
+           conf.high = estimate + 1.96*std.error)
+# Graph the event
+appointment.eventstudy %>%
+  mutate(estimate_before  = ifelse(coefficient < 0 , estimate, NA),
+         estimate_after   = ifelse(0 <= coefficient, estimate, NA),
+         conf.low_before  = ifelse(coefficient < 0,  conf.low, NA),
+         conf.low_after   = ifelse(0 < coefficient, conf.low, NA),
+         conf.high_before = ifelse(coefficient < 0,  conf.high, NA),
+         conf.high_after  = ifelse(0 < coefficient, conf.high, NA)) %>%
+  ggplot(aes(x = coefficient)) +
+  geom_point(aes(y = estimate)) +
+  stat_smooth(aes(y = estimate), geom = 'line', colour = 'blue', span = 0.5, alpha = 0.5, se = F) +
+  geom_line(aes(y = conf.low_before), linetype = 'dashed') +
+  geom_line(aes(y = conf.low_after), linetype = 'dashed') +
+  geom_line(aes(y = conf.high_before), linetype = 'dashed') +
+  geom_line(aes(y = conf.high_after), linetype = 'dashed') +
+  #geom_smooth(aes(y = estimate_before), method = 'lm', se = F, colour = 'red') +
+  #geom_smooth(aes(y = estimate_after), method = 'lm', se = F, colour = 'red') +
+  scale_x_continuous(name = 'Years after appointment', breaks = seq(-20, 20, by = 5)) +
+  scale_y_continuous(name = 'Coefficient estimate') + #, limits = c(3.75,4.5), breaks = seq(3.75,4.5,by = 0.125)) + 
+  theme_bw() + theme(plot.title = element_text(hjust = 0.5)) +
+  labs(title   = "Log Citations by year to author's NBER appointment",
+       caption = anotation_note)
+```
+
 ### Link to the NBER
 
 Draw maps of where they're from
 and test a correlation: distance to publication home institution and economist base.
-^ Start of testing locality or inclusion. 
+^ Start of testing locality or inclusion.
 
-
-
-Further opportunity link to NBER working paper and measure change from WP to published article
-
-
+```{r postcheck, include=F}
+#lintr::lint("Blog_post_exploration/3_NBER_inclusion.Rmd")
+```

@@ -24,7 +24,7 @@ random.seed(47)
 # author2 | name of article 1 | 2
 
 # Load data on economists
-Economists_data = pd.read_csv('../Data/RePEc_data/Economists_data/Economists_repec_data.csv', low_memory=False)
+Economists_data = pd.read_csv('Data/RePEc_data/Economists_data/Economists_repec_data.csv', low_memory=False)
 
 
 # Reshape to a key with individual entries for author_id and article_id
@@ -45,4 +45,4 @@ Economists_papers_data = pd.DataFrame(Economists_papers, columns=['author_url', 
 
 ####################
 ## Save for post analysis.
-Economists_papers_data.to_csv('../Data/RePEc_data/Economists_data/Economists_articles_repec.csv', index = False)
+Economists_papers_data.to_csv('Data/RePEc_data/Economists_data/Economists_articles_repec.csv', index = False)
