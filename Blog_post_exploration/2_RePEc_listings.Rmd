@@ -378,7 +378,7 @@ Top5_since.data <- Author_cumulative_citations.data %>%
   arrange(author_name, since_first_top5) %>%
   ungroup() %>%
   filter(abs(since_first_top5) < 16 & total_citations > 0) %>%
-  mutate(since_first_top5 = factor(since_first_top5, levels = c(0, -40:-1, 1:40)))
+  mutate(since_first_top5 = factor(since_first_top5, levels = c(-1, -50:-2, 0:40)))
 
 # Top other since
 Topother_since.data <- Author_cumulative_citations.data %>%
@@ -390,7 +390,7 @@ Topother_since.data <- Author_cumulative_citations.data %>%
   arrange(author_name, since_first_topother) %>%
   ungroup() %>%
   filter(abs(since_first_topother) < 16 & total_citations > 0) %>%
-  mutate(since_first_topother = factor(since_first_topother, levels = c(0, -50:-1, 1:40)))
+  mutate(since_first_topother = factor(since_first_topother, levels = c(-1, -50:-2, 0:40)))
 
 
 ##############################
@@ -430,7 +430,7 @@ Top5_event.graph <- Top5.eventstudy %>%
   geom_smooth(aes(y = estimate_after), method = 'lm', se = F, colour = 'red') +
   scale_x_continuous(name = 'Years after publication', breaks = seq(-20, 20, by = 5)) +
   scale_y_continuous(name = 'Coefficient estimate',
-                     limits = c(-0.625, 0.125), breaks = seq(-0.625, 0.125, by = 0.125)) +
+                     limits = c(-0.3, 0.3), breaks = seq(-0.3, 0.3, by = 0.1), labels = scales::comma) +
   theme_bw() + theme(plot.title = element_text(hjust = 0.5)) +
   labs(title   = 'Log Citations by year to author first\ntop 5 publication',
        caption = anotation_note)
@@ -468,7 +468,7 @@ Topother_event.graph <- Topother.eventstudy %>%
   geom_smooth(aes(y = estimate_before), method = 'lm', se = F, colour = 'red') +
   geom_smooth(aes(y = estimate_after), method = 'lm', se = F, colour = 'red') +
   scale_x_continuous(name = 'Years after publication', breaks = seq(-20, 20, by = 5)) +
-  scale_y_continuous(name = '', limits = c(-0.625, 0.125), breaks = seq(-0.625, 0.125, by = 0.125)) +
+  scale_y_continuous(name = '', limits = c(-0.3, 0.3), breaks = seq(-0.3, 0.3, by = 0.1), labels = scales::comma) +
   theme_bw() + theme(plot.title = element_text(hjust = 0.5)) +
   labs(title   = 'Log Citations by year to author first\ntop other publication',
        caption = anotation_note)
