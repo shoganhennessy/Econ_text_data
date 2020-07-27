@@ -236,13 +236,13 @@ cum_citations_year.graph <- Yearly_cumulative_citations.data %>%
     values = c('At least one\npublication\nin that year\n' = 'darkviolet',
                'All years' = 'chartreuse4'))
 # Plot both mean and cumulative
-gridExtra::grid.arrange(mean_citations_year.graph, cum_citations_year.graph, nrow = 1)
+#gridExtra::grid.arrange(mean_citations_year.graph, cum_citations_year.graph, nrow = 1)
+mean_citations_year.graph
 ```
 </p>
 
-The above shows means of yearly and cumulative citations across every author following their first publication.
-Be aware that the measure considers citations of papers, so that citations
-are attributed to the year of publication and not the year of citation being made.<sup id="a3">[3](#f1)</sup> 
+The above shows mean yearly citations across every author following their first publication.
+Be aware that the measure considers citations of papers, so that citations are attributed to the year of publication and not the year of citation being made.<sup id="a3">[3](#f1)</sup> 
 
 My data set of papers is formatted at the individual paper level (each row is a paper),
 so that summary statistics on this only consider years in which papers appear,
@@ -258,7 +258,7 @@ in the group of authors who continue to publish years after their first paper.
 
 ### The Top 5
 
-It well known in economics that the top five journals holds an outside influence in
+It well known in economics that the top five journals hold an outside influence in
 publishing and the power structure of our field.
 Recently this has been referred to as a tyranny 
 ([Heckman, Moktan 2020 forthcoming](
@@ -408,8 +408,8 @@ Top5.eventstudy <- Top5.eventstudy %>%
   lmtest::coeftest(vcov = vcovDC(Top5.eventstudy, type = 'sss')) %>%
   broom::tidy() %>%
   filter(str_detect(term, 'since_first_top5')) %>%
-  mutate(coefficient = term %>% str_replace("since_first_top5", "") %>% as.integer()) %>%
-  mutate(conf.low  = estimate - 1.96*std.error,
+  mutate(coefficient = term %>% str_replace("since_first_top5", "") %>% as.integer(),
+         conf.low  = estimate - 1.96*std.error,
          conf.high = estimate + 1.96*std.error)
 
 # Graph the event
@@ -455,9 +455,9 @@ Topother.eventstudy <- Topother.eventstudy %>%
 Topother_event.graph <- Topother.eventstudy %>%
   mutate(estimate_before  = ifelse(coefficient < 0 , estimate, NA),
          estimate_after   = ifelse(0 <= coefficient, estimate, NA),
-         conf.low_before  = ifelse(coefficient < 0,  conf.low, NA),
+         conf.low_before  = ifelse(coefficient < 0, conf.low, NA),
          conf.low_after   = ifelse(0 < coefficient, conf.low, NA),
-         conf.high_before = ifelse(coefficient < 0,  conf.high, NA),
+         conf.high_before = ifelse(coefficient < 0, conf.high, NA),
          conf.high_after  = ifelse(0 < coefficient, conf.high, NA)) %>%
   ggplot(aes(x = coefficient)) +
   geom_point(aes(y = estimate)) +

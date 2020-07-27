@@ -1,5 +1,5 @@
 Senan Hogan-Hennessy,
-21 Jul 2020
+27 Jul 2020
 
 This is the second of a series of blog posts motivating my analysis and
 exploration of a huge set of data on economics publications, sho I hope
@@ -9,7 +9,7 @@ to look over and reproduce from there (which is filled mostly with code
 in *R* and *Python*). Please contact me if you would like to use my
 underlying data for another project – all of the used data are publicly
 accessible across the internet yet my collection of them all may
-constitute sensitive data.
+constitute sensitive information.
 
 -----
 
@@ -41,8 +41,15 @@ Comment on the same here:
 
 <img src="3_NBER_inclusion_files/figure-gfm/unnamed-chunk-1-1.png" style="display: block; margin: auto;" />
 
+### Graph years since PhD
+
 ### Link to the NBER
 
-Draw maps of where they’re from and test a correlation: distance to
+Draw maps of where they"re from and test a correlation: distance to
 publication home institution and economist base. ^ Start of testing
 locality or inclusion.
+
+### Coauthorship
+
+Look at how much more likely to coauthor with other members after being
+appointed.

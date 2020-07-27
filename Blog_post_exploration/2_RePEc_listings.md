@@ -1,5 +1,5 @@
 Senan Hogan-Hennessy,
-21 Jul 2020
+27 Jul 2020
 
 This is the second of a series of blog posts motivating my analysis and
 exploration of a huge set of data on economics publications, sho I hope
@@ -120,11 +120,10 @@ while interesting, is a crude measure of inequality among publications.
 
 </p>
 
-The above shows means of yearly and cumulative citations across every
-author following their first publication. Be aware that the measure
-considers citations of papers, so that citations are attributed to the
-year of publication and not the year of citation being
-made.<sup id="a3">[3](#f1)</sup>
+The above shows mean yearly citations across every author following
+their first publication. Be aware that the measure considers citations
+of papers, so that citations are attributed to the year of publication
+and not the year of citation being made.<sup id="a3">[3](#f1)</sup>
 
 My data set of papers is formatted at the individual paper level (each
 row is a paper), so that summary statistics on this only consider years
@@ -140,7 +139,7 @@ publish years after their first paper.
 
 ### The Top 5
 
-It well known in economics that the top five journals holds an outside
+It well known in economics that the top five journals hold an outside
 influence in publishing and the power structure of our field. Recently
 this has been referred to as a tyranny ([Heckman, Moktan 2020
 forthcoming](https://www.aeaweb.org/articles?id=10.1257/jel.20191574&&from=f)),

@@ -1,0 +1,53 @@
+---
+title: ""
+author: "Senan Hogan-Hennessy, "
+date: "`r format(Sys.time(), '%d %b %Y')`"
+output: github_document
+---
+This is the second of a series of blog posts motivating my analysis and exploration
+of a huge set of data on economics publications, sho I hope you enjoy the posts.
+The source code is available in [this repo](https://github.com/shoganhennessy/Econ_text_data/),
+so feel free to look over and reproduce from there (which is filled mostly with code in *R* and *Python*).
+Please contact me if you would like to use my underlying data for another project --
+all of the used data are publicly accessible across the internet yet
+my collection of them all may constitute sensitive data.
+
+***
+
+```{r setup, include=F}
+knitr::opts_chunk$set(echo = F, message = F, warning = F, cache = T,
+                      fig.align = "center")
+library(data.table)
+library(tidyverse)
+library(plm)
+library(lintr)
+#### Datafiles
+```
+
+# Network Economics and the Network of Economists
+
+Read paper on connections among congressmen:
+"Influencing Connected Legislators," Marco Battaglini and Eleonora Patacchini
+https://www.journals.uchicago.edu/doi/10.1086/700074
+
+Also newer on central points in the networks
+http://www.nber.org/papers/w27557
+
+R package for network analysis:
+https://www.rdocumentation.org/packages/econet/
+
+```{r}
+library(econet)
+data("a_db_alumni")
+```
+
+
+### Link to the NBER
+
+Draw maps of where they're from
+and test a correlation: distance to publication home institution and economist base.
+^ Start of testing locality or inclusion.
+
+```{r postcheck, include=F}
+#lintr::lint("Blog_post_exploration/4_network_economists.Rmd")
+```
